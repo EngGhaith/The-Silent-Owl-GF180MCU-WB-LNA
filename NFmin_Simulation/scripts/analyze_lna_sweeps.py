@@ -388,6 +388,127 @@ def plot_gmro_vs_jd(df: pd.DataFrame, out_dir: Path, title_label: str) -> None:
     plt.legend(fontsize=8, ncol=2)
     save_fig(out_dir / "05_gmro_vs_jd_all.png")
 
+def plot_gmid_vs_vgs(df: pd.DataFrame, out_dir: Path, title_label: str) -> None:
+    """
+    Plot gm/ID versus actual VGS.
+
+    This is useful for choosing the gate bias voltage after selecting
+    a target gm/ID region from the gm/ID-vs-JD plot.
+    """
+
+    required = {"device", "topology", "W_m", "L_m", "VGS_actual_V", "gm_ID_1_per_V", "NFmin_dB"}
+    missing = required - set(df.columns)
+    if missing:
+        print(f"Skipping gm/ID vs VGS plot. Missing columns: {sorted(missing)}")
+        return
+
+    for (device, topology), sub in df.groupby(["device", "topology"]):
+        if sub.empty:
+            continue
+
+        style = style_for(device, topology)
+
+        # Plot only the best few geometries to avoid unreadable figures.
+        # "Best" here means lowest NFmin somewhere along the VGS sweep.
+        best_geom = (
+            sub.groupby(["W_m", "L_m"])["NFmin_dB"]
+            .min()
+            .sort_values()
+            .head(4)
+            .index
+        )
+
+        plt.figure(figsize=(10, 6))
+        geom_colors = plt.cm.tab10(np.linspace(0, 1, max(len(best_geom), 1)))
+        line_styles = ["-", "--", "-.", ":"]
+
+        for idx, (w_m, l_m) in enumerate(best_geom):
+            curve = sub[
+                (sub["W_m"].eq(w_m)) &
+                (sub["L_m"].eq(l_m))
+            ].copy()
+
+            curve = curve.replace([np.inf, -np.inf], np.nan)
+            curve = curve.dropna(subset=["VGS_actual_V", "gm_ID_1_per_V"])
+            curve = curve.sort_values("VGS_actual_V")
+
+            if curve.empty:
+                continue
+
+            label = f"W={w_m * 1e6:g}um L={l_m * 1e6:g}um"
+
+            plt.plot(
+                curve["VGS_actual_V"],
+                curve["gm_ID_1_per_V"],
+                linewidth=2.0,
+                color=geom_colors[idx],
+                marker=style["marker"],
+                markersize=3,
+                markevery=max(len(curve) // 18, 1),
+                alpha=0.95,
+                linestyle=line_styles[idx % len(line_styles)],
+                label=label,
+            )
+
+        plt.xlabel("Actual VGS (V)")
+        plt.ylabel("gm/ID (1/V)")
+        plt.title(f"{title_label}: {device} {topology} gm/ID vs VGS")
+        plt.grid(True, alpha=0.35)
+        plt.legend(fontsize=8)
+
+        safe = f"{device}_{topology}".replace("/", "_").replace(" ", "_")
+        save_fig(out_dir / f"08_gmid_vs_vgs_{safe}.png")
+
+
+def plot_gmgds_vs_gmid(df: pd.DataFrame, out_dir: Path, title_label: str) -> None:
+    """
+    Plot gm/gds versus gm/ID.
+
+    gm/gds is the same as gmro in this script.
+    This plot shows the speed/efficiency/intrinsic-gain tradeoff region.
+    """
+
+    required = {"device", "topology", "gm_ID_1_per_V", "gmro"}
+    missing = required - set(df.columns)
+    if missing:
+        print(f"Skipping gm/gds vs gm/ID plot. Missing columns: {sorted(missing)}")
+        return
+
+    plt.figure(figsize=(10, 6))
+
+    for (device, topology), sub in df.groupby(["device", "topology"]):
+        curve = sub.copy()
+        curve = curve.replace([np.inf, -np.inf], np.nan)
+        curve = curve.dropna(subset=["gm_ID_1_per_V", "gmro"])
+        curve = curve[
+            (curve["gm_ID_1_per_V"] > 0) &
+            (curve["gmro"] > 0)
+        ]
+
+        if curve.empty:
+            continue
+
+        style = style_for(device, topology)
+
+        plt.scatter(
+            curve["gm_ID_1_per_V"],
+            curve["gmro"],
+            s=22,
+            alpha=0.85,
+            edgecolors="none",
+            color=style["color"],
+            marker=style["marker"],
+            label=f"{device} {topology}",
+        )
+
+    plt.yscale("log")
+    plt.xlabel("gm/ID (1/V)")
+    plt.ylabel("gm/gds = gmro")
+    plt.title(f"{title_label}: gm/gds vs gm/ID")
+    plt.grid(True, which="both", alpha=0.35)
+    plt.legend(fontsize=8, ncol=2)
+
+    save_fig(out_dir / "09_gmgds_vs_gmid_all.png")
 
 def plot_sopt(
     df: pd.DataFrame,
@@ -494,6 +615,7 @@ def generate_plot_set(
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     best_by_file = best_rows(df, group_file, "NFmin_dB")
+
     plot_nfmin_vs_jd(df, out_dir, title_label)
     plot_best_nfmin_bar(best_by_file, out_dir, title_label)
     plot_tradeoff(best_by_file, out_dir, title_label)
@@ -501,6 +623,10 @@ def generate_plot_set(
     plot_gmro_vs_jd(df, out_dir, title_label)
     plot_sopt(df, out_dir, title_label, annotation_metric)
     plot_vgs_curves(df, out_dir, title_label)
+
+    # Extra gm/ID design-map plots
+    plot_gmid_vs_vgs(df, out_dir, title_label)
+    plot_gmgds_vs_gmid(df, out_dir, title_label)
 
 
 def format_value(value: object) -> str:
