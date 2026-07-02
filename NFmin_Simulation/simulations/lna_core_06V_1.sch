@@ -26,17 +26,17 @@ lab=GND}
 N 1010 -370 1010 -290 {
 lab=d}
 N 1010 -460 1010 -430 {
-lab=#net1}
+lab=vdcbias}
 N -210 -390 -180 -390 {
 lab=vbias}
 N 640 -520 660 -520 {
-lab=#net2}
+lab=match_in}
 N 550 -520 580 -520 {
-lab=rf_in_pad}
+lab=rf_in_ext}
 N 1010 -330 1050 -330 {
 lab=d}
 N 1220 -330 1260 -330 {
-lab=rf_out_pad}
+lab=rf_out_ext}
 N 1010 -230 1010 -220 {
 lab=s}
 N 1010 -220 1010 -190 {
@@ -65,42 +65,10 @@ N 1140 -330 1140 -290 {
 lab=d}
 N 1140 -230 1140 -180 {
 lab=GND}
-N 300 -580 340 -580 {
-lab=rf_in_pad}
-N 200 -580 240 -580 {
-lab=#net3}
-N 100 -580 140 -580 {
-lab=#net4}
-N 310 -300 360 -300 {
-lab=#net5}
-N 150 -230 150 -200 {
-lab=#net6}
-N 190 -230 190 -200 {
-lab=#net7}
-N 150 -400 150 -370 {
-lab=#net8}
-N 190 -400 190 -370 {
-lab=#net9}
 N -320 -270 -290 -270 {
 lab=GND}
 N -230 -270 -200 -270 {
 lab=vddio}
-N 1810 -390 1860 -390 {
-lab=#net10}
-N 1650 -320 1650 -290 {
-lab=#net11}
-N 1690 -320 1690 -290 {
-lab=#net12}
-N 1650 -490 1650 -460 {
-lab=#net13}
-N 1690 -490 1690 -460 {
-lab=#net14}
-N 1240 -640 1280 -640 {
-lab=rf_out_pad}
-N 1140 -640 1180 -640 {
-lab=#net15}
-N 1040 -640 1080 -640 {
-lab=#net16}
 N 680 -180 680 -150 {
 lab=g}
 N 680 -90 680 -50 {
@@ -112,6 +80,10 @@ lab=d}
 N 720 -520 780 -520 {
 lab=match_in}
 N 1010 -540 1010 -520 {
+lab=vdcbias}
+N 660 -520 720 -520 {
+lab=match_in}
+N 1010 -520 1010 -460 {
 lab=vdcbias}
 C {vsource.sym} -240 -390 1 0 {name=VGG value="dc 1.8" savecurrent=false}
 C {gnd.sym} 1010 -100 0 0 {name=l1 lab=GND}
@@ -145,7 +117,6 @@ C {lab_pin.sym} 950 -260 0 0 {name=p4 sig_type=std_logic lab=g}
 C {lab_pin.sym} -180 -390 2 0 {name=p9 sig_type=std_logic lab=vbias}
 C {lab_pin.sym} 1010 -540 0 0 {name=p11 sig_type=std_logic lab=vdcbias
 }
-C {lab_pin.sym} 1260 -330 2 0 {name=p14 sig_type=std_logic lab=rf_out_pad}
 C {port_diff.sym} -500 -480 0 0 {name=V1 portnum=1 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=""}
 C {port_diff.sym} -500 -330 0 0 {name=V2 portnum=2 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=""}
 C {lab_pin.sym} 1010 -200 2 0 {name=p1 sig_type=std_logic lab=s}
@@ -378,7 +349,7 @@ spiceprefix=X
 }
 C {ind.sym} 610 -520 3 1 {name=LIN
 m=1
-value=2.8n
+value=4.8n
 footprint=1206
 device=inductor}
 C {capa.sym} 750 -360 0 0 {name=CSHUNT
@@ -404,64 +375,9 @@ value=0.85p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_pin.sym} 1140 -180 3 0 {name=p24 sig_type=std_logic lab=GND}
-C {/media/sf_LNA_chipathon/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/xschem/gf180mcu_fd_io__asig_5p0.sym} 160 -300 0 0 {name=x1 model=gf180mcu_fd_io__asig_5p0
-spice_ignore=true}
-C {ind.sym} 270 -580 1 0 {name=LBW_IN
-m=1
-value=3n
-footprint=1206
-device=inductor
-spice_ignore=true}
-C {res.sym} 170 -580 1 0 {name=RBW_IN
-value="0.2"
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} 100 -580 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext
-spice_ignore=true}
-C {lab_pin.sym} 340 -580 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
-C {lab_pin.sym} 360 -300 2 0 {name=p26 sig_type=std_logic lab=rf_in_pad
-spice_ignore=true}
 C {vsource.sym} -260 -270 1 0 {name=VDDIO value="dc 5" savecurrent=false}
 C {lab_pin.sym} -200 -270 1 0 {name=p27 sig_type=std_logic lab=vddio
 }
-C {lab_pin.sym} 150 -400 1 0 {name=p28 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} 190 -400 1 0 {name=p29 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} 150 -200 3 0 {name=p30 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {lab_pin.sym} 190 -200 3 0 {name=p31 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {lab_pin.sym} 550 -520 0 0 {name=p13 sig_type=std_logic lab=rf_in_pad}
-C {/media/sf_LNA_chipathon/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/xschem/gf180mcu_fd_io__asig_5p0.sym} 1660 -390 0 0 {name=x2 model=gf180mcu_fd_io__asig_5p0
-spice_ignore=true}
-C {lab_pin.sym} 1650 -490 1 0 {name=p33 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} 1690 -490 1 0 {name=p34 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} 1650 -290 3 0 {name=p35 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {lab_pin.sym} 1690 -290 3 0 {name=p36 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {lab_pin.sym} 1860 -390 2 0 {name=p32 sig_type=std_logic lab=rf_out_pad
-spice_ignore=true}
-C {ind.sym} 1210 -640 1 0 {name=LBW_IN1
-m=1
-value=3n
-footprint=1206
-device=inductor
-spice_ignore=true}
-C {res.sym} 1100 -640 1 0 {name=RBW_IN1
-value="0.2"
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} 1040 -640 0 0 {name=p37 sig_type=std_logic lab=rf_out_ext
-spice_ignore=true}
-C {lab_pin.sym} 1280 -640 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
 C {lab_pin.sym} -460 -360 2 0 {name=p7 sig_type=std_logic lab=rf_out_ext}
 C {capa.sym} 680 -120 0 0 {name=CGBYP1
 m=1
@@ -469,13 +385,5 @@ value=20p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_pin.sym} 680 -50 3 0 {name=p39 sig_type=std_logic lab=GND}
-C {res.sym} 690 -520 1 0 {name=RBW_IN2
-value="3.5"
-footprint=1206
-device=resistor
-m=1}
-C {res.sym} 1010 -490 2 0 {name=RBW_IN3
-value="5"
-footprint=1206
-device=resistor
-m=1}
+C {lab_pin.sym} 1260 -330 2 0 {name=p14 sig_type=std_logic lab=rf_out_ext}
+C {lab_pin.sym} 550 -520 0 0 {name=p13 sig_type=std_logic lab=rf_in_ext}
