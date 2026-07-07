@@ -1,0 +1,3 @@
+
+# Large simulation result files
+techsweep/simulations/*.mat
