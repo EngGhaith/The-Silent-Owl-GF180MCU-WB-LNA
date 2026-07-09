@@ -1,6 +1,6 @@
 <Qucs Schematic 26.1.1>
 <Properties>
-  <View=-125,0,1172,770,1.22173,0,120>
+  <View=-119,0,1165,673,1.23363,0,0>
   <Grid=10,10,1>
   <DataSet=extracted_pad_qucs.dat>
   <DataDisplay=extracted_pad_qucs.dpl>
@@ -35,7 +35,7 @@
   <R R1 1 630 210 15 -26 0 1 "50 Ohm" 1 "26.85" 0 "0.0" 0 "0.0" 0 "26.85" 0 "US" 0>
   <GND * 1 630 300 0 0 0 0>
   <NutmegEq NutmegEq1 1 830 400 -31 16 0 0 "ALL" 1 "DB_S11=dB(s_1_1)" 1>
-  <SPICE X1 1 410 160 -26 -119 0 0 "/foss/designs/GF180/sscs_chipathon_26/LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice" 0 "_netASIG5V,_netDVDD,_netDVSS,_netVDD,_netVSS" 0 "yes" 0 "none" 0 "" 0>
+  <SPICE X1 1 410 160 -26 -119 0 0 "/foss/designs/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice" 0 "_netASIG5V,_netDVDD,_netDVSS,_netVDD,_netVSS" 0 "yes" 0 "none" 0 "" 0>
 </Components>
 <Wires>
   <200 240 200 300 "" 0 0 0 "">

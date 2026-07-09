@@ -19,15 +19,15 @@ divx=5
 subdivx=8
 xlabmag=1.0
 ylabmag=1.0
-node=vin
-color=4
 dataset=-1
 unitx=1
 logx=1
 logy=0
-rawfile=$netlist_dir/ac_analog_pad.raw
+rawfile=$netlist_dir/ac_extracted_analog_pad.raw
 sim_type=ac
-autoload=1}
+autoload=1
+color=4
+node=vin}
 P 4 4 465 -505 475 -510 475 -500 465 -505 {fill=1}
 P 4 3 475 -505 500 -505 500 -450 {}
 N 530 -540 530 -480 {lab=#net1}
@@ -57,14 +57,14 @@ only_toplevel=true
 value="
 .control
 save all
-ac dec 1000 10e3 2e9 
+ac dec 1000 10e3 10e9 
 *sp lin 100 1e3 2e9 0
-write ac_analog_pad.raw
+write ac_extracted_analog_pad.raw
 .endc
 " }
 C {launcher.sym} 990 -305 0 0 {name=h1
 descr="load waves" 
-tclcommand="xschem raw_read $netlist_dir/ac_analog_pad.raw ac"}
+tclcommand="xschem raw_read $netlist_dir/ac_extracted_analog_pad.raw ac"}
 C {code_shown.sym} 20 -235 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -73,9 +73,8 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice res_typical
 .lib $::180MCU_MODELS/sm141064.ngspice moscap_typical
 .lib $::180MCU_MODELS/sm141064.ngspice diode_typical
-.include /foss/designs/GF180/sscs_chipathon_26/LNA/analog_pad_sp_paramerters/spice_files/unextracted_gf180mcu_fd_io__asig_5p0.spice
-*.include /foss/designs/GF180/sscs_chipathon_26/LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
-*.include /foss/designs/GF180/sscs_chipathon_26/LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
+*.include /foss/designs/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/unextracted_gf180mcu_fd_io__asig_5p0.spice
+.include /foss/designs/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
 "}
 C {lab_wire.sym} 410 -540 0 1 {name=p4 sig_type=std_logic lab=Vin}
 C {title.sym} 180 -40 0 0 {name=l4 author="Ahmed Elnaggar/A38-SilentOwl"}

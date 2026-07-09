@@ -5,7 +5,7 @@
 * editor: Ahmed M. Elnaggar, elnaggar@email.sc.edu
 * github: @elnaggar
 ***************************************************************************************************
-This fix the unmatched pin arragement of the analog pad symbol and the subcircuit wrapper
+*This fix the unmatched pin arragement of the analog pad symbol and the subcircuit wrapper
 ***************************************************************************************************
 ***************************************************************************************************
 * Copyright 2022 GlobalFoundries PDK Authors
