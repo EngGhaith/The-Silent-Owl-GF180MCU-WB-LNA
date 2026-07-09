@@ -2,8 +2,8 @@
 
 .option scale=5n
 
+*.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
 .SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
-
 D0 DVSS ASIG5V diode_nd2ps_06v0 pj=21200 area=6e+06
 D1 DVSS ASIG5V diode_nd2ps_06v0 pj=21200 area=6e+06
 D2 ASIG5V DVDD diode_pd2nw_06v0 pj=21200 area=6e+06

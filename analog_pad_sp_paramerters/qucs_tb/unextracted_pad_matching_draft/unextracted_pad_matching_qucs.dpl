@@ -1,0 +1,34 @@
+<Qucs Schematic 26.1.1>
+<Properties>
+  <View=-60,-304,1828,674,0.839428,1,0>
+  <Grid=10,10,0>
+  <DataSet=unextracted_pad_matching_qucs.dat>
+  <DataDisplay=unextracted_pad_matching_qucs.sch>
+  <OpenDisplay=0>
+  <Script=unextracted_pad_matching_qucs.m>
+  <RunScript=0>
+  <showFrame=0>
+  <FrameText0=Title>
+  <FrameText1=Drawn By:>
+  <FrameText2=Date:>
+  <FrameText3=Revision:>
+</Properties>
+<Symbol>
+</Symbol>
+<Components>
+</Components>
+<Wires>
+</Wires>
+<Diagrams>
+  <Rect -20 509 676 649 3 #c0c0c0 1 00 1 2.3e+09 1e+08 2.5e+09 1 -18.659 2 2 1 -1 0.2 1 315 0 225 1 0 0 "" "" "">
+	<"ngspice/ac.db_s11" #0000ff 0 3 0 0 0>
+  </Rect>
+  <Smith 700 518 648 648 3 #c0c0c0 1 00 1 0 1 1 1 0 4 17.2381 1 0 1 1 315 0 225 1 0 0 "" "" "">
+	<"ngspice/ac.s_1_1" #0000ff 0 3 0 0 0>
+  </Smith>
+  <Tab 1420 512 366 661 3 #c0c0c0 1 00 1 0 1 1 1 0 1 1 1 0 1 1000 315 0 225 1 0 0 "" "" "">
+	<"ngspice/ac.s_1_1" #0000ff 0 3 0 0 0>
+  </Tab>
+</Diagrams>
+<Paintings>
+</Paintings>
