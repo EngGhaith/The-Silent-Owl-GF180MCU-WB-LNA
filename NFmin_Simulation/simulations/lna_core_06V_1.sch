@@ -152,13 +152,11 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   set wr_vecnames
   set filetype=ascii
 
-  echo ============================================================
-  echo 6 V CG LNA verification with pads/bondwire/ideal passives
-  echo ============================================================
-
-    * ------------------------------------------------------------
-  * 1. Operating point
-  * ------------------------------------------------------------
+  
+  echo 6 V CG LNA
+  
+  * Operating point
+  
   op
 
   let id_op      = abs(i(vdd))
@@ -175,7 +173,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   let gmro_op    = gm_op/gds_op
   let rin_cg_op  = 1/gm_op
 
-  echo -------------------- OPERATING POINT --------------------
+  echo OPERATING POINT 
   print v(g) v(s) v(d)
   print vgs_op vds_op vbs_op
   print id_op pdc_op
@@ -184,9 +182,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   wrdata lna06_op.txt v(g) v(s) v(d) vgs_op vds_op vbs_op id_op pdc_op gm_op gds_op gm_id_op ro_op gmro_op rin_cg_op
   destroy $curplot
 
-  * ------------------------------------------------------------
-  * 2. Exact 2.4 GHz point
-  * ------------------------------------------------------------
+  
   echo ============================================================
   echo Exact 2.4 GHz S-parameter/noise point
   echo ============================================================
@@ -217,7 +213,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   let mismatch_loss_in_db  = -10*log10(1 - mag_s11*mag_s11)
   let mismatch_loss_out_db = -10*log10(1 - mag_s22*mag_s22)
 
-  echo -------------------- 2.4 GHz RESULTS --------------------
+  echo ----------2.4 GHz RESULTS --------------
   print s11_db s21_db s12_db s22_db
   print nf_db nfmin_db
   print k_stab mag_delta
@@ -230,9 +226,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
 
   destroy $curplot
 
-  * ------------------------------------------------------------
-  * 3. Broadband S-parameter/noise sweep
-  * ------------------------------------------------------------
+  
   echo ============================================================
   echo Broadband sweep: 100 MHz to 20 GHz
   echo ============================================================
@@ -268,7 +262,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   * Approximate available power gain if ports are reasonably matched:
   let gt_approx_db = s21_db + 10*log10(1 - mag_s11*mag_s11) + 10*log10(1 - mag_s22*mag_s22)
 
-    echo -------------------- BROADBAND SUMMARY --------------------
+    echo BROADBAND SUMMARY
 
   let s21_max_db      = vecmax(s21_db)
   let s11_best_db     = vecmin(s11_db)
@@ -286,10 +280,8 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
 
   wrdata lna06_broadband_all.txt s11_db s21_db s12_db s22_db nf_db nfmin_db k_stab mag_delta vswr_in vswr_out mismatch_loss_in_db mismatch_loss_out_db gt_approx_db
   write lna06_broadband.raw all
-
-  * ------------------------------------------------------------
-  * 4. Plots from ngspice
-  * ------------------------------------------------------------
+  
+  * Plots from ngspice
 
   plot s21_db s11_db s22_db s12_db
   hardcopy lna06_sparams.ps s21_db s11_db s22_db s12_db
@@ -312,22 +304,7 @@ C {code.sym} 1150 40 0 0 {name=s2 only_toplevel=false value="
   plot gt_approx_db s21_db
   hardcopy lna06_gain_comparison.ps gt_approx_db s21_db
 
-  echo ============================================================
   echo Done.
-  echo Generated:
-  echo   lna06_op.txt
-  echo   lna06_2p4GHz_point.txt
-  echo   lna06_2p4GHz.raw
-  echo   lna06_broadband_all.txt
-  echo   lna06_broadband.raw
-  echo   lna06_sparams.ps
-  echo   lna06_noise.ps
-  echo   lna06_k_stability.ps
-  echo   lna06_delta.ps
-  echo   lna06_vswr.ps
-  echo   lna06_mismatch_loss.ps
-  echo   lna06_gain_comparison.ps
-  echo ============================================================
 
 .endc
 
