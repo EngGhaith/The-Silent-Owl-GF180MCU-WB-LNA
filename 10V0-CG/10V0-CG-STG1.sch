@@ -1,9 +1,9 @@
-v {xschem version=3.4.8RC file_version=1.3}
+v {xschem version=3.4.5 file_version=1.2
+}
 G {}
 K {}
 V {}
 S {}
-F {}
 E {}
 B 2 1030 440 1830 840 {flags=graph
 y1=-15.4
@@ -13,8 +13,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -35,8 +35,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -57,8 +57,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -80,8 +80,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -103,8 +103,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -125,8 +125,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -148,8 +148,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=8
 xlabmag=1.0
@@ -172,8 +172,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -194,8 +194,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -217,8 +217,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -239,8 +239,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=0.038095872
+x2=0.038095872
 divx=5
 subdivx=8
 xlabmag=1.0
@@ -295,37 +295,17 @@ N 0 -1610 0 -1590 {lab=#net2
 }
 N -320 -1610 -320 -1410 {lab=#net2
 }
-N -810 -1410 -770 -1410 {lab=Vm1
-spice_ignore=true}
-N -770 -1410 -770 -1380 {lab=Vm1
-spice_ignore=true}
-N -810 -1380 -810 -1320 {lab=Vm1
-spice_ignore=true}
-N -810 -1510 -810 -1440 {lab=#net4
-spice_ignore=true}
-N -880 -1410 -850 -1410 {lab=#net5
-spice_ignore=true}
-N -1100 -1410 -1100 -1290 {lab=#net6
-spice_ignore=true}
 N 60 -1010 380 -1010 {lab=0
 }
 N 0 -1010 60 -1010 {lab=0
 }
 N -160 -1610 0 -1610 {lab=#net2
 }
-N -940 -1410 -880 -1410 {lab=#net5
-spice_ignore=true}
-N -1040 -1410 -1000 -1410 {lab=#net5
-spice_ignore=true}
 N -230 -1290 -190 -1290 {lab=#net1
 }
 N -130 -1290 -70 -1290 {lab=#net1
 }
-N -1000 -1410 -940 -1410 {lab=#net5
-spice_ignore=true}
 N -190 -1290 -130 -1290 {lab=#net1}
-N -810 -1380 -770 -1380 {lab=Vm1
-spice_ignore=true}
 N 0 -1260 40 -1260 {lab=VI1}
 N 130 -1060 130 -1010 {lab=0}
 N 490 -1010 700 -1010 {lab=0}
@@ -424,7 +404,7 @@ C {gnd.sym} -330 -1290 1 0 {name=l2 lab=0
 }
 C {vsource.sym} -320 -1380 0 1 {name=V3 value=10 savecurrent=false
 }
-C {devices/launcher.sym} 390 -120 0 0 {name=h1
+C {devices/launcher.sym} 390 -130 0 0 {name=h1
 descr="load op & annotate" 
 tclcommand="xschem raw_read $netlist_dir/10V0-CG-STG1.raw; set show_hidden_texts 1; xschem annotate_op"}
 C {capa.sym} -260 -1130 3 0 {name=C1
@@ -447,11 +427,21 @@ C {devices/code_shown.sym} 1130 -1160 0 0 {name=NGSPICE2 only_toplevel=true
 value="
 .control
 op
+
 save all
-show
+save @m.xm1.m0[gm] @m.xm1.m0[id] @m.xm1.m0[gds] @m.xm1.m0[vth] @m.xm1.m0[vdsat]
+save @m.xm3.m0[gm] @m.xm3.m0[id] @m.xm3.m0[gds] @m.xm3.m0[vth] @m.xm3.m0[vdsat]
+save @m.xm4.m0[gm] @m.xm4.m0[id] @m.xm4.m0[gds] @m.xm4.m0[vth] @m.xm4.m0[vdsat]
+save @m.xm5.m0[gm] @m.xm5.m0[id] @m.xm5.m0[gds] @m.xm5.m0[vth] @m.xm5.m0[vdsat]
+print @m.xm1.xm0.m0[gm] @m.xm1.xm0.m0[id]
+print @m.xm3.xm0.m0[gm] @m.xm3.xm0.m0[id]
+print @m.xm4.xm0.m0[gm] @m.xm4.xm0.m0[id]
+print @m.xm5.xm0.m0[gm] @m.xm5.xm0.m0[id]
 write 10V0-CG-STG1.raw
+
 sp lin 1001 1 10e9 1
 write 10V0-CG-STG1-sp.raw
+
 ac lin 1001 1 10e9
 write 10V0-CG-STG1-ac.raw
 .endc
@@ -459,26 +449,10 @@ write 10V0-CG-STG1-ac.raw
 }
 C {vsource.sym} -1070 -1410 1 0 {name=V5 value=3.55 savecurrent=false
 spice_ignore=true}
-C {lab_wire.sym} -810 -1350 0 0 {name=p3 sig_type=std_logic lab=Vm1
-spice_ignore=true}
 C {lab_wire.sym} 610 -1510 0 1 {name=p6 sig_type=std_logic lab=VO2
 }
 C {port_diff.sym} 1040 -1140 0 1 {name=V7 portnum=2 Z0=50 DCval=0 ACmag=0 ACphase=0 TRANval=""
 }
-C {symbols/nfet_10v0_asym.sym} -830 -1410 0 0 {name=M2
-L=0.60u
-W=41.5u
-nf=10
-m=5
-ad="'W * 1.48u'"
-pd="'2 * (W + 1.48u)'"
-as="'W * 0.48u'"
-ps="'2 * (W + 0.48u)'"
-nrd=0 nrs=0
-sa=0 sb=0 sd=0
-model=nfet_10v0_asym
-spiceprefix=X
-spice_ignore=true}
 C {ind.sym} 80 -1100 0 0 {name=L3
 m=1
 value=10n

@@ -1,9 +1,9 @@
-v {xschem version=3.4.8RC file_version=1.3}
+v {xschem version=3.4.5 file_version=1.2
+}
 G {}
 K {}
 V {}
 S {}
-F {}
 E {}
 T {Bandgap} 420 -2370 0 0 0.8 0.8 {}
 T {V2I} 850 -2370 0 0 0.8 0.8 {}
@@ -12,66 +12,6 @@ T {First Stage} 1730 -2410 0 0 0.8 0.8 {}
 T {Second Stage} 2230 -2400 0 0 0.8 0.8 {}
 T {Third Stage} 2710 -2400 0 0 0.8 0.8 {}
 T {Sources} 140 -1540 0 0 0.8 0.8 {}
-N -750 -1550 -750 -1510 {lab=vddio
-spice_ignore=true}
-N -950 -1440 -950 -1400 {lab=vddio
-spice_ignore=true}
-N -990 -1440 -990 -1400 {lab=vddio
-spice_ignore=true}
-N -990 -1260 -990 -1240 {lab=0
-spice_ignore=true}
-N -950 -1260 -950 -1240 {lab=0
-spice_ignore=true}
-N -830 -1330 -770 -1330 {lab=rf_in_pad
-spice_ignore=true}
-N -540 -1330 -470 -1330 {lab=rf_in_pad
-spice_ignore=true}
-N -410 -1330 -370 -1330 {lab=#net4
-spice_ignore=true}
-N -310 -1330 -260 -1330 {lab=match_in
-spice_ignore=true}
-N -590 -1210 -470 -1210 {lab=match_in
-spice_ignore=true}
-N -410 -1210 -270 -1210 {lab=vin
-spice_ignore=true}
-N -360 -1210 -360 -1160 {lab=vin
-spice_ignore=true}
-N -360 -1100 -360 -1070 {lab=0
-spice_ignore=true}
-N -1010 -1680 -960 -1680 {lab=rf_in_ext
-spice_ignore=true}
-N -490 -1600 -420 -1600 {lab=rf_in_ext
-spice_ignore=true}
-N -360 -1600 -320 -1600 {lab=#net5
-spice_ignore=true}
-N -260 -1600 -210 -1600 {lab=rf_in_pad
-spice_ignore=true}
-N -410 -2350 -360 -2350 {lab=rf_out_ext
-spice_ignore=true}
-N -420 -2110 -350 -2110 {lab=rf_in_ext
-spice_ignore=true}
-N -430 -2350 -410 -2350 {lab=#net5
-spice_ignore=true}
-N -700 -1970 -430 -1970 {lab=vout
-spice_ignore=true}
-N -510 -1970 -510 -1930 {lab=vout
-spice_ignore=true}
-N -510 -1870 -510 -1820 {lab=0
-spice_ignore=true}
-N -370 -1970 -330 -1970 {lab=rf_out_pad
-spice_ignore=true}
-N -630 -2110 -590 -2110 {lab=rf_out_pad
-spice_ignore=true}
-N -530 -2110 -480 -2110 {lab=#net5
-spice_ignore=true}
-N -1010 -1620 -980 -1620 {lab=0
-spice_ignore=true}
-N -980 -1620 -980 -1600 {lab=0
-spice_ignore=true}
-N -390 -2290 -360 -2290 {lab=0
-spice_ignore=true}
-N -390 -2290 -390 -2270 {lab=0
-spice_ignore=true}
 N 300 -1900 370 -1900 {lab=vdd_5v}
 N 240 -1900 300 -1900 {lab=vdd_5v}
 N 350 -1830 370 -1830 {lab=0}
@@ -236,118 +176,6 @@ write LNA_sim.raw
 
 .endc
 "
-spice_ignore=true}
-C {/foss/designs/theSilentOwl/analog_pad_sp_paramerters/xschem/gf180mcu_fd_io__asig_5p0.sym} -980 -1330 0 0 {name=x2 model=gf180mcu_fd_io__asig_5p0
-spice_ignore=true}
-C {vsource.sym} -750 -1480 0 0 {name=V1 value=5 savecurrent=false
-spice_ignore=true}
-C {gnd.sym} -750 -1450 0 0 {name=l2 lab=0
-spice_ignore=true}
-C {lab_pin.sym} -750 -1550 0 0 {name=p10 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} -990 -1440 1 0 {name=p11 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {lab_pin.sym} -950 -1440 1 0 {name=p12 sig_type=std_logic lab=vddio
-spice_ignore=true}
-C {gnd.sym} -990 -1240 0 0 {name=l6 lab=0
-spice_ignore=true}
-C {gnd.sym} -950 -1240 0 0 {name=l11 lab=0
-spice_ignore=true}
-C {lab_pin.sym} -770 -1330 2 0 {name=p13 sig_type=std_logic lab=rf_in_pad
-spice_ignore=true}
-C {ind.sym} -440 -1330 1 0 {name=L12
-m=1
-value=2.8n
-footprint=1206
-device=inductor
-spice_ignore=true}
-C {res.sym} -340 -1330 1 0 {name=R8
-value=3.5
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} -540 -1330 0 0 {name=p14 sig_type=std_logic lab=rf_in_pad
-spice_ignore=true}
-C {lab_pin.sym} -260 -1330 2 0 {name=p15 sig_type=std_logic lab=match_in
-spice_ignore=true}
-C {capa.sym} -440 -1210 3 0 {name=C4
-m=1
-value=10p
-footprint=1206
-device="ceramic capacitor"
-spice_ignore=true}
-C {capa.sym} -360 -1130 0 0 {name=CSHUNT
-m=1
-value=10p
-footprint=1206
-device="ceramic capacitor"
-spice_ignore=true}
-C {gnd.sym} -360 -1070 0 0 {name=l17 lab=0
-spice_ignore=true}
-C {lab_pin.sym} -590 -1210 0 0 {name=p16 sig_type=std_logic lab=match_in
-spice_ignore=true}
-C {lab_pin.sym} -270 -1210 2 0 {name=p17 sig_type=std_logic lab=vin
-spice_ignore=true}
-C {ind.sym} -390 -1600 1 0 {name=L18
-m=1
-value=3n
-footprint=1206
-device=inductor
-spice_ignore=true}
-C {res.sym} -290 -1600 1 0 {name=R9
-value=0.2
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} -960 -1680 2 0 {name=p19 sig_type=std_logic lab=rf_in_ext
-spice_ignore=true}
-C {lab_pin.sym} -490 -1600 0 0 {name=p2 sig_type=std_logic lab=rf_in_ext
-spice_ignore=true}
-C {lab_pin.sym} -210 -1600 2 0 {name=p18 sig_type=std_logic lab=rf_in_pad
-spice_ignore=true}
-C {ind.sym} -560 -2110 3 1 {name=L19
-m=1
-value=3n
-footprint=1206
-device=inductor
-spice_ignore=true}
-C {res.sym} -450 -2110 3 1 {name=R10
-value=0.2
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} -430 -2350 2 1 {name=p21 sig_type=std_logic lab=rf_out_ext
-spice_ignore=true}
-C {lab_pin.sym} -350 -2110 0 1 {name=p22 sig_type=std_logic lab=rf_in_ext
-spice_ignore=true}
-C {lab_pin.sym} -330 -1970 0 1 {name=p23 sig_type=std_logic lab=rf_out_pad
-spice_ignore=true}
-C {capa.sym} -510 -1900 0 0 {name=CLOAD
-m=1
-value=0.85p
-footprint=1206
-device="ceramic capacitor"
-spice_ignore=true}
-C {gnd.sym} -510 -1820 0 0 {name=l20 lab=0
-spice_ignore=true}
-C {capa.sym} -400 -1970 3 0 {name=COUT
-m=1
-value=0.2p
-footprint=1206
-device="ceramic capacitor"
-spice_ignore=true}
-C {lab_pin.sym} -630 -2110 2 1 {name=p24 sig_type=std_logic lab=rf_out_pad
-spice_ignore=true}
-C {gnd.sym} -980 -1600 0 0 {name=l21 lab=0
-spice_ignore=true}
-C {gnd.sym} -390 -2270 0 0 {name=l22 lab=0
-spice_ignore=true}
-C {/foss/designs/theSilentOwl/analog_pad_sp_paramerters/xschem/port_diff.sym} -1010 -1650 0 0 {name=V5 portnum=1 Z0=50 DCval=0 ACmag=0 ACphase=0 TRANval="PWL(0 0)"
-spice_ignore=true}
-C {/foss/designs/theSilentOwl/analog_pad_sp_paramerters/xschem/port_diff.sym} -360 -2320 0 1 {name=V6 portnum=2 Z0=50 DCval=0 ACmag=0 ACphase=0 TRANval="PWL(0 0)"
 spice_ignore=true}
 C {bandgap.sym} 520 -1760 0 0 {name=x3}
 C {gnd.sym} 240 -1800 0 0 {name=l10 lab=0
