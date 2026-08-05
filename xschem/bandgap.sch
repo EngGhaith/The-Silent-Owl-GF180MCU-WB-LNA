@@ -1,9 +1,9 @@
-v {xschem version=3.4.5 file_version=1.2
-}
+v {xschem version=3.4.8RC file_version=1.3}
 G {}
 K {}
 V {}
 S {}
+F {}
 E {}
 N 680 -630 830 -630 {lab=vdd}
 N 330 -630 390 -630 {lab=vdd}
@@ -131,9 +131,9 @@ C {devices/lab_wire.sym} 520 -160 0 0 {name=p7 sig_type=std_logic lab=vg1}
 C {ipin.sym} 210 -630 0 0 {name=p1 lab=vdd}
 C {iopin.sym} 230 110 2 0 {name=p2 lab=vss}
 C {opin.sym} 1210 -150 0 0 {name=p3 lab=vref}
-C {symbols/pfet_05v0.sym} 810 -560 0 0 {name=M12
-L=1u
-W=50u
+C {symbols/pfet_05v0.sym} 810 -560 0 0 {name=M8
+L=8u
+W=30u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -159,9 +159,9 @@ sa=0 sb=0 sd=0
 model=nfet_05v0
 spiceprefix=X
 }
-C {symbols/pfet_05v0.sym} 410 -560 0 1 {name=M14
-L=1u
-W=50u
+C {symbols/pfet_05v0.sym} 410 -560 0 1 {name=M10
+L=8u
+W=30u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -173,9 +173,9 @@ sa=0 sb=0 sd=0
 model=pfet_05v0
 spiceprefix=X
 }
-C {symbols/pfet_05v0.sym} 410 -480 0 1 {name=M1
-L=1u
-W=50u
+C {symbols/pfet_05v0.sym} 410 -480 0 1 {name=M11
+L=2u
+W=100u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -187,9 +187,9 @@ sa=0 sb=0 sd=0
 model=pfet_05v0
 spiceprefix=X
 }
-C {symbols/pfet_05v0.sym} 810 -480 0 0 {name=M2
-L=1u
-W=50u
+C {symbols/pfet_05v0.sym} 810 -480 0 0 {name=M12
+L=2u
+W=100u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -202,8 +202,8 @@ model=pfet_05v0
 spiceprefix=X
 }
 C {symbols/pfet_05v0.sym} 1010 -430 0 0 {name=M3
-L=1u
-W=50u
+L=8u
+W=30u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -215,9 +215,9 @@ sa=0 sb=0 sd=0
 model=pfet_05v0
 spiceprefix=X
 }
-C {symbols/pfet_05v0.sym} 1010 -330 0 0 {name=M4
-L=1u
-W=50u
+C {symbols/pfet_05v0.sym} 1010 -330 0 0 {name=M14
+L=2u
+W=100u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"

@@ -1,9 +1,9 @@
-v {xschem version=3.4.5 file_version=1.2
-}
+v {xschem version=3.4.8RC file_version=1.3}
 G {}
 K {}
 V {}
 S {}
+F {}
 E {}
 B 2 1030 440 1830 840 {flags=graph
 y1=-15.4
@@ -28,8 +28,8 @@ logx=0
 logy=0
 }
 B 2 1030 40 1830 440 {flags=graph
-y1=-14.724977
-y2=33.685905
+y1=-7.0975487
+y2=31.631157
 ypos1=0
 ypos2=2
 divy=5
@@ -148,8 +148,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.0916813
-x2=1.0916813
+x1=0.038095872
+x2=0.038095872
 divx=5
 subdivx=8
 xlabmag=1.0
@@ -232,8 +232,8 @@ logx=0
 logy=0
 }
 B 2 120 -2290 920 -1890 {flags=graph
-y1=-36.053012
-y2=74.047468
+y1=-729.45679
+y2=-619.35631
 ypos1=0
 ypos2=2
 divy=5
@@ -357,21 +357,21 @@ N 380 -1610 460 -1610 {lab=#net2}
 N 460 -1610 460 -1590 {lab=#net2}
 N 790 -1610 790 -1540 {lab=#net2}
 N 460 -1610 790 -1610 {lab=#net2}
-N 700 -1510 750 -1510 {lab=#net4}
+N 700 -1510 750 -1510 {lab=VO01}
 N 790 -1510 850 -1510 {lab=VO3}
 N 850 -1510 850 -1480 {lab=VO3}
 N 790 -1480 850 -1480 {lab=VO3}
 N 790 -1480 790 -1160 {lab=VO3}
 N 790 -1100 790 -1010 {lab=0}
 N 700 -1010 790 -1010 {lab=0}
-N 1040 -1200 1040 -1170 {lab=#net5}
+N 1040 -1200 1040 -1170 {lab=#net4}
 N 1040 -1110 1040 -1010 {lab=0}
 N 790 -1010 1040 -1010 {lab=0}
 N 610 -1510 640 -1510 {lab=VO2}
 N 750 -1100 750 -1010 {lab=0}
-N 750 -1270 750 -1160 {lab=#net6}
-N 750 -1510 750 -1330 {lab=#net4}
-N 1000 -1200 1040 -1200 {lab=#net5}
+N 750 -1270 750 -1160 {lab=#net5}
+N 750 -1510 750 -1330 {lab=VO01}
+N 1000 -1200 1040 -1200 {lab=#net4}
 N 790 -1200 940 -1200 {lab=VO3}
 C {devices/code_shown.sym} 1600 -730 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
@@ -423,27 +423,39 @@ m=1
 }
 C {lab_wire.sym} -130 -1130 0 0 {name=p2 sig_type=std_logic lab=VI1
 }
-C {devices/code_shown.sym} 1130 -1160 0 0 {name=NGSPICE2 only_toplevel=true
+C {devices/code_shown.sym} 2060 -800 0 0 {name=NGSPICE2 only_toplevel=true
 value="
+
 .control
 op
 
 save all
-save @m.xm1.m0[gm] @m.xm1.m0[id] @m.xm1.m0[gds] @m.xm1.m0[vth] @m.xm1.m0[vdsat]
-save @m.xm3.m0[gm] @m.xm3.m0[id] @m.xm3.m0[gds] @m.xm3.m0[vth] @m.xm3.m0[vdsat]
-save @m.xm4.m0[gm] @m.xm4.m0[id] @m.xm4.m0[gds] @m.xm4.m0[vth] @m.xm4.m0[vdsat]
-save @m.xm5.m0[gm] @m.xm5.m0[id] @m.xm5.m0[gds] @m.xm5.m0[vth] @m.xm5.m0[vdsat]
-print @m.xm1.xm0.m0[gm] @m.xm1.xm0.m0[id]
-print @m.xm3.xm0.m0[gm] @m.xm3.xm0.m0[id]
-print @m.xm4.xm0.m0[gm] @m.xm4.xm0.m0[id]
-print @m.xm5.xm0.m0[gm] @m.xm5.xm0.m0[id]
 write 10V0-CG-STG1.raw
+
+set filetype=ascii
+
+echo ================================================== > 10V0-CG-STG1-op-detailed.txt
+echo GF180MCU 10V0-CG-STG1 detailed operating point >> 10V0-CG-STG1-op-detailed.txt
+echo ================================================== >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- Node voltages and source currents ---- >> 10V0-CG-STG1-op-detailed.txt
+print all >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- All device operating point data ---- >> 10V0-CG-STG1-op-detailed.txt
+show all >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- Expanded device listing and hierarchy ---- >> 10V0-CG-STG1-op-detailed.txt
+listing e >> 10V0-CG-STG1-op-detailed.txt
 
 sp lin 1001 1 10e9 1
 write 10V0-CG-STG1-sp.raw
 
 ac lin 1001 1 10e9
 write 10V0-CG-STG1-ac.raw
+
 .endc
 "
 }
@@ -572,4 +584,6 @@ m=1
 value=1p
 footprint=1206
 device="ceramic capacitor"
+}
+C {lab_wire.sym} 730 -1510 0 1 {name=p3 sig_type=std_logic lab=VO01
 }

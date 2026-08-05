@@ -1,0 +1,212 @@
+"
+
+* =============================================================================
+* FULL-MODE HIGH-RESOLUTION VERIFIED BEST OPTIMIZED PARAMETER SET
+*
+* Core formal pass         : TRUE
+* Cancellation formal pass : TRUE
+* Overall formal pass      : TRUE
+*
+* Nominal 2.30-2.50 GHz performance:
+*   S21 minimum     = 21.3296 dB
+*   S21 at 2.4 GHz  = 21.8258 dB
+*   Gain ripple     = 0.4963 dB
+*   NF worst        = 3.0595 dB
+*   S11 worst       = -15.5948 dB
+*   S22 worst       = -12.5586 dB
+*   PDC             = 131.129 mW
+* =============================================================================
+
+* Main shunt-peaking inductor loss
+.param RLD2=11.4
+
+* Noise-cancellation feed-forward resistor
+.param R_FF=22
+
+* Not swept by the optimizer; retained from the existing design
+.param L_NC=0.5n
+
+
+* -----------------------------------------------------------------------------
+* Currently unused unless a corresponding cascode-CG transistor is instantiated
+*
+* These parameters were not included in the optimized active circuit.
+* -----------------------------------------------------------------------------
+.param VBIAS_CAS_CG=3.30
+.param L_CAS_CG=0.60u
+.param W_CAS_CG=80u
+.param M_CAS_CG=4
+
+
+* -----------------------------------------------------------------------------
+* Supply / package
+* -----------------------------------------------------------------------------
+.param VDS=5.0
+.param VDDIO_SUP=5.0
+
+.param L_BW=2n
+.param R_BW=0.2
+
+
+* -----------------------------------------------------------------------------
+* Source equalization networks
+* -----------------------------------------------------------------------------
+
+* XM9 cancellation-branch source equalizer
+.param RS_EQ_D_VAL=0.25
+.param CSEQ_D_VAL=2.2p
+
+* XM1 main-path source equalizer
+.param RS_EQ_S_VAL=0.05
+.param CSEQ_S_VAL=100f
+
+* Redundant aliases retained for compatibility
+.param RS_EQ=0.05
+.param CSEQ_VAL=100f
+
+
+* -----------------------------------------------------------------------------
+* Input network
+*
+* Package inductance       = 2.0 nH
+* Intentional inductance   = 4.2 nH
+* Total nominal inductance = 6.2 nH, excluding pad/interconnect parasitics
+*
+* R_L_IN was not swept by the optimizer and is therefore retained.
+* -----------------------------------------------------------------------------
+.param L_IN=4.2n
+.param R_L_IN=2.26
+
+.param CIN_VAL=6.8p
+.param C_SH_IN=470f
+
+
+* -----------------------------------------------------------------------------
+* XM2 common-gate input stage
+* -----------------------------------------------------------------------------
+.param VBIAS_CG=2.20
+
+* Unit-device geometry retained; multiplier optimized
+.param W_CG=40u
+.param M_CG=14
+.param L_CG=0.60u
+
+.param RD1=850
+
+.param RBIAS_CG=50k
+.param CBYP_CG=20p
+
+
+* -----------------------------------------------------------------------------
+* XM1 common-source / XM4 cascode main stage
+* -----------------------------------------------------------------------------
+.param C12_VAL=6.8p
+
+.param VBIAS_CS=1.20
+
+* Unit-device geometry retained; multiplier optimized
+.param W_CS=20u
+.param M_CS=10
+.param L_CS=0.28u
+
+.param RBIAS_CS=50k
+
+.param VBIAS_CAS=3.70
+
+* Unit-device geometry retained; multiplier optimized
+.param W_CAS=35u
+.param M_CAS=4
+.param L_CAS=0.60u
+
+.param RD2=650
+
+
+* -----------------------------------------------------------------------------
+* XM3 body-tied source follower
+* -----------------------------------------------------------------------------
+
+* Unit-device geometry retained; multiplier optimized
+.param W_SF=25u
+.param M_SF=10
+.param L_SF=0.60u
+
+.param RG_SF_VAL=2
+
+
+* -----------------------------------------------------------------------------
+* Output network
+*
+* Package inductance       = 2.0 nH
+* Intentional inductance   = 1.2 nH
+* Total nominal inductance = 3.2 nH, excluding pad/interconnect parasitics
+* -----------------------------------------------------------------------------
+.param COUT_VAL=2.2p
+
+.param L_OUT=1.2n
+.param R_L_OUT=1.8
+
+.param C_SH_OUT=220f
+
+
+* -----------------------------------------------------------------------------
+* XM5 common-gate current sink
+* -----------------------------------------------------------------------------
+.param VBIAS_ICG=1.90
+
+.param L_BIAS_CG=0.50u
+.param W_BIAS_CG=15u
+.param M_BIAS_CG=1
+
+
+* -----------------------------------------------------------------------------
+* XM6 source-follower current sink
+* -----------------------------------------------------------------------------
+.param VBIAS_BUF=1.30
+
+* Unit width/length retained; multiplier optimized
+.param L_BIAS_SF=0.50u
+.param W_BIAS_SF=25u
+.param M_BIAS_SF=5
+
+
+* -----------------------------------------------------------------------------
+* XM9 source-sensing common-source cancellation branch
+* -----------------------------------------------------------------------------
+.param RBIAS_CSC=50k
+
+.param VBIAS_CSC=0.90
+
+.param L_CSC=0.28u
+.param W_CSC=60u
+.param M_CSC=4
+.param NF_CSC=10
+
+
+* -----------------------------------------------------------------------------
+* XM7 cancellation-branch cascode
+* -----------------------------------------------------------------------------
+.param VBIAS_CASC=3.20
+
+* Unit width/length retained; multiplier optimized
+.param L_CASC=0.60u
+.param W_CASC=35u
+.param M_CASC=2
+
+
+* -----------------------------------------------------------------------------
+* Noise-cancellation coupling network
+* -----------------------------------------------------------------------------
+.param CNC_VAL=4.7p
+.param R_FF=22
+
+
+* -----------------------------------------------------------------------------
+* Drain shunt-peaking network
+* -----------------------------------------------------------------------------
+.param LD2=6.8n
+.param CD2=330f
+
+* Both names are retained because the existing deck uses both conventions.
+.param RLD2=11.4
+.param R_LD2=11.4
+"

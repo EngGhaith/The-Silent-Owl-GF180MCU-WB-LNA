@@ -24,17 +24,17 @@ lab=rf_out_ext}
 N -500 -300 -460 -300 {
 lab=GND}
 N 1010 -470 1010 -390 {
-lab=vm2}
+lab=d}
 N 1010 -560 1010 -530 {
 lab=vdcbias}
 N -210 -390 -180 -390 {
 lab=vbias_cg}
-N 470 -410 490 -410 {
+N 880 -520 900 -520 {
 lab=s}
-N 140 -410 170 -410 {
+N 550 -520 580 -520 {
 lab=rf_in_pad}
 N 1010 -430 1050 -430 {
-lab=vm2}
+lab=d}
 N 1110 -430 1150 -430 {
 lab=g_cs}
 N 1010 -230 1010 -220 {
@@ -85,7 +85,7 @@ N 1430 -190 1460 -190 {
 lab=g_cs}
 N 1540 -220 1540 -160 {
 lab=#net3}
-N 1540 -660 1540 -620 {
+N 1540 -580 1540 -540 {
 lab=vdcbias}
 N 1750 -550 1750 -480 {
 lab=vdcbias}
@@ -107,15 +107,15 @@ N 2250 -350 2250 -270 {
 lab=rf_out_pad}
 N 2250 -210 2250 -170 {
 lab=GND}
-N 150 -410 150 -370 {
+N 560 -520 560 -480 {
 lab=rf_in_pad}
-N 150 -310 150 -270 {
+N 560 -420 560 -380 {
 lab=GND}
-N 170 -410 200 -410 {
+N 580 -520 610 -520 {
 lab=rf_in_pad}
-N 260 -410 310 -410 {
+N 670 -520 720 -520 {
 lab=#net6}
-N 370 -410 410 -410 {
+N 780 -520 820 -520 {
 lab=#net7}
 N 1540 -370 1560 -370 {
 lab=GND}
@@ -123,7 +123,7 @@ N 1540 -340 1540 -330 {
 lab=vm1}
 N 1480 -370 1500 -370 {
 lab=vbias_cas}
-N 1540 -560 1540 -480 {
+N 1540 -480 1540 -400 {
 lab=vx}
 N 1540 -330 1540 -290 {
 lab=vm1}
@@ -256,26 +256,26 @@ N 1190 -260 1230 -260 {
 lab=s}
 N 1290 -260 1330 -260 {
 lab=g_csc}
+N 1010 -360 1030 -360 {
+lab=d}
 N 1010 -330 1010 -320 {
-lab=vm2}
-N 1010 -320 1010 -290 {lab=vm2}
+lab=d}
+N 950 -360 970 -360 {
+lab=d}
+N 1010 -320 1010 -290 {lab=d}
 N -308.75 210 -278.75 210 {
 lab=vbias_cas_cg}
 N -400 210 -368.75 210 {
 lab=GND}
-N 1460 -640 1460 -620 {lab=vdcbias}
-N 1460 -640 1540 -640 {lab=vdcbias}
-N 1460 -560 1460 -540 {lab=#net11}
-N 1620 -560 1620 -550 {lab=vx}
-N 1540 -460 1620 -460 {lab=vx}
-N 1620 -640 1620 -620 {lab=vdcbias}
-N 1540 -640 1620 -640 {lab=vdcbias}
-N 1620 -550 1620 -540 {lab=vx}
-N 1010 -390 1010 -330 {lab=vm2}
-N 1540 -480 1540 -400 {lab=vx}
+N 1460 -560 1460 -540 {lab=vdcbias}
+N 1460 -560 1540 -560 {lab=vdcbias}
 N 1460 -480 1460 -460 {lab=vx}
 N 1460 -460 1540 -460 {lab=vx}
-N 1620 -540 1620 -460 {lab=vx}
+N 1620 -480 1620 -470 {lab=vx}
+N 1540 -460 1620 -460 {lab=vx}
+N 1620 -560 1620 -540 {lab=vdcbias}
+N 1540 -560 1620 -560 {lab=vdcbias}
+N 1620 -470 1620 -460 {lab=vx}
 C {vsource.sym} -240 -390 1 0 {name=VBCG value=\{VBIAS_CG\} savecurrent=false}
 C {gnd.sym} 1010 -100 0 0 {name=l1 lab=GND}
 C {vsource.sym} -320 -470 0 0 {name=VDD value=\{VDS\} savecurrent=false}
@@ -284,12 +284,13 @@ m=1
 value=\{C12_VAL\}
 footprint=1206
 device="ceramic capacitor"}
+C {lab_pin.sym} 1010 -420 0 0 {name=p3 sig_type=std_logic lab=d}
 C {lab_pin.sym} -460 -510 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
 C {lab_pin.sym} -460 -450 2 0 {name=p6 sig_type=std_logic lab=GND
 
 }
 C {lab_pin.sym} -460 -300 2 0 {name=p8 sig_type=std_logic lab=GND}
-C {capa.sym} 440 -410 3 0 {name=CIN
+C {capa.sym} 850 -520 3 0 {name=CIN
 m=1
 value=\{CIN_VAL\}
 footprint=1206
@@ -319,7 +320,7 @@ sa=0 sb=0 sd=0
 model=nfet_06v0
 spiceprefix=X
 }
-C {lab_pin.sym} 490 -410 2 0 {name=p17 sig_type=std_logic lab=s}
+C {lab_pin.sym} 900 -520 2 0 {name=p17 sig_type=std_logic lab=s}
 C {res.sym} 690 -70 1 0 {name=RBCG
 value=\{RBIAS_CG\}
 footprint=1206
@@ -348,7 +349,7 @@ C {lab_pin.sym} 340 -580 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
 C {vsource.sym} -250 10 1 0 {name=VDDIO value=\{VDDIO_SUP\} savecurrent=false}
 C {lab_pin.sym} -190 10 1 0 {name=p27 sig_type=std_logic lab=vddio
 }
-C {lab_pin.sym} 140 -410 0 0 {name=p13 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 550 -520 0 0 {name=p13 sig_type=std_logic lab=rf_in_pad}
 C {ind.sym} 270 -740 1 0 {name=LBW_IN1
 m=1
 value=\{L_BW\}
@@ -381,13 +382,13 @@ device=resistor
 m=1}
 C {lab_pin.sym} 1350 -190 0 0 {name=p23 sig_type=std_logic lab=vbias_cs}
 C {lab_pin.sym} 1460 -190 2 0 {name=p24 sig_type=std_logic lab=g_cs}
-C {res.sym} 1540 -590 0 0 {name=RD2_LOAD
+C {res.sym} 1540 -510 0 0 {name=RD2_LOAD
 value=\{RD2\}
 footprint=1206
 device=resistor
 m=1
 }
-C {lab_pin.sym} 1540 -660 0 0 {name=p39 sig_type=std_logic lab=vdcbias
+C {lab_pin.sym} 1540 -580 0 0 {name=p39 sig_type=std_logic lab=vdcbias
 }
 C {symbols/nfet_06v0.sym} 1730 -450 0 0 {name=M3
 L=\{L_SF\}
@@ -431,19 +432,19 @@ value=\{C_SH_OUT\}
 footprint=1206
 device="ceramic capacitor"}
 C {lab_pin.sym} 2250 -170 3 0 {name=p42 sig_type=std_logic lab=GND}
-C {capa.sym} 150 -340 0 0 {name=CSHIN
+C {capa.sym} 560 -450 0 0 {name=CSHIN
 m=1
 value=\{C_SH_IN\}
 footprint=1206
 device="ceramic capacitor"}
-C {lab_pin.sym} 150 -270 3 0 {name=p46 sig_type=std_logic lab=GND}
-C {ind.sym} 230 -410 1 0 {name=LIN
+C {lab_pin.sym} 560 -380 3 0 {name=p46 sig_type=std_logic lab=GND}
+C {ind.sym} 640 -520 1 0 {name=LIN
 m=1
 value=\{L_IN\}
 footprint=1206
 device=inductor
 }
-C {res.sym} 340 -410 1 0 {name=RLIN
+C {res.sym} 750 -520 1 0 {name=RLIN
 value=\{R_L_IN\}
 footprint=1206
 device=resistor
@@ -597,7 +598,7 @@ C {lab_pin.sym} 1310 -720 2 0 {name=p34 sig_type=std_logic lab=GND}
 C {symbols/nfet_03v3.sym} 1270 -720 0 0 {name=M9
 L=\{L_CSC\}
 W=\{W_CSC\}
-nf=4
+nf=10
 m=\{M_CSC\}
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -637,162 +638,97 @@ value="
 *.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
 "}
 C {code_shown.sym} 1660 80 0 0 {name=s1 only_toplevel=false value="
-* =============================================================================
-* BEST OPTIMIZED PARAMETER SET
-* =============================================================================
-.param RLD2=7
-* Currently unused unless a corresponding cascode-CG transistor is instantiated
 .param VBIAS_CAS_CG=3.30
 .param L_CAS_CG=0.60u
 .param W_CAS_CG=80u
 .param M_CAS_CG=4
 
-* -----------------------------------------------------------------------------
 * Supply / package
-* -----------------------------------------------------------------------------
 .param VDS=5.0
 .param VDDIO_SUP=5.0
-
 .param L_BW=2n
 .param R_BW=0.2
 
-* -----------------------------------------------------------------------------
-* Source equalization networks
-* -----------------------------------------------------------------------------
+.param RS_EQ_D_VAL=12
+.param CSEQ_D_VAL=8.2p
+.param RS_EQ_S_VAL=8
+.param CSEQ_S_VAL=8.2p
 
-* XM9 cancellation-branch source equalizer
-.param RS_EQ_D_VAL=0.25
-.param CSEQ_D_VAL=4.7p
 
-* XM1 main-path source equalizer
-.param RS_EQ_S_VAL=0.10
-.param CSEQ_S_VAL=220f
-
-* Redundant aliases retained for compatibility
-.param RS_EQ=0.10
-.param CSEQ_VAL=220f
-
-* -----------------------------------------------------------------------------
-* Input network
-*
-* Package inductance       = 2.0 nH
-* Intentional inductance   = 3.5 nH
-* Total nominal inductance = 5.5 nH, excluding pad/interconnect parasitics
-* -----------------------------------------------------------------------------
-.param L_IN=3.5n
+* Input network; legal intentional total = 2 nH
+.param L_IN=1.80n
 .param R_L_IN=2.26
+.param CIN_VAL=100p
+.param C_SH_IN=1f
 
-.param CIN_VAL=8.2p
-.param C_SH_IN=330f
-
-* -----------------------------------------------------------------------------
-* XM2 common-gate input stage
-* -----------------------------------------------------------------------------
-.param VBIAS_CG=2.10
-
-.param W_CG=40u
-.param M_CG=10
+* XM2 common-gate input
+.param VBIAS_CG=2.05
+.param W_CG=80u
+.param M_CG=6
 .param L_CG=0.60u
-
-.param RD1=950
-
+.param RD1=680
 .param RBIAS_CG=50k
 .param CBYP_CG=20p
 
-* -----------------------------------------------------------------------------
-* XM1 common-source / XM4 cascode main stage
-* -----------------------------------------------------------------------------
-.param C12_VAL=8.2p
-
-.param VBIAS_CS=1.25
-
-.param W_CS=20u
-.param M_CS=8
+* Mixed-voltage XM1/XM4 stage
+.param C12_VAL=47p
+.param VBIAS_CS=0.95
+.param W_CS=40u
+.param M_CS=2
 .param L_CS=0.28u
-
 .param RBIAS_CS=50k
-
-.param VBIAS_CAS=3.60
-
-.param W_CAS=35u
-.param M_CAS=4
+.param VBIAS_CAS=3.30
+.param W_CAS=70u
+.param M_CAS=1
 .param L_CAS=0.60u
+.param RD2=600
 
-.param RD2=1.2k
+* XM1 source equalizer
+.param RS_EQ=8
+.param CSEQ_VAL=8.2p
 
-* -----------------------------------------------------------------------------
-* XM3 body-tied source follower
-* -----------------------------------------------------------------------------
-.param W_SF=25u
-.param M_SF=8
+* Body-tied source follower and gate stopper
+.param W_SF=50u
+.param M_SF=5
 .param L_SF=0.60u
+.param RG_SF_VAL=0.25
 
-.param RG_SF_VAL=0.10
-
-* -----------------------------------------------------------------------------
 * Output network
-*
-* Package inductance       = 2.0 nH
-* Intentional inductance   = 1.2 nH
-* Total nominal inductance = 3.2 nH, excluding pad/interconnect parasitics
-* -----------------------------------------------------------------------------
-.param COUT_VAL=4.7p
-
-.param L_OUT=1.2n
+.param COUT_VAL=47p
+.param L_OUT=1.52n
 .param R_L_OUT=1.5
+.param C_SH_OUT=0.87p
 
-.param C_SH_OUT=470f
-
-* -----------------------------------------------------------------------------
 * XM5 common-gate current sink
-* -----------------------------------------------------------------------------
-.param VBIAS_ICG=1.80
-
+.param VBIAS_ICG=1.65
 .param L_BIAS_CG=0.50u
-.param W_BIAS_CG=15u
+.param W_BIAS_CG=25u
 .param M_BIAS_CG=1
 
-* -----------------------------------------------------------------------------
-* XM6 source-follower current sink
-* -----------------------------------------------------------------------------
-.param VBIAS_BUF=2.50
-
+* XM6 follower current sink
+.param VBIAS_BUF=2.20
 .param L_BIAS_SF=0.50u
-.param W_BIAS_SF=25u
-.param M_BIAS_SF=5
+.param W_BIAS_SF=50u
+.param M_BIAS_SF=3
 
-* -----------------------------------------------------------------------------
-* XM9 source-sensing common-source cancellation branch
-* -----------------------------------------------------------------------------
+
+* Source-sensing common-source branch
 .param RBIAS_CSC=50k
-
-.param VBIAS_CSC=0.90
-
+.param VBIAS_CSC=0.95
 .param L_CSC=0.28u
-.param W_CSC=40u
-.param M_CSC=6
-.param NF_CSC=4
+.param W_CSC=10u
+.param M_CSC=1
 
-* -----------------------------------------------------------------------------
-* XM7 cancellation-branch cascode
-* -----------------------------------------------------------------------------
-.param VBIAS_CASC=3.40
-
+* Cancellation-branch cascode
+.param VBIAS_CASC=3.30
 .param L_CASC=0.60u
-.param W_CASC=35u
+.param W_CASC=70u
 .param M_CASC=1
 
-* -----------------------------------------------------------------------------
-* Noise-cancellation coupling capacitor
-* -----------------------------------------------------------------------------
-.param CNC_VAL=8.2p
+.param CNC_VAL=47p
 
-* -----------------------------------------------------------------------------
-* Drain shunt-peaking network
-* -----------------------------------------------------------------------------
-.param LD2=4.7n
-.param CD2=680f
-.param R_LD2=7
+.param LD2=3.3n
+.param CD2=1p
 "}
 C {code.sym} 790 490 0 0 {name=s2 only_toplevel=false value="
 .control
@@ -31047,6 +30983,22 @@ quit
 
 "
 spice_ignore=true}
+C {symbols/nfet_06v0.sym} 990 -360 0 0 {name=M10
+L=\{L_CAS_CG\}
+W=\{W_CAS_CG\}
+nf=10
+m=\{M_CAS_CG\}
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=nfet_06v0
+spiceprefix=X
+spice_ignore=short}
+C {lab_pin.sym} 950 -360 0 0 {name=p31 sig_type=std_logic lab=vbias_cas_cg}
+C {lab_pin.sym} 1030 -360 2 0 {name=p70 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 1010 -318.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1540 -318.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {vsource.sym} -338.75 210 1 0 {name=VBCS6 value=\{VBIAS_CAS_CG\} savecurrent=false}
@@ -31082,7 +31034,7 @@ let icoreop=abs(i(VDD))
 let iioop=abs(i(VDDIO))
 
 let vsop=v(s)
-let vdop=v(vm2)
+let vdop=v(d)
 let vnet3op=v(net3)
 let vnet8op=v(net8)
 let vbufop=v(vbuf)
@@ -31186,20 +31138,6 @@ let vdsat7op=abs(@m.xm7.m0[vdsat])
 let sat7op=vds7op-vdsat7op
 let gmid7op=gm7op/(id7op+1e-30)
 let ro7op=1/(gds7op+1e-30)
-
-let id9op=abs(@m.xm9.m0[id])
-let gm9op=@m.xm9.m0[gm]
-let gmb9op=@m.xm9.m0[gmbs]
-let gds9op=@m.xm9.m0[gds]
-let vgs9op=@m.xm9.m0[vgs]
-let vds9op=@m.xm9.m0[vds]
-let vbs9op=@m.xm9.m0[vbs]
-let vth9op=@m.xm9.m0[vth]
-let vov9op=vgs9op-vth9op
-let vdsat9op=abs(@m.xm9.m0[vdsat])
-let sat9op=vds9op-vdsat9op
-let gmid9op=gm9op/(id9op+1e-30)
-let ro9op=1/(gds9op+1e-30)
 
 let vnet9op=vnet3op+vds1op
 let vnet9check=vnet8op-vds4op
@@ -31323,24 +31261,10 @@ set op_sat7=$&sat7op
 set op_gmid7=$&gmid7op
 set op_ro7=$&ro7op
 
-set op_id9=$&id9op
-set op_gm9=$&gm9op
-set op_gmb9=$&gmb9op
-set op_gds9=$&gds9op
-set op_vgs9=$&vgs9op
-set op_vds9=$&vds9op
-set op_vbs9=$&vbs9op
-set op_vth9=$&vth9op
-set op_vov9=$&vov9op
-set op_vdsat9=$&vdsat9op
-set op_sat9=$&sat9op
-set op_gmid9=$&gmid9op
-set op_ro9=$&ro9op
-
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 echo DC_SUPPLY_AND_NODE_VOLTAGES >> lna_core_06V_cgcs_report.txt
 echo PDC_mW $op_pdc ICORE_A $op_icore IIO_A $op_iio >> lna_core_06V_cgcs_report.txt
-echo NODES_V S $op_vs NET10_DERIVED $op_vnet10 VM2 $op_vd NET3 $op_vnet3 NET9_DERIVED $op_vnet9 NET8 $op_vnet8 VBUF $op_vbuf G_CS $op_vgcs G_CG $op_vgcg >> lna_core_06V_cgcs_report.txt
+echo NODES_V S $op_vs NET10_DERIVED $op_vnet10 D $op_vd NET3 $op_vnet3 NET9_DERIVED $op_vnet9 NET8 $op_vnet8 VBUF $op_vbuf G_CS $op_vgcs G_CG $op_vgcg >> lna_core_06V_cgcs_report.txt
 echo HIDDEN_NODE_CHECKS NET10_FROM_XM2 $op_vnet10 NET10_FROM_XM7 $op_vnet10check DIFFERENCE $op_vnet10diff NET9_FROM_XM1 $op_vnet9 NET9_FROM_XM4 $op_vnet9check DIFFERENCE $op_vnet9diff >> lna_core_06V_cgcs_report.txt
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 echo TRANSISTOR_OPERATING_POINTS >> lna_core_06V_cgcs_report.txt
@@ -31352,7 +31276,6 @@ echo XM4_CS_CASCODE ID $op_id4 GM $op_gm4 GMBS $op_gmb4 GDS $op_gds4 VGS $op_vgs
 echo XM5_CG_CURRENT_SINK ID $op_id5 GM $op_gm5 GMBS $op_gmb5 GDS $op_gds5 VGS $op_vgs5 VDS $op_vds5 VBS $op_vbs5 VTH $op_vth5 VOV $op_vov5 VDSAT $op_vdsat5 SAT_MARGIN $op_sat5 GMID $op_gmid5 RO $op_ro5 >> lna_core_06V_cgcs_report.txt
 echo XM6_BUFFER_CURRENT_SINK ID $op_id6 GM $op_gm6 GMBS $op_gmb6 GDS $op_gds6 VGS $op_vgs6 VDS $op_vds6 VBS $op_vbs6 VTH $op_vth6 VOV $op_vov6 VDSAT $op_vdsat6 SAT_MARGIN $op_sat6 GMID $op_gmid6 RO $op_ro6 >> lna_core_06V_cgcs_report.txt
 echo XM7_CG_CASCODE ID $op_id7 GM $op_gm7 GMBS $op_gmb7 GDS $op_gds7 VGS $op_vgs7 VDS $op_vds7 VBS $op_vbs7 VTH $op_vth7 VOV $op_vov7 VDSAT $op_vdsat7 SAT_MARGIN $op_sat7 GMID $op_gmid7 RO $op_ro7 >> lna_core_06V_cgcs_report.txt
-echo XM9_CANCELLATION_CS ID $op_id9 GM $op_gm9 GMBS $op_gmb9 GDS $op_gds9 VGS $op_vgs9 VDS $op_vds9 VBS $op_vbs9 VTH $op_vth9 VOV $op_vov9 VDSAT $op_vdsat9 SAT_MARGIN $op_sat9 GMID $op_gmid9 RO $op_ro9 >> lna_core_06V_cgcs_report.txt
 
 destroy $curplot
 
@@ -31705,158 +31628,6 @@ wrdata lna_core_06V_cgcs_target_band.dat frequency s_1_1 s_2_1 s_1_2 s_2_2 s11db
 wrdata lna_core_06V_cgcs_broadband.dat frequency s11db s21db s12db s22db nfdb nfmin_db kval mu mup delta_mag zin_re zin_im zout_re zout_im
 
 * =============================================================================
-* NOISE-CANCELLATION A/B PROOF
-*
-* ON baseline:
-*   CNC = optimized value (8.2 pF).
-*
-* OFF baseline:
-*   CNC is opened to 1e-18 F using alterparam.
-*   XM7/XM9 remain biased and connected to vx, so their DC current,
-*   output loading and intrinsic noise remain present. Only the sensed
-*   RF path from node s to g_csc is removed. This is a conservative
-*   demonstration of whether the sensing/cancellation action reduces NF.
-*
-* Positive NF_IMPROVEMENT_DB = NF_OFF - NF_ON means cancellation helps.
-* =============================================================================
-
-* Preserve the cancellation-ON plot generated above.
-set nc_on_plot=$rfplot
-
-* Open only the noise-sensing capacitor.
-alterparam CNC_VAL = 1e-18
-reset
-
-sp lin 7000 1Meg 7Gig 1
-set nc_off_plot=$curplot
-
-let fghz_nc=frequency/1e9
-
-* Copy ON data into this plot so ON and OFF vectors share one scale.
-let nf_nc_on=\{$nc_on_plot\}.nfdb
-let s21_nc_on=\{$nc_on_plot\}.s21db
-let s11_nc_on=\{$nc_on_plot\}.s11db
-let s22_nc_on=\{$nc_on_plot\}.s22db
-
-* OFF data with the cancellation sensing path opened.
-let nf_nc_off=real(NF)
-let s21_nc_off=db(s_2_1)
-let s11_nc_off=db(s_1_1)
-let s22_nc_off=db(s_2_2)
-
-* Main proof vector. Positive values mean lower NF with cancellation ON.
-let nf_improvement_db=nf_nc_off-nf_nc_on
-let gain_change_on_minus_off_db=s21_nc_on-s21_nc_off
-
-let nc_npts=length(frequency)
-
-* Locate 2.3, 2.4 and 2.5 GHz in the OFF dataset.
-let nc_ilo=0
-let nc_icenter=0
-let nc_ihi=0
-let nc_errlo=abs(frequency[0]-2.3e9)
-let nc_errcenter=abs(frequency[0]-2.4e9)
-let nc_errhi=abs(frequency[0]-2.5e9)
-let nc_ii=1
-while nc_ii < nc_npts
-  let nc_newerr=abs(frequency[nc_ii]-2.3e9)
-  if nc_newerr < nc_errlo
-    let nc_errlo=nc_newerr
-    let nc_ilo=nc_ii
-  end
-
-  let nc_newerr=abs(frequency[nc_ii]-2.4e9)
-  if nc_newerr < nc_errcenter
-    let nc_errcenter=nc_newerr
-    let nc_icenter=nc_ii
-  end
-
-  let nc_newerr=abs(frequency[nc_ii]-2.5e9)
-  if nc_newerr < nc_errhi
-    let nc_errhi=nc_newerr
-    let nc_ihi=nc_ii
-  end
-
-  let nc_ii=nc_ii+1
-end
-
-* Center-frequency results.
-let nc_freq_center=frequency[nc_icenter]
-let nc_nf_on_c=nf_nc_on[nc_icenter]
-let nc_nf_off_c=nf_nc_off[nc_icenter]
-let nc_imp_c=nf_improvement_db[nc_icenter]
-
-let nc_s21_on_c=s21_nc_on[nc_icenter]
-let nc_s21_off_c=s21_nc_off[nc_icenter]
-let nc_gain_delta_c=gain_change_on_minus_off_db[nc_icenter]
-
-let nc_s11_on_c=s11_nc_on[nc_icenter]
-let nc_s11_off_c=s11_nc_off[nc_icenter]
-let nc_s22_on_c=s22_nc_on[nc_icenter]
-let nc_s22_off_c=s22_nc_off[nc_icenter]
-
-* Improvement extrema over 2.3-2.5 GHz.
-let nc_imp_min=nf_improvement_db[nc_ilo]
-let nc_imp_max=nf_improvement_db[nc_ilo]
-let nc_imp_min_i=nc_ilo
-let nc_imp_max_i=nc_ilo
-
-let nc_ii=nc_ilo
-while nc_ii <= nc_ihi
-  if nf_improvement_db[nc_ii] < nc_imp_min
-    let nc_imp_min=nf_improvement_db[nc_ii]
-    let nc_imp_min_i=nc_ii
-  end
-  if nf_improvement_db[nc_ii] > nc_imp_max
-    let nc_imp_max=nf_improvement_db[nc_ii]
-    let nc_imp_max_i=nc_ii
-  end
-  let nc_ii=nc_ii+1
-end
-
-let nc_imp_min_f=frequency[nc_imp_min_i]
-let nc_imp_max_f=frequency[nc_imp_max_i]
-
-* User-selectable threshold for a practically meaningful center improvement.
-let nc_practical_threshold_db=0.20
-
-echo ============================================================ >> lna_core_06V_cgcs_report.txt
-echo NOISE_CANCELLATION_AB_PROOF >> lna_core_06V_cgcs_report.txt
-echo METHOD ON_CNC_8P2PF OFF_CNC_1E_MINUS18F_XM7_XM9_STILL_BIASED_AND_LOADING_RETAINED >> lna_core_06V_cgcs_report.txt
-echo ACTUAL_CENTER_SAMPLE_HZ $&nc_freq_center >> lna_core_06V_cgcs_report.txt
-echo NF_ON_DB $&nc_nf_on_c NF_OFF_DB $&nc_nf_off_c NF_IMPROVEMENT_DB $&nc_imp_c >> lna_core_06V_cgcs_report.txt
-echo S21_ON_DB $&nc_s21_on_c S21_OFF_DB $&nc_s21_off_c S21_ON_MINUS_OFF_DB $&nc_gain_delta_c >> lna_core_06V_cgcs_report.txt
-echo S11_ON_DB $&nc_s11_on_c S11_OFF_DB $&nc_s11_off_c >> lna_core_06V_cgcs_report.txt
-echo S22_ON_DB $&nc_s22_on_c S22_OFF_DB $&nc_s22_off_c >> lna_core_06V_cgcs_report.txt
-echo NF_IMPROVEMENT_MIN_DB_2P3_TO_2P5 $&nc_imp_min AT_HZ $&nc_imp_min_f >> lna_core_06V_cgcs_report.txt
-echo NF_IMPROVEMENT_MAX_DB_2P3_TO_2P5 $&nc_imp_max AT_HZ $&nc_imp_max_f >> lna_core_06V_cgcs_report.txt
-echo PRACTICAL_CENTER_THRESHOLD_DB $&nc_practical_threshold_db >> lna_core_06V_cgcs_report.txt
-
-if nc_imp_c > 0
-  echo CENTER_DIRECTIONAL_TEST PASS_CANCELLATION_LOWERS_NF >> lna_core_06V_cgcs_report.txt
-else
-  echo CENTER_DIRECTIONAL_TEST FAIL_CANCELLATION_DOES_NOT_LOWER_NF >> lna_core_06V_cgcs_report.txt
-end
-
-if nc_imp_min > 0
-  echo FULL_TARGET_BAND_TEST PASS_CANCELLATION_LOWERS_NF_ACROSS_2P3_TO_2P5_GHZ >> lna_core_06V_cgcs_report.txt
-else
-  echo FULL_TARGET_BAND_TEST FAIL_NF_IMPROVEMENT_NOT_POSITIVE_ACROSS_ENTIRE_TARGET_BAND >> lna_core_06V_cgcs_report.txt
-end
-
-if nc_imp_c >= nc_practical_threshold_db
-  echo PRACTICAL_CENTER_TEST PASS_IMPROVEMENT_AT_LEAST_0P20_DB >> lna_core_06V_cgcs_report.txt
-else
-  echo PRACTICAL_CENTER_TEST FAIL_IMPROVEMENT_BELOW_0P20_DB >> lna_core_06V_cgcs_report.txt
-end
-
-wrdata lna_core_06V_cgcs_noise_cancellation.dat nf_nc_on nf_nc_off nf_improvement_db s21_nc_on s21_nc_off s11_nc_on s11_nc_off s22_nc_on s22_nc_off
-
-* Restore the optimized cancellation capacitor before subsequent analyses.
-alterparam CNC_VAL = 8.2p
-reset
-
-* =============================================================================
 * WIDEBAND STABILITY 10 MHZ TO 30 GHZ
 * =============================================================================
 
@@ -31897,8 +31668,7 @@ echo REPORT lna_core_06V_cgcs_report.txt >> lna_core_06V_cgcs_report.txt
 echo TARGET_DATA lna_core_06V_cgcs_target_band.dat >> lna_core_06V_cgcs_report.txt
 echo BROADBAND_DATA lna_core_06V_cgcs_broadband.dat >> lna_core_06V_cgcs_report.txt
 echo STABILITY_DATA lna_core_06V_cgcs_stability.dat >> lna_core_06V_cgcs_report.txt
-echo NOISE_CANCELLATION_DATA lna_core_06V_cgcs_noise_cancellation.dat >> lna_core_06V_cgcs_report.txt
-echo PLOTS S_PARAMETERS NF_NFMIN NOISE_CANCELLATION_ON_OFF NF_IMPROVEMENT S21_ON_OFF >> lna_core_06V_cgcs_report.txt
+echo PLOTS S11_S21_S12_S22_SEPARATE NF_AND_NFMIN_TOGETHER STABILITY_AND_IMPEDANCE_DIAGNOSTICS >> lna_core_06V_cgcs_report.txt
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 
 
@@ -31918,11 +31688,11 @@ plot s21db xlimit 2.3 2.5
 plot s12db xlimit 2.3 2.5
 plot s22db xlimit 2.3 2.5
 plot nfdb nfmin_db xlimit 2.3 2.5
-* plot mu mup xlimit 2.3 2.5
-* plot kval xlimit 2.3 2.5
-* plot delta_mag xlimit 2.3 2.5
-* plot zin_re zin_im xlimit 2.3 2.5
-* plot zout_re zout_im xlimit 2.3 2.5
+plot mu mup xlimit 2.3 2.5
+plot kval xlimit 2.3 2.5
+plot delta_mag xlimit 2.3 2.5
+plot zin_re zin_im xlimit 2.3 2.5
+plot zout_re zout_im xlimit 2.3 2.5
 
 * Broadband 1 MHz to 7 GHz
 plot s11db xlimit 0 7
@@ -31930,256 +31700,30 @@ plot s21db xlimit 0 7
 plot s12db xlimit 0 7
 plot s22db xlimit 0 7
 plot nfdb nfmin_db xlimit 0 7
-* plot mu mup xlimit 0 7
-* plot kval xlimit 0 7
-* plot delta_mag xlimit 0 7
-* plot zin_re zin_im xlimit 0 7
-* plot zout_re zout_im xlimit 0 7
-
-* Noise-cancellation proof plots
-setplot $nc_off_plot
-setscale fghz_nc
-set xbrushwidth=2
-
-* Plot 1: direct NF comparison; ON must lie below OFF.
-plot nf_nc_on nf_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'Noise figure (dB)'
-
-* Plot 2: positive improvement proves cancellation benefit.
-plot nf_improvement_db xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'NF OFF - NF ON (dB)'
-
-* Plot 3: signal-gain sanity check for the same A/B experiment.
-plot s21_nc_on s21_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'S21 (dB)'
+plot mu mup xlimit 0 7
+plot kval xlimit 0 7
+plot delta_mag xlimit 0 7
+plot zin_re zin_im xlimit 0 7
+plot zout_re zout_im xlimit 0 7
 
 * Wideband stability 10 MHz to 30 GHz
-* setplot $stabilityplot
-* setscale wbfghz
-* plot wbmu wbmup
-* plot wbk
-* plot wbmd
+setplot $stabilityplot
+setscale wbfghz
+plot wbmu wbmup
+plot wbk
+plot wbmd
 
 .endc
 
-"
-}
+"}
 C {ind.sym} 1460 -510 0 0 {name=LD2
 m=1
 value=\{LD2\}
 footprint=1206
 device=inductor
 }
-C {capa.sym} 1620 -590 0 0 {name=CD2
+C {capa.sym} 1620 -510 0 0 {name=CD2
 m=1
 value=\{CD2\}
 footprint=1206
 device="ceramic capacitor"}
-C {res.sym} 1460 -590 0 0 {name=RLD2
-value=\{RLD2\}
-footprint=1206
-device=resistor
-m=1
-}
-C {code.sym} 162.5 693.75 0 0 {name=s5 only_toplevel=false value="
-
-.control
-
-set noaskquit
-set numdgt=12
-set width=240
-set wr_vecnames
-set wr_singlescale
-
-* Report noise as power quantities:
-* spectral:   V^2/Hz
-* integrated: V^2
-set sqrnoise
-
-* Remove earlier plots so the generated plot names are predictable:
-* noise1 = center spectral
-* noise2 = center integrated
-* noise3 = band spectral
-* noise4 = band integrated
-destroy all
-
-echo ============================================================
-echo BEGIN_PER_SOURCE_NOISE_REPORT
-echo CIRCUIT GF180MCU_LNA_CORE_06V_CGCS
-echo OUTPUT_NODE rf_out_ext
-echo INPUT_SOURCE V1
-echo SPECTRAL_UNITS V2_PER_HZ
-echo INTEGRATED_UNITS V2
-echo ============================================================
-
-* =============================================================================
-* 1. CENTER-FREQUENCY BREAKDOWN
-*
-* Three frequency points:
-*   2.399 GHz
-*   2.400 GHz
-*   2.401 GHz
-*
-* pts_per_summary = 1 prints every internal noise generator at every point.
-* =============================================================================
-
-reset
-
-echo ============================================================
-echo CENTER_NOISE_BREAKDOWN_BEGIN
-echo FREQUENCIES_HZ 2.399E9 2.400E9 2.401E9
-echo ============================================================
-
-noise v(rf_out_ext) V1 lin 3 2.399G 2.401G 1
-
-* Save total output/input PSD versus frequency.
-setplot noise1
-wrdata lna_noise_center_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_center_spectral.raw all
-
-* Save and print integrated center-window noise.
-setplot noise2
-print onoise_total inoise_total
-write lna_noise_center_integrated.raw all
-
-echo ============================================================
-echo CENTER_NOISE_BREAKDOWN_END
-echo ============================================================
-
-* =============================================================================
-* 2. TARGET-BAND BREAKDOWN, 2.3–2.5 GHz
-*
-* 201 points produce 1 MHz spacing.
-*
-* pts_per_summary = 20 prints detailed per-source contributions
-* approximately every 20 MHz:
-*   2.300, 2.320, ..., 2.500 GHz
-*
-* Change 20 to 1 to print every source at every 1 MHz point.
-* =============================================================================
-
-reset
-
-echo ============================================================
-echo TARGET_BAND_NOISE_BREAKDOWN_BEGIN
-echo START_HZ 2.300E9
-echo STOP_HZ 2.500E9
-echo POINTS 201
-echo DEVICE_SUMMARY_EVERY_POINTS 20
-echo ============================================================
-
-noise v(rf_out_ext) V1 lin 201 2.3G 2.5G 20
-
-* Save total spectral noise.
-setplot noise3
-wrdata lna_noise_band_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_band_spectral.raw all
-
-* Save and print integrated target-band noise.
-setplot noise4
-print onoise_total inoise_total
-write lna_noise_band_integrated.raw all
-
-echo ============================================================
-echo TARGET_BAND_NOISE_BREAKDOWN_END
-echo ============================================================
-
-echo IDEAL_CAPACITORS_AND_INDUCTORS_HAVE_ZERO_INTRINSIC_NOISE
-echo INDUCTOR_LOSS_APPEARS_UNDER_ITS_EXPLICIT_SERIES_RESISTOR
-echo PAD_NOISE_APPEARS_USING_HIERARCHICAL_X3_AND_X4_INTERNAL_NAMES
-
-echo ============================================================
-echo GENERATED_DATA_FILES
-echo CENTER_TOTAL_PSD lna_noise_center_total_psd.dat
-echo CENTER_SPECTRAL_RAW lna_noise_center_spectral.raw
-echo CENTER_INTEGRATED_RAW lna_noise_center_integrated.raw
-echo BAND_TOTAL_PSD lna_noise_band_total_psd.dat
-echo BAND_SPECTRAL_RAW lna_noise_band_spectral.raw
-echo BAND_INTEGRATED_RAW lna_noise_band_integrated.raw
-echo END_PER_SOURCE_NOISE_REPORT
-echo ============================================================
-
-unset sqrnoise
-
-* =============================================================================
-* COMPLETE NOISE-CONTRIBUTION EXTRACTION
-* =============================================================================
-
-set numdgt=12
-set width=240
-set wr_vecnames
-set wr_singlescale
-set sqrnoise
-set filetype=ascii
-
-* Makes noise plot numbering predictable:
-* noise1/noise2 = center contributor analysis
-* noise3/noise4 = band contributor analysis
-* noise5/noise6 = full-resolution total band analysis
-destroy all
-
-* =============================================================================
-* 1. CONTRIBUTOR BREAKDOWN AROUND 2.4 GHz
-* =============================================================================
-
-reset
-noise v(rf_out_ext) V1 lin 3 2.399G 2.401G 1
-
-setplot noise1
-
-* List every vector ngspice generated.
-display > lna_noise_center_vector_names.txt
-
-* ASCII raw-format text file containing every available contributor vector.
-write lna_noise_center_all_sources.txt
-
-* Simple table containing only total noise.
-wrdata lna_noise_center_total_psd.dat onoise_spectrum inoise_spectrum
-
-setplot noise2
-write lna_noise_center_integrated_all.txt
-print onoise_total inoise_total > lna_noise_center_integrated_totals.txt
-
-* =============================================================================
-* 2. CONTRIBUTOR BREAKDOWN ACROSS 2.3–2.5 GHz
-*
-* Eleven points:
-* 2.300, 2.320, ..., 2.500 GHz
-*
-* Final argument 1 requests contributor data at every simulated point.
-* =============================================================================
-
-reset
-noise v(rf_out_ext) V1 lin 11 2.3G 2.5G 1
-
-setplot noise3
-
-display > lna_noise_band_vector_names.txt
-write lna_noise_band_all_sources.txt
-wrdata lna_noise_band_summary_total_psd.dat onoise_spectrum inoise_spectrum
-
-setplot noise4
-write lna_noise_band_integrated_all.txt
-print onoise_total inoise_total > lna_noise_band_integrated_totals.txt
-
-* =============================================================================
-* 3. FULL-RESOLUTION TOTAL NOISE
-*
-* No pts_per_summary argument is used here.
-* This preserves all 201 frequency points at 1 MHz spacing.
-* =============================================================================
-
-reset
-noise v(rf_out_ext) V1 lin 201 2.3G 2.5G
-
-setplot noise5
-
-wrdata lna_noise_band_full_resolution_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_band_full_resolution_raw.txt
-
-setplot noise6
-print onoise_total inoise_total > lna_noise_band_full_resolution_integrated.txt
-
-unset sqrnoise
-
-.endc
-
-"
-spice_ignore=true}

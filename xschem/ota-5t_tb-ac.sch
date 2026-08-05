@@ -113,7 +113,6 @@ C {spice_probe.sym} 850 -620 0 0 {name=p5 attrs=""}
 C {spice_probe.sym} 1210 -590 0 0 {name=p6 attrs=""}
 C {spice_probe.sym} 1120 -430 0 0 {name=p7 attrs=""}
 C {lab_wire.sym} 1120 -490 0 0 {name=p8 sig_type=std_logic lab=v_ena}
-C {ota-5t.sym} 990 -510 0 0 {name=x1}
 C {devices/code_shown.sym} 50 -60 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -136,3 +135,4 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice typical
 "
 spice_ignore=true}
+C {/home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/xschem/ota-5t.sym} 990 -510 0 0 {name=x1}
