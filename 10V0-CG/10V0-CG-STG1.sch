@@ -13,8 +13,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -28,15 +28,15 @@ logx=0
 logy=0
 }
 B 2 1030 40 1830 440 {flags=graph
-y1=-14.724977
-y2=33.685905
+y1=-7.0975487
+y2=31.631157
 ypos1=0
 ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -57,8 +57,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -80,8 +80,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -103,8 +103,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -125,8 +125,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -148,8 +148,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=0.038095872
+x2=0.038095872
 divx=5
 subdivx=8
 xlabmag=1.0
@@ -172,8 +172,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -194,8 +194,8 @@ ypos2=2
 divy=5
 subdivy=4
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=4
 xlabmag=1.0
@@ -217,8 +217,8 @@ ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=1.0916813
+x2=1.0916813
 divx=5
 subdivx=1
 xlabmag=1.0
@@ -232,15 +232,15 @@ logx=0
 logy=0
 }
 B 2 120 -2290 920 -1890 {flags=graph
-y1=-36.053012
-y2=74.047468
+y1=-729.45679
+y2=-619.35631
 ypos1=0
 ypos2=2
 divy=5
 subdivy=1
 unity=1
-x1=1.2725754e+09
-x2=5.3685754e+09
+x1=0.038095872
+x2=0.038095872
 divx=5
 subdivx=8
 xlabmag=1.0
@@ -295,37 +295,17 @@ N 0 -1610 0 -1590 {lab=#net2
 }
 N -320 -1610 -320 -1410 {lab=#net2
 }
-N -810 -1410 -770 -1410 {lab=Vm1
-spice_ignore=true}
-N -770 -1410 -770 -1380 {lab=Vm1
-spice_ignore=true}
-N -810 -1380 -810 -1320 {lab=Vm1
-spice_ignore=true}
-N -810 -1510 -810 -1440 {lab=#net4
-spice_ignore=true}
-N -880 -1410 -850 -1410 {lab=#net5
-spice_ignore=true}
-N -1100 -1410 -1100 -1290 {lab=#net6
-spice_ignore=true}
 N 60 -1010 380 -1010 {lab=0
 }
 N 0 -1010 60 -1010 {lab=0
 }
 N -160 -1610 0 -1610 {lab=#net2
 }
-N -940 -1410 -880 -1410 {lab=#net5
-spice_ignore=true}
-N -1040 -1410 -1000 -1410 {lab=#net5
-spice_ignore=true}
 N -230 -1290 -190 -1290 {lab=#net1
 }
 N -130 -1290 -70 -1290 {lab=#net1
 }
-N -1000 -1410 -940 -1410 {lab=#net5
-spice_ignore=true}
 N -190 -1290 -130 -1290 {lab=#net1}
-N -810 -1380 -770 -1380 {lab=Vm1
-spice_ignore=true}
 N 0 -1260 40 -1260 {lab=VI1}
 N 130 -1060 130 -1010 {lab=0}
 N 490 -1010 700 -1010 {lab=0}
@@ -377,21 +357,21 @@ N 380 -1610 460 -1610 {lab=#net2}
 N 460 -1610 460 -1590 {lab=#net2}
 N 790 -1610 790 -1540 {lab=#net2}
 N 460 -1610 790 -1610 {lab=#net2}
-N 700 -1510 750 -1510 {lab=#net4}
+N 700 -1510 750 -1510 {lab=VO01}
 N 790 -1510 850 -1510 {lab=VO3}
 N 850 -1510 850 -1480 {lab=VO3}
 N 790 -1480 850 -1480 {lab=VO3}
 N 790 -1480 790 -1160 {lab=VO3}
 N 790 -1100 790 -1010 {lab=0}
 N 700 -1010 790 -1010 {lab=0}
-N 1040 -1200 1040 -1170 {lab=#net5}
+N 1040 -1200 1040 -1170 {lab=#net4}
 N 1040 -1110 1040 -1010 {lab=0}
 N 790 -1010 1040 -1010 {lab=0}
 N 610 -1510 640 -1510 {lab=VO2}
 N 750 -1100 750 -1010 {lab=0}
-N 750 -1270 750 -1160 {lab=#net6}
-N 750 -1510 750 -1330 {lab=#net4}
-N 1000 -1200 1040 -1200 {lab=#net5}
+N 750 -1270 750 -1160 {lab=#net5}
+N 750 -1510 750 -1330 {lab=VO01}
+N 1000 -1200 1040 -1200 {lab=#net4}
 N 790 -1200 940 -1200 {lab=VO3}
 C {devices/code_shown.sym} 1600 -730 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
@@ -424,7 +404,7 @@ C {gnd.sym} -330 -1290 1 0 {name=l2 lab=0
 }
 C {vsource.sym} -320 -1380 0 1 {name=V3 value=10 savecurrent=false
 }
-C {devices/launcher.sym} 390 -120 0 0 {name=h1
+C {devices/launcher.sym} 390 -130 0 0 {name=h1
 descr="load op & annotate" 
 tclcommand="xschem raw_read $netlist_dir/10V0-CG-STG1.raw; set show_hidden_texts 1; xschem annotate_op"}
 C {capa.sym} -260 -1130 3 0 {name=C1
@@ -443,42 +423,48 @@ m=1
 }
 C {lab_wire.sym} -130 -1130 0 0 {name=p2 sig_type=std_logic lab=VI1
 }
-C {devices/code_shown.sym} 1130 -1160 0 0 {name=NGSPICE2 only_toplevel=true
+C {devices/code_shown.sym} 2060 -800 0 0 {name=NGSPICE2 only_toplevel=true
 value="
+
 .control
 op
+
 save all
-show
 write 10V0-CG-STG1.raw
+
+set filetype=ascii
+
+echo ================================================== > 10V0-CG-STG1-op-detailed.txt
+echo GF180MCU 10V0-CG-STG1 detailed operating point >> 10V0-CG-STG1-op-detailed.txt
+echo ================================================== >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- Node voltages and source currents ---- >> 10V0-CG-STG1-op-detailed.txt
+print all >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- All device operating point data ---- >> 10V0-CG-STG1-op-detailed.txt
+show all >> 10V0-CG-STG1-op-detailed.txt
+echo  >> 10V0-CG-STG1-op-detailed.txt
+
+echo ---- Expanded device listing and hierarchy ---- >> 10V0-CG-STG1-op-detailed.txt
+listing e >> 10V0-CG-STG1-op-detailed.txt
+
 sp lin 1001 1 10e9 1
 write 10V0-CG-STG1-sp.raw
+
 ac lin 1001 1 10e9
 write 10V0-CG-STG1-ac.raw
+
 .endc
 "
 }
 C {vsource.sym} -1070 -1410 1 0 {name=V5 value=3.55 savecurrent=false
 spice_ignore=true}
-C {lab_wire.sym} -810 -1350 0 0 {name=p3 sig_type=std_logic lab=Vm1
-spice_ignore=true}
 C {lab_wire.sym} 610 -1510 0 1 {name=p6 sig_type=std_logic lab=VO2
 }
 C {port_diff.sym} 1040 -1140 0 1 {name=V7 portnum=2 Z0=50 DCval=0 ACmag=0 ACphase=0 TRANval=""
 }
-C {symbols/nfet_10v0_asym.sym} -830 -1410 0 0 {name=M2
-L=0.60u
-W=41.5u
-nf=10
-m=5
-ad="'W * 1.48u'"
-pd="'2 * (W + 1.48u)'"
-as="'W * 0.48u'"
-ps="'2 * (W + 0.48u)'"
-nrd=0 nrs=0
-sa=0 sb=0 sd=0
-model=nfet_10v0_asym
-spiceprefix=X
-spice_ignore=true}
 C {ind.sym} 80 -1100 0 0 {name=L3
 m=1
 value=10n
@@ -598,4 +584,6 @@ m=1
 value=1p
 footprint=1206
 device="ceramic capacitor"
+}
+C {lab_wire.sym} 730 -1510 0 1 {name=p3 sig_type=std_logic lab=VO01
 }

@@ -1,9 +1,9 @@
-v {xschem version=3.4.5 file_version=1.2
-}
+v {xschem version=3.4.8RC file_version=1.3}
 G {}
 K {}
 V {}
 S {}
+F {}
 E {}
 N 250 -90 250 -40 {
 lab=GND}
@@ -107,18 +107,6 @@ sa=0 sb=0 sd=0
 model=nfet_06v0
 spiceprefix=X
 }
-C {code_shown.sym} 140 45 0 0 {name=MODELS only_toplevel=true
-format="tcleval( @value )"
-value="
-.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
-
-.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
-.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice res_typical
-.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice moscap_typical
-.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice diode_typical
-
-.include /foss/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
-"}
 C {code.sym} 1010 60 0 0 {name=s2 only_toplevel=false value="
 .option savecurrents
 
@@ -214,4 +202,12 @@ C {code.sym} 1010 60 0 0 {name=s2 only_toplevel=false value="
   end
 
 .endc
+"}
+C {code_shown.sym} -720 75 0 0 {name=MODELS1 only_toplevel=true
+format="tcleval( @value )"
+value="
+.include $\{::180MCU_MODELS\}/design.ngspice
+
+.lib $\{::180MCU_MODELS\}/sm141064.ngspice typical
+
 "}

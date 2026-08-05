@@ -7,7 +7,7 @@ F {}
 E {}
 N -320 -440 -320 -410 {
 lab=GND}
-N 1040 -270 1060 -270 {
+N 1010 -260 1030 -260 {
 lab=GND}
 N -320 -410 -320 -310 {
 lab=GND}
@@ -23,7 +23,9 @@ N -500 -360 -460 -360 {
 lab=rf_out_ext}
 N -500 -300 -460 -300 {
 lab=GND}
-N 1040 -566.25 1040 -536.25 {
+N 1010 -466.25 1010 -386.25 {
+lab=d}
+N 1010 -556.25 1010 -526.25 {
 lab=vdcbias}
 N -210 -390 -180 -390 {
 lab=vbias_cg}
@@ -31,15 +33,15 @@ N 880 -520 900 -520 {
 lab=s}
 N 550 -520 580 -520 {
 lab=rf_in_pad}
-N 1040 -436.25 1080 -436.25 {
+N 1010 -426.25 1050 -426.25 {
 lab=d}
-N 1140 -436.25 1180 -436.25 {
+N 1110 -426.25 1150 -426.25 {
 lab=g_cs}
-N 1040 -240 1040 -230 {
+N 1010 -230 1010 -220 {
 lab=s}
-N 1040 -230 1040 -200 {
+N 1010 -220 1010 -190 {
 lab=s}
-N 980 -270 1000 -270 {
+N 950 -260 970 -260 {
 lab=g_cg}
 N -320 -310 -320 -110 {
 lab=GND}
@@ -107,9 +109,9 @@ N 1540 -230 1540 -220 {
 lab=#net3}
 N 1480 -260 1500 -260 {
 lab=g_cs}
-N 1337.5 -198.75 1357.5 -198.75 {
+N 1252.5 -308.75 1272.5 -308.75 {
 lab=vbias_cs}
-N 1417.5 -198.75 1447.5 -198.75 {
+N 1332.5 -308.75 1362.5 -308.75 {
 lab=g_cs}
 N 1540 -220 1540 -160 {
 lab=#net3}
@@ -138,11 +140,11 @@ lab=#net6}
 N 780 -520 820 -520 {
 lab=#net7}
 N 1540 -370 1560 -370 {
-lab=vm1}
+lab=GND}
 N 1480 -370 1500 -370 {
 lab=vbias_cas}
 N 1540 -480 1540 -400 {
-lab=vx}
+lab=#net8}
 N -320 -110 -320 20 {
 lab=GND}
 N -230 -160 -200 -160 {
@@ -153,13 +155,13 @@ N 1770 -450 1770 -400 {
 lab=vbuf}
 N 1750 -400 1770 -400 {
 lab=vbuf}
-N 1040 -170 1060 -170 {
+N 1010 -160 1030 -160 {
 lab=GND}
-N 1040 -140 1040 -130 {
+N 1010 -130 1010 -120 {
 lab=GND}
-N 980 -170 1000 -170 {
+N 950 -160 970 -160 {
 lab=vbias_icg}
-N 1040 -130 1040 -110 {
+N 1010 -120 1010 -100 {
 lab=GND}
 N 1660 -320 1710 -320 {
 lab=vbias_buf}
@@ -188,87 +190,30 @@ lab=GND}
 N 1540 -80 1540 -60 {
 lab=GND}
 N 1670 -450 1710 -450 {
-lab=vx}
-N 1040 -356.25 1060 -356.25 {
-lab=GND
-}
-N 981.25 -356.25 1001.25 -356.25 {
-lab=vbias_cas_cg
-}
+lab=#net8}
+N 1010 -356.25 1030 -356.25 {
+lab=GND}
+N 951.25 -356.25 971.25 -356.25 {
+lab=vbias_cas_cg}
 N -360 51.25 -360 81.25 {
 lab=vbias_cas_cg}
 N 1540 -341.25 1540 -288.75 {
 lab=vm1}
+N 1010 -326.25 1010 -288.75 {
+lab=vm2}
 N -360 -40 -360 -8.75 {
 lab=GND}
 N 1540 -450 1670 -450 {
-lab=vx}
-N 1325 -765 1345 -765 {
-lab=GND
-spice_ignore=true}
-N 1325 -735 1325 -725 {
-lab=#net8
-spice_ignore=true}
-N 1265 -765 1285 -765 {
-lab=g_cs
-spice_ignore=true}
-N 1122.5 -703.75 1142.5 -703.75 {
-lab=vbias_cs
-spice_ignore=true}
-N 1202.5 -703.75 1232.5 -703.75 {
-lab=g_cs
-spice_ignore=true}
-N 1325 -725 1325 -665 {
-lab=#net8
-spice_ignore=true}
-N 1325 -1085 1325 -1045 {
-lab=vdcbias
-spice_ignore=true}
-N 1325 -875 1345 -875 {
-lab=GND
-spice_ignore=true}
-N 1265 -875 1285 -875 {
-lab=vbias_cas
-spice_ignore=true}
-N 1325 -985 1325 -905 {
-lab=vx
-spice_ignore=true}
-N 1345 -665 1345 -655 {
-lab=#net8
-spice_ignore=true}
-N 1295 -665 1345 -665 {
-lab=#net8
-spice_ignore=true}
-N 1345 -595 1345 -585 {
-lab=GND
-spice_ignore=true}
-N 1295 -585 1345 -585 {
-lab=GND
-spice_ignore=true}
-N 1295 -665 1295 -655 {
-lab=#net8
-spice_ignore=true}
-N 1295 -595 1295 -585 {
-lab=GND
-spice_ignore=true}
-N 1325 -585 1325 -565 {
-lab=GND
-spice_ignore=true}
-N 1325 -846.25 1325 -793.75 {
-lab=vm1
-spice_ignore=true}
-N 1040 -325 1040 -300 {lab=vm2
-}
-N 1040 -475 1040 -385 {lab=d}
+lab=#net8}
 C {vsource.sym} -240 -390 1 0 {name=VBCG value=\{VBIAS_CG\} savecurrent=false}
-C {gnd.sym} 1040 -110 0 0 {name=l1 lab=GND}
+C {gnd.sym} 1010 -100 0 0 {name=l1 lab=GND}
 C {vsource.sym} -320 -470 0 0 {name=VDD value=\{VDS\} savecurrent=false}
-C {capa.sym} 1110 -436.25 3 0 {name=C12
+C {capa.sym} 1080 -426.25 3 0 {name=C12
 m=1
 value=20p
 footprint=1206
 device="ceramic capacitor"}
-C {lab_pin.sym} 1040 -426.25 0 0 {name=p3 sig_type=std_logic lab=d}
+C {lab_pin.sym} 1010 -416.25 0 0 {name=p3 sig_type=std_logic lab=d}
 C {lab_pin.sym} -460 -510 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
 C {lab_pin.sym} -460 -450 2 0 {name=p6 sig_type=std_logic lab=GND
 
@@ -276,20 +221,20 @@ C {lab_pin.sym} -460 -450 2 0 {name=p6 sig_type=std_logic lab=GND
 C {lab_pin.sym} -460 -300 2 0 {name=p8 sig_type=std_logic lab=GND}
 C {capa.sym} 850 -520 3 0 {name=CIN
 m=1
-value=10p
+value=20p
 footprint=1206
 device="ceramic capacitor"}
 C {gnd.sym} -320 20 0 0 {name=l3 lab=GND}
 C {lab_pin.sym} -320 -530 0 0 {name=p10 sig_type=std_logic lab=vdcbias
 }
 C {lab_pin.sym} -180 -390 2 0 {name=p9 sig_type=std_logic lab=vbias_cg}
-C {lab_pin.sym} 1040 -566.25 0 0 {name=p11 sig_type=std_logic lab=vdcbias
+C {lab_pin.sym} 1010 -556.25 0 0 {name=p11 sig_type=std_logic lab=vdcbias
 }
-C {lab_pin.sym} 1180 -436.25 2 0 {name=p14 sig_type=std_logic lab=g_cs}
+C {lab_pin.sym} 1150 -426.25 2 0 {name=p14 sig_type=std_logic lab=g_cs}
 C {port_diff.sym} -500 -480 0 0 {name=V1 portnum=1 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=""}
 C {port_diff.sym} -500 -330 0 0 {name=V2 portnum=2 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=""}
-C {lab_pin.sym} 1040 -210 2 0 {name=p1 sig_type=std_logic lab=s}
-C {lab_pin.sym} 1060 -270 2 0 {name=p2 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 1010 -200 2 0 {name=p1 sig_type=std_logic lab=s}
+C {lab_pin.sym} 1030 -260 2 0 {name=p2 sig_type=std_logic lab=GND}
 C {code.sym} 1842.5 93.75 0 0 {name=s2 only_toplevel=false value="
 
 
@@ -317,7 +262,7 @@ C {code.sym} 1842.5 93.75 0 0 {name=s2 only_toplevel=false value="
 * FIXED XM2 COMMON-GATE INPUT STAGE
 * =============================================================================
 
-.param VBIAS_CG=2.00
+.param VBIAS_CG=2.20
 .param W_CG=140u
 .param M_CG=2
 .param L_CG=0.60u
@@ -1114,7 +1059,7 @@ plot wbmd
 .endc
 
 "}
-C {symbols/nfet_06v0.sym} 1020 -270 0 0 {name=M2
+C {symbols/nfet_06v0.sym} 990 -260 0 0 {name=M2
 L=0.6u
 W=70u
 nf=10
@@ -1138,7 +1083,7 @@ C {lab_pin.sym} 640 -70 0 0 {name=p20 sig_type=std_logic lab=vbias_cg}
 C {lab_pin.sym} 750 -70 2 0 {name=p21 sig_type=std_logic lab=g_cg}
 C {capa.sym} 680 -150 3 0 {name=CBCG
 m=1
-value=10p
+value=20p
 footprint=1206
 device="ceramic capacitor"}
 C {lab_pin.sym} 750 -150 2 0 {name=p19 sig_type=std_logic lab=GND}
@@ -1193,9 +1138,9 @@ C {lab_pin.sym} 2310 -560 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
 C {lab_pin.sym} -460 -360 2 0 {name=p7 sig_type=std_logic lab=rf_out_ext}
 C {vsource.sym} -260 -270 1 0 {name=VBCS value=\{VBIAS_CS\} savecurrent=false}
 C {lab_pin.sym} -200 -270 2 0 {name=p12 sig_type=std_logic lab=vbias_cs}
-C {lab_pin.sym} 980 -270 0 0 {name=p4 sig_type=std_logic lab=g_cg}
+C {lab_pin.sym} 950 -260 0 0 {name=p4 sig_type=std_logic lab=g_cg}
 C {lab_pin.sym} 620 -150 0 0 {name=p15 sig_type=std_logic lab=g_cg}
-C {res.sym} 1040 -506.25 0 0 {name=RD1_LOAD
+C {res.sym} 1010 -496.25 0 0 {name=RD1_LOAD
 value=760
 footprint=1206
 device=resistor
@@ -1203,13 +1148,13 @@ m=1
 }
 C {lab_pin.sym} 1540 -60 3 0 {name=p16 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 1480 -260 0 0 {name=p18 sig_type=std_logic lab=g_cs}
-C {res.sym} 1387.5 -198.75 1 0 {name=RBCS
+C {res.sym} 1302.5 -308.75 1 0 {name=RBCS
 value=50k
 footprint=1206
 device=resistor
 m=1}
-C {lab_pin.sym} 1337.5 -198.75 0 0 {name=p23 sig_type=std_logic lab=vbias_cs}
-C {lab_pin.sym} 1447.5 -198.75 2 0 {name=p24 sig_type=std_logic lab=g_cs}
+C {lab_pin.sym} 1252.5 -308.75 0 0 {name=p23 sig_type=std_logic lab=vbias_cs}
+C {lab_pin.sym} 1362.5 -308.75 2 0 {name=p24 sig_type=std_logic lab=g_cs}
 C {res.sym} 1540 -510 0 0 {name=RD2_LOAD
 value=490
 footprint=1206
@@ -1264,7 +1209,8 @@ C {res.sym} 750 -520 1 0 {name=RLIN
 value=2.26
 footprint=1206
 device=resistor
-m=1}
+m=1
+}
 C {symbols/nfet_06v0.sym} 1520 -370 0 0 {name=M4
 L=0.6u
 W=70u
@@ -1280,18 +1226,18 @@ model=nfet_06v0
 spiceprefix=X
 }
 C {lab_pin.sym} 1480 -370 0 0 {name=p47 sig_type=std_logic lab=vbias_cas}
-C {lab_pin.sym} 1560 -370 2 0 {name=p48 sig_type=std_logic lab=vm1}
+C {lab_pin.sym} 1560 -370 2 0 {name=p48 sig_type=std_logic lab=GND}
 C {vsource.sym} -260 -160 1 0 {name=VBCS1 value=\{VBIAS_CAS\} savecurrent=false}
 C {lab_pin.sym} -200 -160 2 0 {name=p49 sig_type=std_logic lab=vbias_cas}
-C {lab_pin.sym} 1060 -170 2 0 {name=p41 sig_type=std_logic lab=GND}
-C {lab_pin.sym} 980 -170 0 0 {name=p50 sig_type=std_logic lab=vbias_icg}
+C {lab_pin.sym} 1030 -160 2 0 {name=p41 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 950 -160 0 0 {name=p50 sig_type=std_logic lab=vbias_icg}
 C {lab_pin.sym} 1660 -320 0 0 {name=p51 sig_type=std_logic lab=vbias_buf}
 C {lab_pin.sym} 1800 -320 2 0 {name=p52 sig_type=std_logic lab=GND}
 C {vsource.sym} -410 -40 3 0 {name=VBCS2 value=\{VBIAS_BUF\} savecurrent=false}
 C {lab_pin.sym} -470 -40 0 0 {name=p53 sig_type=std_logic lab=vbias_buf}
 C {vsource.sym} -420 -150 3 0 {name=VBCS3 value=\{VBIAS_ICG\} savecurrent=false}
 C {lab_pin.sym} -480 -150 0 0 {name=p54 sig_type=std_logic lab=vbias_icg}
-C {symbols/nfet_03v3.sym} 1020 -170 0 0 {name=M5
+C {symbols/nfet_03v3.sym} 990 -160 0 0 {name=M5
 L=0.5u
 W=30u
 nf=10
@@ -1345,11 +1291,10 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {lab_pin.sym} 981.25 -356.25 0 0 {name=p57 sig_type=std_logic lab=vbias_cas_cg
-}
+C {lab_pin.sym} 951.25 -356.25 0 0 {name=p57 sig_type=std_logic lab=vbias_cas_cg}
 C {vsource.sym} -360 21.25 2 0 {name=VBCS4 value=\{VBIAS_CAS_CG\} savecurrent=false}
 C {lab_pin.sym} -360 81.25 3 0 {name=p58 sig_type=std_logic lab=vbias_cas_cg}
-C {symbols/nfet_06v0.sym} 1020 -356.25 0 0 {name=M7
+C {symbols/nfet_06v0.sym} 990 -356.25 0 0 {name=M7
 L=0.6u
 W=50u
 nf=10
@@ -1382,81 +1327,6 @@ value="
 .include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
 *.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
 "}
-C {lab_pin.sym} 1040 -311.25 2 0 {name=p42 sig_type=std_logic lab=vm2
-}
-C {lab_pin.sym} 1060 -356.25 2 0 {name=p46 sig_type=std_logic lab=GND
-}
+C {lab_pin.sym} 1010 -311.25 2 0 {name=p42 sig_type=std_logic lab=vm2}
+C {lab_pin.sym} 1030 -356.25 2 0 {name=p46 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 1540 -318.75 0 0 {name=p56 sig_type=std_logic lab=vm1}
-C {lab_pin.sym} 1325 -565 3 0 {name=p59 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {lab_pin.sym} 1265 -765 0 0 {name=p60 sig_type=std_logic lab=g_cs
-spice_ignore=true}
-C {res.sym} 1172.5 -703.75 1 0 {name=RBCS1
-value=50k
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} 1122.5 -703.75 0 0 {name=p61 sig_type=std_logic lab=vbias_cs
-spice_ignore=true}
-C {lab_pin.sym} 1232.5 -703.75 2 0 {name=p62 sig_type=std_logic lab=g_cs
-spice_ignore=true}
-C {res.sym} 1325 -1015 0 0 {name=RD1
-value=490
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {lab_pin.sym} 1325 -1085 0 0 {name=p63 sig_type=std_logic lab=vdcbias
-spice_ignore=true}
-C {symbols/nfet_06v0.sym} 1305 -875 0 0 {name=M8
-L=0.6u
-W=70u
-nf=10
-m=1
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_06v0
-spiceprefix=X
-spice_ignore=true}
-C {lab_pin.sym} 1265 -875 0 0 {name=p64 sig_type=std_logic lab=vbias_cas
-spice_ignore=true}
-C {lab_pin.sym} 1345 -875 2 0 {name=p65 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {res.sym} 1295 -625 0 0 {name=RS_EQ1
-value=7
-footprint=1206
-device=resistor
-m=1
-spice_ignore=true}
-C {capa.sym} 1345 -625 0 0 {name=CS_EQ1
-m=1
-value=12p
-footprint=1206
-device="ceramic capacitor"
-spice_ignore=true}
-C {lab_pin.sym} 1345 -765 2 0 {name=p66 sig_type=std_logic lab=GND
-spice_ignore=true}
-C {symbols/nfet_03v3.sym} 1305 -765 0 0 {name=M9
-L=0.28u
-W=40u
-nf=10
-m=2
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_03v3
-spiceprefix=X
-spice_ignore=true}
-C {lab_pin.sym} 1325 -823.75 0 0 {name=p67 sig_type=std_logic lab=vm1
-spice_ignore=true}
-C {lab_pin.sym} 1633.75 -450 1 0 {name=p68 sig_type=std_logic lab=vx}
-C {lab_pin.sym} 1325 -941.25 2 0 {name=p69 sig_type=std_logic lab=vx
-spice_ignore=true}
