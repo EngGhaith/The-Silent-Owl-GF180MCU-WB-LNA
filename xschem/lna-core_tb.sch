@@ -199,7 +199,7 @@ C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 
 .param VDD=5.0
 
-.param L_BW=3n
+.param L_BW=4n
 .param R_BW=0.2
 
 .param RNC_TEST=1m
@@ -598,6 +598,9 @@ let s12re=real(s_1_2)
 let s12im=imag(s_1_2)
 let s22re=real(s_2_2)
 let s22im=imag(s_2_2)
+
+let z22re=real(z_2_2)
+let z22im=imag(z_2_2)
 
 let nfdb=real(NF)
 let nfmin_db=real(NFmin)
@@ -1099,25 +1102,26 @@ echo ============================================================ >> lna_core_06
 setplot $rfplot
 setscale fghz
 
-plot s11db xlimit 2.3 2.5
-plot s21db xlimit 2.3 2.5
-plot s12db xlimit 2.3 2.5
-plot s22db xlimit 2.3 2.5
-plot nfdb nfmin_db xlimit 2.3 2.5
+*plot s11db xlimit 2.3 2.5
+*plot s21db xlimit 2.3 2.5
+*plot s12db xlimit 2.3 2.5
+*plot s22db xlimit 2.3 2.5
+*plot nfdb nfmin_db xlimit 2.3 2.5
 
-plot s11db xlimit 0 7
-plot s21db xlimit 0 7
-plot s12db xlimit 0 7
-plot s22db xlimit 0 7
-plot nfdb nfmin_db xlimit 0 7
+plot s11db s22db s21db xlimit 0.5 5 ylimit -30 20
+*plot z22re z22im xlimit 0.5 5
+*plot s21db xlimit 0 7
+*plot s12db xlimit 0 7
+*plot s22db xlimit 0 7
+plot nfdb nfmin_db xlimit 0.5 5 ylimit 0 5
 
 setplot $nc_off_plot
 setscale fghz_nc
 set xbrushwidth=2
 
-plot nf_nc_on nf_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'Noise figure (dB)'
-plot nf_improvement_db xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'NF OFF - NF ON (dB)'
-plot s21_nc_on s21_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'S21 (dB)'
+*plot nf_nc_on nf_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'Noise figure (dB)'
+*plot nf_improvement_db xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'NF OFF - NF ON (dB)'
+*plot s21_nc_on s21_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'S21 (dB)'
 
 .endc
 "
@@ -1148,7 +1152,7 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 .param VDS=5.0
 .param VDDIO_SUP=5.0
 
-.param L_BW=3n
+.param L_BW=2n
 .param R_BW=0.2
 
 
