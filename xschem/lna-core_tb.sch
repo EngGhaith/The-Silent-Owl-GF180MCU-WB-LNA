@@ -71,7 +71,8 @@ lab=rf_in_ext}
 N 280 -1370 320 -1370 {
 lab=rf_out_pad}
 N 180 -1370 220 -1370 {
-lab=#net2}
+lab=#net2
+}
 N 80 -1370 120 -1370 {
 lab=rf_out_ext}
 N -200 -450 -200 -390 {lab=GND}
@@ -114,6 +115,10 @@ N -590 -1020 -560 -1020 {
 lab=vbias_casc}
 N -680 -1020 -650 -1020 {
 lab=GND}
+N 230 -1440 280 -1440 {lab=rf_out_pad}
+N 280 -1440 280 -1370 {lab=rf_out_pad}
+N 120 -1440 170 -1440 {lab=rf_out_ext}
+N 120 -1440 120 -1370 {lab=rf_out_ext}
 C {lna_core.sym} 480 -910 0 0 {name=x1}
 C {vsource.sym} -200 -510 0 0 {name=VDD value=\{VDD\} savecurrent=false}
 C {lab_pin.sym} -340 -840 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
@@ -157,7 +162,8 @@ C {lab_pin.sym} 300 -830 0 0 {name=p14 sig_type=std_logic lab=vbias_casc}
 C {lab_pin.sym} 300 -810 0 0 {name=p15 sig_type=std_logic lab=vbias_buf}
 C {lab_pin.sym} 480 -1080 1 0 {name=p16 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 480 -740 3 0 {name=p17 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 660 -910 2 0 {name=p18 sig_type=std_logic lab=rf_out_pad}
+C {lab_pin.sym} 660 -910 2 0 {name=p18 sig_type=std_logic lab=rf_out_pad
+}
 C {ind.sym} 250 -1210 1 0 {name=LBW_IN
 m=1
 value=\{L_BW\}
@@ -174,12 +180,14 @@ C {ind.sym} 250 -1370 1 0 {name=LBW_IN1
 m=1
 value=\{L_BW\}
 footprint=1206
-device=inductor}
+device=inductor
+}
 C {res.sym} 150 -1370 1 0 {name=RBW_IN1
 value=\{R_BW\}
 footprint=1206
 device=resistor
-m=1}
+m=1
+}
 C {lab_pin.sym} 80 -1370 0 0 {name=p37 sig_type=std_logic lab=rf_out_ext}
 C {lab_pin.sym} 320 -1370 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
 C {code_shown.sym} 50 -505 0 0 {name=MODELS only_toplevel=true
@@ -199,7 +207,7 @@ C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 
 .param VDD=5.0
 
-.param L_BW=4n
+.param L_BW=3n
 .param R_BW=0.2
 
 .param RNC_TEST=1m
@@ -1108,7 +1116,8 @@ setscale fghz
 *plot s22db xlimit 2.3 2.5
 *plot nfdb nfmin_db xlimit 2.3 2.5
 
-plot s11db s22db s21db xlimit 0.5 5 ylimit -30 20
+plot s11db s22db s21db xlimit 0.5 5 ylimit -30 30
+plot s22re s22im xlimit 2.2 2.6 ylimit -1 1
 *plot z22re z22im xlimit 0.5 5
 *plot s21db xlimit 0 7
 *plot s12db xlimit 0 7
@@ -1173,3 +1182,9 @@ C {gf180mcu_fd_io__asig_5p0.sym} -185 -1460 0 0 {name=x2 model=gf180mcu_fd_io__a
 }
 C {gf180mcu_fd_io__asig_5p0.sym} -185 -1095 0 0 {name=x3 model=gf180mcu_fd_io__asig_5p0
 }
+C {res.sym} 200 -1440 3 0 {name=RBW_IN2
+value=1u
+footprint=1206
+device=resistor
+m=1
+spice_ignore=true}
