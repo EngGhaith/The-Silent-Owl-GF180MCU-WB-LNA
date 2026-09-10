@@ -82,14 +82,18 @@ N 1240 -670 1260 -670 {
 lab=vbias_cas}
 N 1300 -630 1300 -590 {
 lab=vm1}
-N 760 -420 780 -420 {
-lab=vss}
-N 760 -390 760 -380 {
-lab=vss}
-N 700 -420 720 -420 {
-lab=vbias_icg}
-N 760 -380 760 -360 {
-lab=vss}
+N 1070 -330 1090 -330 {
+lab=vss
+spice_ignore=true}
+N 1070 -300 1070 -290 {
+lab=vss
+spice_ignore=true}
+N 1010 -330 1030 -330 {
+lab=vbias_icg
+spice_ignore=true}
+N 1070 -290 1070 -270 {
+lab=vss
+spice_ignore=true}
 N 2440 -1500 2490 -1500 {
 lab=vss
 spice_ignore=true}
@@ -128,7 +132,8 @@ N 1300 -1240 1300 -1180 {lab=vdd}
 N 2330 -1680 2330 -1650 {lab=vss
 spice_ignore=true}
 N 550 -830 550 -790 {lab=g_cg}
-N 760 -580 760 -450 {lab=s}
+N 1070 -490 1070 -360 {lab=s
+spice_ignore=true}
 N 510 -580 760 -580 {lab=s}
 N 760 -800 760 -620 {lab=s}
 N 340 -830 700 -830 {lab=g_cg}
@@ -204,6 +209,8 @@ N 410 -1000 620 -1000 {lab=vm2}
 N 410 -1040 410 -1000 {lab=vm2}
 N 410 -1200 410 -1100 {lab=vdd}
 N 410 -1200 620 -1200 {lab=vdd}
+N 760 -580 760 -470 {lab=s}
+N 760 -410 760 -370 {lab=vss}
 C {lab_pin.sym} 760 -1130 0 0 {name=p11 sig_type=std_logic lab=vdd
 }
 C {lab_wire.sym} 900 -1000 0 0 {name=p14 sig_type=std_logic lab=g_cs}
@@ -270,7 +277,7 @@ sa=0 sb=0 sd=0
 model=nfet_06v0
 spiceprefix=X
 }
-C {symbols/nfet_03v3.sym} 740 -420 0 0 {name=M5
+C {symbols/nfet_03v3.sym} 1050 -330 0 0 {name=M5
 L=0.5u
 W=15u
 nf=10
@@ -283,7 +290,7 @@ nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
-}
+spice_ignore=true}
 C {symbols/nfet_03v3.sym} 2420 -1500 0 0 {name=M6
 L=0.5u
 W=25u
@@ -410,15 +417,18 @@ C {iopin.sym} 1240 -670 0 1 {name=p61 lab=vbias_cas}
 C {iopin.sym} 120 -670 0 1 {name=p62 lab=vss}
 C {iopin.sym} 2380 -1500 2 0 {name=p64 lab=vbias_buf
 }
-C {iopin.sym} 700 -420 0 1 {name=p65 lab=vbias_icg}
-C {lab_pin.sym} 760 -360 3 0 {name=p5 sig_type=std_logic lab=vss}
+C {iopin.sym} 1010 -330 0 1 {name=p65 lab=vbias_icg
+spice_ignore=true}
+C {lab_pin.sym} 1070 -270 3 0 {name=p5 sig_type=std_logic lab=vss
+spice_ignore=true}
 C {lab_pin.sym} 1300 -360 3 0 {name=p7 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 2440 -1440 3 0 {name=p8 sig_type=std_logic lab=vss
 spice_ignore=true}
 C {lab_pin.sym} 2800 -1430 3 0 {name=p9 sig_type=std_logic lab=vss
 spice_ignore=true}
 C {lab_pin.sym} 550 -690 3 0 {name=p10 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 780 -420 2 0 {name=p2 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 1090 -330 2 0 {name=p2 sig_type=std_logic lab=vss
+spice_ignore=true}
 C {lab_pin.sym} 780 -830 2 0 {name=p12 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 700 -1070 0 0 {name=p16 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 500 -920 2 1 {name=p3 sig_type=std_logic lab=vss}
@@ -520,10 +530,17 @@ value=800f
 footprint=1206
 device="ceramic capacitor"
 spice_ignore=true}
-C {symbols/cap_mim_2f0fF.sym} 340 -340 1 0 {name=C14
+C {symbols/cap_mim_2f0fF.sym} 1220 -220 1 0 {name=C14
 W=58.2168u
 L=58.2168u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1
 spice_ignore=true}
+C {ind.sym} 760 -440 2 0 {name=LIN1
+m=1
+value=7n
+footprint=1206
+device=inductor
+}
+C {lab_pin.sym} 760 -370 3 0 {name=p19 sig_type=std_logic lab=vss}

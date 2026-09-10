@@ -341,3 +341,5 @@ append XSCHEM_LIBRARY_PATH :${PDK_ROOT}/gf180mcuD/libs.tech/xschem
 if { [info exists ::env(XSCHEM_USER_LIBRARY_PATH) ] } {
     append XSCHEM_LIBRARY_PATH :$env(XSCHEM_USER_LIBRARY_PATH)
 }
+
+set xschem_execute_scripts 0
