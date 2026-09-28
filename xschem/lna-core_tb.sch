@@ -62,17 +62,17 @@ N -108.75 -450 -78.75 -450 {
 lab=vss}
 N -200 -450 -168.75 -450 {
 lab=GND}
-N 280 -1210 320 -1210 {
+N 490 -1220 530 -1220 {
 lab=rf_in_pad}
-N 180 -1210 220 -1210 {
+N 390 -1220 430 -1220 {
 lab=#net1}
-N 80 -1210 120 -1210 {
+N 290 -1220 330 -1220 {
 lab=rf_in_ext}
 N 280 -1370 320 -1370 {
 lab=rf_out_pad}
 N 180 -1370 220 -1370 {
 lab=#net2
-}
+spice_ignore=short}
 N 80 -1370 120 -1370 {
 lab=rf_out_ext}
 N -200 -450 -200 -390 {lab=GND}
@@ -119,7 +119,8 @@ N 230 -1440 280 -1440 {lab=rf_out_pad}
 N 280 -1440 280 -1370 {lab=rf_out_pad}
 N 120 -1440 170 -1440 {lab=rf_out_ext}
 N 120 -1440 120 -1370 {lab=rf_out_ext}
-C {lna_core.sym} 480 -910 0 0 {name=x1}
+C {lna_core.sym} 480 -910 0 0 {name=x1
+}
 C {vsource.sym} -200 -510 0 0 {name=VDD value=\{VDD\} savecurrent=false}
 C {lab_pin.sym} -340 -840 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
 C {lab_pin.sym} -340 -780 2 0 {name=p6 sig_type=std_logic lab=GND
@@ -164,18 +165,18 @@ C {lab_pin.sym} 480 -1080 1 0 {name=p16 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 480 -740 3 0 {name=p17 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 660 -910 2 0 {name=p18 sig_type=std_logic lab=rf_out_pad
 }
-C {ind.sym} 250 -1210 1 0 {name=LBW_IN
+C {ind.sym} 460 -1220 1 0 {name=LBW_IN
 m=1
 value=\{L_BW\}
 footprint=1206
 device=inductor}
-C {res.sym} 150 -1210 1 0 {name=RBW_IN
+C {res.sym} 360 -1220 1 0 {name=RBW_IN
 value=\{R_BW\}
 footprint=1206
 device=resistor
 m=1}
-C {lab_pin.sym} 80 -1210 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext}
-C {lab_pin.sym} 320 -1210 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 290 -1220 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext}
+C {lab_pin.sym} 530 -1220 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
 C {ind.sym} 250 -1370 1 0 {name=LBW_IN1
 m=1
 value=\{L_BW\}
@@ -1117,7 +1118,7 @@ setscale fghz
 *plot nfdb nfmin_db xlimit 2.3 2.5
 
 plot s11db s22db s21db xlimit 0.5 5 ylimit -30 30
-plot s22re s22im xlimit 2.2 2.6 ylimit -1 1
+plot s11re s11im xlimit 2.2 2.6 ylimit -1 1
 *plot z22re z22im xlimit 0.5 5
 *plot s21db xlimit 0 7
 *plot s12db xlimit 0 7
@@ -1187,4 +1188,34 @@ value=1u
 footprint=1206
 device=resistor
 m=1
+spice_ignore=true}
+C {code_shown.sym} 760 -1730 0 0 {name=ngspice_s1 only_toplevel=true 
+value="
+
+.temp 25
+
+.control
+
+*set spnum = 1
+
+*foreach Lval 1n 2n 3n 4n 5n 10n
+*	alter l.x1.l1 $Lval
+
+*foreach Rval 2.5 5 7.5 10 12.5 15
+*	alter r.x1.Rs $Rval
+
+	sp lin 500 100e6 10e9 1
+*end
+
+*plot vdb(sp1.s_2_1) vdb(sp2.s_2_1) vdb(sp3.s_2_1) vdb(sp4.s_2_1) vdb(sp5.s_2_1) vdb(sp6.s_2_1)
+plot vdb(sp1.s_2_1)
+plot nf NFmin
+plot vdb(sp1.s_1_1)
+write lna-core_tb.raw
+
+let Rbase = 50
+wrs2p /foss/designs/lna_core_tb.s2p
+
+.endc
+"
 spice_ignore=true}
