@@ -1,0 +1,339 @@
+<title>ngspice-47 moscap bug</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:            #f4f6f5;
+    --surface:       #ffffff;
+    --surface-2:     #eef1f0;
+    --border:        #dbe1df;
+    --text-primary:  #12181a;
+    --text-secondary:#57635f;
+    --text-muted:    #8a948f;
+    --accent:        #0f5c5c;
+    --accent-soft:   #0f5c5c14;
+    --code-bg:       #0f1618;
+    --code-text:     #d9e6e2;
+    --code-dim:      #7f938c;
+    --code-red:      #ff8577;
+    --code-green:    #6fd6a0;
+    --code-border:   #24312f;
+    --bad:           #b3392f;
+    --bad-soft:      #b3392f14;
+    --good:          #1a7a4c;
+    --good-soft:     #1a7a4c14;
+    --shadow: 0 1px 2px rgba(20,30,28,.06), 0 8px 24px -12px rgba(20,30,28,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg:            #0c1112;
+      --surface:       #131a1c;
+      --surface-2:     #182022;
+      --border:        #263030;
+      --text-primary:  #eaf1ef;
+      --text-secondary:#a6b3af;
+      --text-muted:    #71807b;
+      --accent:        #4fd6c4;
+      --accent-soft:   #4fd6c422;
+      --code-bg:       #0a0f10;
+      --code-text:     #d9e6e2;
+      --code-dim:      #6c8079;
+      --code-red:      #ff9d90;
+      --code-green:    #7fe0ad;
+      --code-border:   #1c2624;
+      --bad:           #ef7d6f;
+      --bad-soft:      #ef7d6f1c;
+      --good:          #63d99a;
+      --good-soft:     #63d99a1c;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:            #0c1112;
+    --surface:       #131a1c;
+    --surface-2:     #182022;
+    --border:        #263030;
+    --text-primary:  #eaf1ef;
+    --text-secondary:#a6b3af;
+    --text-muted:    #71807b;
+    --accent:        #4fd6c4;
+    --accent-soft:   #4fd6c422;
+    --code-bg:       #0a0f10;
+    --code-text:     #d9e6e2;
+    --code-dim:      #6c8079;
+    --code-red:      #ff9d90;
+    --code-green:    #7fe0ad;
+    --code-border:   #1c2624;
+    --bad:           #ef7d6f;
+    --bad-soft:      #ef7d6f1c;
+    --good:          #63d99a;
+    --good-soft:     #63d99a1c;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text-primary);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    padding:40px 20px 64px;
+  }
+  .wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:30px;}
+
+  header{display:flex;flex-direction:column;gap:10px;}
+  .eyebrow{
+    font-family:"IBM Plex Mono", ui-monospace, monospace;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .tag{
+    background:var(--bad-soft); color:var(--bad); border:1px solid currentColor;
+    padding:2px 7px; border-radius:4px; font-size:10.5px; letter-spacing:.06em;
+  }
+  h1{
+    margin:0; font-size:27px; line-height:1.25; font-weight:700;
+    text-wrap:balance; letter-spacing:-.01em;
+  }
+  h1 code{font-family:"IBM Plex Mono",monospace; font-size:.78em; font-weight:600;
+    background:var(--surface-2); padding:2px 6px; border-radius:5px; color:var(--bad);}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12.5px; color:var(--text-muted);
+    font-family:"IBM Plex Mono",monospace;}
+  .meta-row b{color:var(--text-secondary); font-weight:600;}
+
+  section{display:flex; flex-direction:column; gap:12px;}
+  h2{
+    font-size:12px; text-transform:uppercase; letter-spacing:.07em; font-weight:600;
+    color:var(--accent); margin:0; display:flex; align-items:center; gap:8px;
+  }
+  h2::after{content:''; flex:1; height:1px; background:var(--border);}
+  p{margin:0; color:var(--text-primary); font-size:15px; line-height:1.65; max-width:66ch;}
+  p.lede{font-size:15.5px; color:var(--text-secondary);}
+  code{font-family:"IBM Plex Mono",monospace; font-size:.88em; background:var(--surface-2);
+    padding:1px 5px; border-radius:4px; color:var(--text-primary);}
+  strong{font-weight:600;}
+  ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px;}
+  li{font-size:15px; line-height:1.6;}
+
+  .callout{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0; padding:16px 18px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:8px;
+  }
+
+  /* environment table */
+  .envtable{border-collapse:collapse; width:100%; font-size:13.5px;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+    box-shadow:var(--shadow);}
+  .envtable td{padding:9px 14px; border-bottom:1px solid var(--border);}
+  .envtable tr:last-child td{border-bottom:none;}
+  .envtable td:first-child{color:var(--text-secondary); width:220px; font-weight:500;}
+  .envtable td:last-child{font-family:"IBM Plex Mono",monospace; font-size:12.5px;}
+  .flag{display:inline-flex; align-items:center; gap:5px; font-weight:600; padding:1px 8px;
+    border-radius:20px; font-size:11.5px; font-family:"IBM Plex Mono",monospace;}
+  .flag.bad{background:var(--bad-soft); color:var(--bad);}
+  .flag.good{background:var(--good-soft); color:var(--good);}
+
+  /* code block */
+  .code-panel{
+    background:var(--code-bg); border:1px solid var(--code-border); border-radius:10px;
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .code-panel .bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; border-bottom:1px solid var(--code-border);
+    font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--code-dim);
+    letter-spacing:.03em; text-transform:uppercase;
+  }
+  .code-panel .bar .stat{font-weight:600; letter-spacing:.02em; text-transform:none;}
+  .code-panel .bar .stat.bad{color:var(--code-red);}
+  .code-panel .bar .stat.good{color:var(--code-green);}
+  .code-panel pre{
+    margin:0; padding:14px 16px; overflow-x:auto; font-family:"IBM Plex Mono",monospace;
+    font-size:12.5px; line-height:1.65; color:var(--code-text); white-space:pre;
+  }
+  .code-panel pre .hl{color:var(--code-red); font-weight:600;}
+  .code-panel pre .ok{color:var(--code-green); font-weight:600;}
+  .code-panel pre .dim{color:var(--code-dim);}
+  .code-panel .diff-add{color:var(--code-green);}
+  .code-panel .diff-rm{color:var(--code-red);}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:640px){ .two-col{grid-template-columns:1fr;} }
+  .col-label{
+    display:flex; align-items:center; gap:6px; font-family:"IBM Plex Mono",monospace;
+    font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; margin-bottom:8px;
+  }
+  .col-label.bad{color:var(--bad);}
+  .col-label.good{color:var(--good);}
+  .col-label .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+  .fact-strip{display:flex; flex-wrap:wrap; gap:10px;}
+  .fact{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:8px 12px; font-size:13px; display:flex; align-items:center; gap:8px;
+    box-shadow:var(--shadow);
+  }
+  .fact .ic{width:16px;height:16px;flex:none;}
+
+  .formula{
+    font-family:"IBM Plex Mono",monospace; font-size:14px; text-align:center;
+    background:var(--accent-soft); border:1px solid var(--border); border-radius:8px;
+    padding:14px; color:var(--text-primary);
+  }
+  .formula .op{color:var(--accent); font-weight:700; margin:0 10px;}
+
+  footer{
+    border-top:1px solid var(--border); padding-top:18px; margin-top:6px;
+    font-size:12.5px; color:var(--text-muted); font-family:"IBM Plex Mono",monospace;
+    line-height:1.7;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">GF180MCU &middot; ngspice-47 <span class="tag">simulator bug</span></div>
+    <h1>ngspice-47 fails to load GF180MCU I/O pad netlists &mdash; <code>unknown parameter (e9)</code></h1>
+    <p class="lede">Every branch of the Silent Owl LNA (<code>main</code>, <code>dev_ghaith</code>, <code>dev_ilir</code>) instantiates the same GF180MCU RF pad cell. Its vendor SPICE model triggers a netlist-parser bug in ngspice-47 that aborts simulation before any analysis runs &mdash; independent of the LNA circuit itself.</p>
+    <div class="meta-row">
+      <span><b>Scope</b> all 3 branches</span>
+      <span><b>Stage</b> circuit load (pre-analysis)</span>
+      <span><b>Status</b> workaround applied, upstream fix needed</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Summary</h2>
+    <p><code>ngspice-47</code> cannot load any GF180MCU netlist that instantiates the <code>gf180mcu_fd_io__asig_*</code> I/O pad cells, because the pad's vendor model uses an <code>X</code>-instance multiplier (<code>m=</code>) on a subcircuit containing a <strong>nonlinear (voltage-dependent) behavioral capacitor</strong> (<code>C &hellip; C='&lt;expr&gt;'</code>). Combining <code>m=</code> with that kind of capacitor corrupts an internally auto-generated element line, and the simulator aborts before any analysis runs.</p>
+    <p>The PDK's own <code>versions.txt</code> pins <strong>ngspice&nbsp;43</strong> as the intended simulator; only <strong>ngspice-47</strong> is installed here. This looks like a regression between those releases &mdash; not confirmed against 43 directly, since no 43 binary was available to test.</p>
+  </section>
+
+  <section>
+    <h2>Environment</h2>
+    <table class="envtable">
+      <tr><td>ngspice (installed)</td><td><span class="flag bad">ngspice-47</span>&nbsp; KLU direct-solver build</td></tr>
+      <tr><td>ngspice (PDK-declared)</td><td><span class="flag good">43</span>&nbsp; from <code>/foss/pdks/versions.txt</code>, not installed here</td></tr>
+      <tr><td>xschem</td><td>3.4.8RC</td></tr>
+      <tr><td>PDK</td><td>GF180MCU (gf180mcuD, open_pdks) &middot; models sm141064.ngspice</td></tr>
+      <tr><td>Failing include</td><td>gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Symptom</h2>
+    <p>Netlisting <code>xschem/lna-core_tb.sch</code> (any branch) and running the result through <code>ngspice&nbsp;-b</code> fails immediately at circuit-load time, before any <code>.control</code> statement executes:</p>
+    <div class="code-panel">
+      <div class="bar"><span>ngspice -b lna-core_tb.spice</span><span class="stat bad">aborted</span></div>
+      <pre>Error on line 1412 or its substitute:
+  g.x2.x1.gc_moscap x2.x1.c_moscap_int1 0 0 vddio   3.600000000000000e+01    e9
+  <span class="hl">unknown parameter (e9)</span>
+    Simulation interrupted due to error!
+
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!</pre>
+    </div>
+    <p><code>x2</code> is the <code>gf180mcu_fd_io__asig_5p0</code> RF pad instance; <code>.x1</code> and <code>c_moscap</code> are internal to the pad's vendor subcircuit &mdash; nothing in the LNA design is involved. <code>g.x2.x1.gc_moscap</code> and <code>x2.x1.c_moscap_int1</code> are ngspice's own auto-generated helper names for the nonlinear capacitor, created when it expands a <code>C=&lt;expr&gt;</code> line into charge-storage form &mdash; they appear in no source file.</p>
+  </section>
+
+  <section>
+    <h2>Minimal reproduction</h2>
+    <p>Fully independent of the LNA circuit &mdash; reproduces with a 2-line netlist against the stock PDK files:</p>
+    <div class="code-panel">
+      <div class="bar"><span>repro.spice</span><span class="stat">8 lines</span></div>
+      <pre>.title moscap_m_bug
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib     /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+.lib     /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice moscap_typical
+
+<span class="hl">X1 vdd 0 cap_nmos_06v0 m=1.0 c_length=15e-6 c_width=15e-6</span>
+V1 vdd 0 3.3
+.control
+op
+.endc
+.end</pre>
+    </div>
+    <p>Result: same <code>unknown parameter (e9)</code> error. Isolating further:</p>
+    <ul>
+      <li>Removing <code>m=</code> entirely (any value, including the implicit default <code>m=1</code>) &rarr; <strong>works</strong>.</li>
+      <li>Keeping <code>m=</code> but swapping in a <strong>linear</strong> capacitor (plain numeric <code>C=</code>, no voltage dependence) &rarr; <strong>works</strong>.</li>
+      <li>Keeping the nonlinear cap and <code>m=</code> together, at <em>any</em> multiplier &mdash; tested <code>1.0</code>, <code>2.0</code>, <code>4.0</code>, <code>36.0</code>, <code>36</code> &mdash; &rarr; <strong>fails identically every time</strong>.</li>
+    </ul>
+    <p>So the trigger is specifically <strong><code>m=</code> on an X-instance of a subcircuit containing a <code>C ... C='&lt;expr&gt;'</code> capacitor</strong> &mdash; independent of the multiplier's magnitude.</p>
+    <div class="code-panel">
+      <div class="bar"><span>sm141064.ngspice &middot; cap_nmos_06v0</span><span class="stat">vendor model</span></div>
+      <pre>.subckt cap_nmos_06v0 1 2 c_length=l c_width=w dtemp=0
+.param cvar1=0.001107
+.param cvar2=0.00107
+.param cvar3=6.25
+.param cvar4=-4.1875
+c_moscap 1 2 c='cap_nmos_06v0_corner*c_length*c_width*(cvar1+cvar2*tanh(cvar3*v(1,2)+cvar4))' dtemp=dtemp
+.ends cap_nmos_06v0</pre>
+    </div>
+    <p>The I/O pad file instantiates it 18 times, always as <code>X&lt;n&gt; &lt;net1&gt; &lt;net2&gt; cap_nmos_06v0 m=&lt;M&gt; c_length=&lt;L&gt; c_width=&lt;W&gt;</code> &mdash; ESD/decoupling MOS-caps, <code>m</code> ranging 4&ndash;70 across the 18 sites.</p>
+  </section>
+
+  <section>
+    <h2>Impact</h2>
+    <p>Any GF180MCU design instantiating <code>gf180mcu_fd_io__asig_*</code> &mdash; or presumably any pad relying on <code>cap_nmos_06v0</code> / <code>cap_pmos_06v0</code> / <code>cap_nmos_03v3</code> / <code>cap_pmos_03v3</code> with an <code>m=</code> multiplier &mdash; cannot be netlisted-and-run at all under this ngspice-47 build. The failure is at circuit load, before any analysis, so it blocks every simulation type equally: <code>.op</code>, <code>.ac</code>, <code>sp</code>, <code>.noise</code>, transient.</p>
+  </section>
+
+  <section>
+    <h2>Workaround applied</h2>
+    <p><code>cap_nmos_06v0</code>'s capacitance is <strong>exactly linear in <code>c_width</code></strong> &mdash; the <code>tanh(...)</code> term depends only on terminal voltage, never on width &mdash; so folding the multiplier into the width is an algebraic identity, not an approximation:</p>
+    <div class="formula">m = M,&nbsp; c_width = W&nbsp;&nbsp;<span class="op">&equiv;</span>&nbsp;&nbsp;(no m),&nbsp; c_width = M&times;W</div>
+    <p>A local patched copy of just the I/O pad file was made &mdash; the shared <code>/foss/pdks</code> install was left untouched &mdash; rewriting all 18 <code>m=</code>-bearing instances this way:</p>
+    <div class="code-panel">
+      <div class="bar"><span>gf180mcu_fd_io.spice &middot; local patch</span><span class="stat">1 of 18 sites</span></div>
+      <pre><span class="diff-rm">- X1 DVDD DVSS cap_nmos_06v0 m=36.0 c_length=15e-6 c_width=15e-6</span>
+<span class="diff-add">+ X1 DVDD DVSS cap_nmos_06v0 c_length=15e-6 c_width=0.00054</span></pre>
+    </div>
+    <p>Each generated testbench netlist's <code>.include</code> for the pad file was redirected to this patched copy before invoking <code>ngspice&nbsp;-b</code>. All three branches then netlist and simulate to completion.</p>
+  </section>
+
+  <section>
+    <h2>Evidence &mdash; unmodified <code>main</code> branch netlist</h2>
+    <div class="two-col">
+      <div>
+        <div class="col-label bad"><span class="dot"></span>buggy &middot; stock pad file</div>
+        <div class="code-panel">
+          <div class="bar"><span>lna-core_tb.spice</span><span class="stat bad">FAIL</span></div>
+          <pre>$ ngspice -b lna-core_tb.spice
+...
+Error on line 1412:
+  <span class="hl">unknown parameter (e9)</span>
+Simulation interrupted!
+Error: incomplete or empty
+netlist &mdash; no simulations run!</pre>
+        </div>
+      </div>
+      <div>
+        <div class="col-label good"><span class="dot"></span>patched &middot; m folded into width</div>
+        <div class="code-panel">
+          <div class="bar"><span>lna-core_tb.patched.spice</span><span class="stat good">OK</span></div>
+          <pre>$ ngspice -b lna-core_tb.patched.spice
+...
+No. of Data Rows : 7000  <span class="dim">(broadband sp, 1M&ndash;7GHz)</span>
+No. of Data Rows : 7000  <span class="dim">(target-band sp)</span>
+No. of Data Rows : 352   <span class="dim">(stability, 10M&ndash;30GHz)</span>
+<span class="ok">Simulation executed from .control</span></pre>
+        </div>
+      </div>
+    </div>
+    <p>Patched run yields, e.g., DC operating point <code>ICORE_A&nbsp;0.0261771</code>, <code>S11_DB&nbsp;&minus;18.8465</code>, <code>S21_DB&nbsp;17.7832</code> at 2.4&nbsp;GHz &mdash; see the full three-branch S-parameter/NF comparison for details.</p>
+  </section>
+
+  <section>
+    <h2>Recommendation</h2>
+    <ul>
+      <li>Treat this as an <strong>ngspice-47 regression</strong>, not a PDK or design bug &mdash; file it upstream against ngspice (netlist parser / nonlinear-capacitor expansion), referencing the 8-line repro above.</li>
+      <li>Until fixed: either pin the PDK-recommended <strong>ngspice&nbsp;43</strong> for this flow, or apply the <code>m=</code>&rarr;<code>c_width</code> folding workaround to any locally used copy of the affected library file &mdash; never edit the shared <code>/foss/pdks</code> install in place.</li>
+      <li>Worth checking whether other GF180MCU pad/cell files beyond <code>gf180mcu_fd_io.spice</code> use the same <code>m=</code> + nonlinear-cap pattern &mdash; they would hit the identical failure.</li>
+    </ul>
+  </section>
+
+  <footer>
+    docs/ngspice47_moscap_m_bug_report.md &middot; The-Silent-Owl-GF180MCU-WB-LNA &middot; investigated while running the 3-branch S-parameter/NF comparison
+  </footer>
+</div>
