@@ -1,0 +1,46 @@
+# ----- ------ ----- ----- ------ ----- ----- ------ -----
+# Chipathon 2026: Project configuration
+# LICENSE: Apache License Version 2.0
+# Team A38: The Silent Owl — GF180MCU Wide-Band LNA
+# ----- ------ ----- ----- ------ ----- ----- ------ -----
+
+project:
+  title: "The Silent Owl: GF180MCU Wide-Band LNA"
+  team: "A38 The Silent Owl"
+  discord: ""  # Optional: enter a confirmed team Discord username
+  description: "GF180MCU low-noise amplifier with RF input matching, common-gate/common-source gain stages, and external analog bias controls."
+  lvs_config: "lvs_config.json"  
+  gf_def_ready: false           # Set true only after GF padframe/DEF preparation is verified
+  ws_def_ready: false           # Set true only after Wafer Space padframe/DEF preparation is verified
+  drc_ready: false              # Set true only when submission GDS is integration/DRC ready
+  lvs_ready: false              # Set true only when the final GDS and LVS inputs are ready
+
+# Intended seven-pin interface for the current active schematic:
+# 2 RF ports + 3 external analog biases + power + ground.
+# The last ctrl[7:0] is dedicated for adjustable components in the circuit. Considered right now as spare bits. Have to be buffered when used.
+
+pins:
+  - name: vss
+    io_type: ground
+
+  - name: rf_in_pad
+    io_type: analog
+
+  - name: vbias_cg
+    io_type: analog
+
+  - name: vbias_cs
+    io_type: analog
+
+  - name: vbias_cas
+    io_type: analog
+
+  - name: rf_out_pad
+    io_type: analog
+
+  - name: vdd
+    io_type: power
+
+  - name: ctrl[7:0]
+    io_type: digital
+
