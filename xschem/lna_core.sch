@@ -381,8 +381,8 @@ spiceprefix=X
 m=1
 }
 C {symbols/cap_mim_2f0fF.sym} 170 -510 0 0 {name=C5
-W=10u
-L=10u
+W=15.075u
+L=15.075u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1
@@ -527,3 +527,20 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1
 spice_ignore=true}
+C {lab_wire.sym} 1220 -1000 0 0 {name=pRT101 sig_type=std_logic lab=vout_tank}
+C {symbols/cap_mim_2f0fF.sym} 400 -2000 0 0 {name=CTUNE_M2
+W=18.9u
+L=18.9u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 400 -2030 0 0 {name=pRT102 sig_type=std_logic lab=vdd}
+C {lab_wire.sym} 400 -1970 0 0 {name=pRT103 sig_type=std_logic lab=vm2}
+C {symbols/cap_mim_2f0fF.sym} 800 -2000 0 0 {name=CTUNE_OUT
+W=26.728u
+L=26.728u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=1}
+C {lab_wire.sym} 800 -2030 0 0 {name=pRT104 sig_type=std_logic lab=vdd}
+C {lab_wire.sym} 800 -1970 0 0 {name=pRT105 sig_type=std_logic lab=vout_tank}
