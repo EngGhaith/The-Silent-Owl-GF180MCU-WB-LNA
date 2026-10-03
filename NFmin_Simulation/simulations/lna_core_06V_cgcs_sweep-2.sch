@@ -588,8 +588,8 @@ value="
 .lib $\{::180MCU_MODELS\}/sm141064.ngspice diode_typical
 
 
-.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
-*.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
+*.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
 "}
 C {code_shown.sym} 2520 -1000 0 0 {name=s1 only_toplevel=false value="
 .param VBIAS_CAS_CG=3.30

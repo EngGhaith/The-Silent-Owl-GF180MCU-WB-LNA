@@ -24,7 +24,7 @@ lab=rf_out_ext}
 N -500 -300 -460 -300 {
 lab=GND}
 N 1010 -470 1010 -390 {
-lab=d}
+lab=vm2}
 N 1010 -560 1010 -530 {
 lab=vdcbias}
 N -210 -390 -180 -390 {
@@ -34,7 +34,7 @@ lab=s}
 N 550 -520 580 -520 {
 lab=rf_in_pad}
 N 1010 -430 1050 -430 {
-lab=d}
+lab=vm2}
 N 1110 -430 1150 -430 {
 lab=g_cs}
 N 1010 -230 1010 -220 {
@@ -256,13 +256,9 @@ N 1190 -260 1230 -260 {
 lab=s}
 N 1290 -260 1330 -260 {
 lab=g_csc}
-N 1010 -360 1030 -360 {
-lab=d}
 N 1010 -330 1010 -320 {
-lab=d}
-N 950 -360 970 -360 {
-lab=d}
-N 1010 -320 1010 -290 {lab=d}
+lab=vm2}
+N 1010 -320 1010 -290 {lab=vm2}
 N -308.75 210 -278.75 210 {
 lab=vbias_cas_cg}
 N -400 210 -368.75 210 {
@@ -276,6 +272,7 @@ N 1540 -460 1620 -460 {lab=vx}
 N 1620 -560 1620 -540 {lab=vdcbias}
 N 1540 -560 1620 -560 {lab=vdcbias}
 N 1620 -470 1620 -460 {lab=vx}
+N 1010 -390 1010 -330 {lab=vm2}
 C {vsource.sym} -240 -390 1 0 {name=VBCG value=\{VBIAS_CG\} savecurrent=false}
 C {gnd.sym} 1010 -100 0 0 {name=l1 lab=GND}
 C {vsource.sym} -320 -470 0 0 {name=VDD value=\{VDS\} savecurrent=false}
@@ -284,7 +281,6 @@ m=1
 value=\{C12_VAL\}
 footprint=1206
 device="ceramic capacitor"}
-C {lab_pin.sym} 1010 -420 0 0 {name=p3 sig_type=std_logic lab=d}
 C {lab_pin.sym} -460 -510 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
 C {lab_pin.sym} -460 -450 2 0 {name=p6 sig_type=std_logic lab=GND
 
@@ -634,8 +630,8 @@ value="
 .lib $\{::180MCU_MODELS\}/sm141064.ngspice diode_typical
 
 
-.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
-*.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
+*.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
 "}
 C {code_shown.sym} 1660 80 0 0 {name=s1 only_toplevel=false value="
 .param VBIAS_CAS_CG=3.30
@@ -30983,22 +30979,6 @@ quit
 
 "
 spice_ignore=true}
-C {symbols/nfet_06v0.sym} 990 -360 0 0 {name=M10
-L=\{L_CAS_CG\}
-W=\{W_CAS_CG\}
-nf=10
-m=\{M_CAS_CG\}
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_06v0
-spiceprefix=X
-spice_ignore=short}
-C {lab_pin.sym} 950 -360 0 0 {name=p31 sig_type=std_logic lab=vbias_cas_cg}
-C {lab_pin.sym} 1030 -360 2 0 {name=p70 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 1010 -318.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1540 -318.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {vsource.sym} -338.75 210 1 0 {name=VBCS6 value=\{VBIAS_CAS_CG\} savecurrent=false}

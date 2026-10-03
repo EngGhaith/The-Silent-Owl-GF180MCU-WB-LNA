@@ -753,8 +753,8 @@ value="
 .lib $\{::180MCU_MODELS\}/sm141064.ngspice diode_typical
 
 
-.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
-*.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice
+*.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
 "}
 C {code_shown.sym} 2700 -510 0 0 {name=s1 only_toplevel=false value="
 
@@ -1802,7 +1802,7 @@ plot s21_nc_on s21_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'S21 (d
 .endc
 
 "
-}
+spice_ignore=true}
 C {ind.sym} 1460 -510 0 0 {name=LD2
 m=1
 value=\{LD2\}
@@ -1829,202 +1829,476 @@ set numdgt=12
 set width=240
 set wr_vecnames
 set wr_singlescale
-
-* Report noise as power quantities:
-* spectral:   V^2/Hz
-* integrated: V^2
-set sqrnoise
-
-* Remove earlier plots so the generated plot names are predictable:
-* noise1 = center spectral
-* noise2 = center integrated
-* noise3 = band spectral
-* noise4 = band integrated
-destroy all
-
-echo ============================================================
-echo BEGIN_PER_SOURCE_NOISE_REPORT
-echo CIRCUIT GF180MCU_LNA_CORE_06V_CGCS
-echo OUTPUT_NODE rf_out_ext
-echo INPUT_SOURCE V1
-echo SPECTRAL_UNITS V2_PER_HZ
-echo INTEGRATED_UNITS V2
-echo ============================================================
-
-* =============================================================================
-* 1. CENTER-FREQUENCY BREAKDOWN
-*
-* Three frequency points:
-*   2.399 GHz
-*   2.400 GHz
-*   2.401 GHz
-*
-* pts_per_summary = 1 prints every internal noise generator at every point.
-* =============================================================================
-
-reset
-
-echo ============================================================
-echo CENTER_NOISE_BREAKDOWN_BEGIN
-echo FREQUENCIES_HZ 2.399E9 2.400E9 2.401E9
-echo ============================================================
-
-noise v(rf_out_ext) V1 lin 3 2.399G 2.401G 1
-
-* Save total output/input PSD versus frequency.
-setplot noise1
-wrdata lna_noise_center_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_center_spectral.raw all
-
-* Save and print integrated center-window noise.
-setplot noise2
-print onoise_total inoise_total
-write lna_noise_center_integrated.raw all
-
-echo ============================================================
-echo CENTER_NOISE_BREAKDOWN_END
-echo ============================================================
-
-* =============================================================================
-* 2. TARGET-BAND BREAKDOWN, 2.3–2.5 GHz
-*
-* 201 points produce 1 MHz spacing.
-*
-* pts_per_summary = 20 prints detailed per-source contributions
-* approximately every 20 MHz:
-*   2.300, 2.320, ..., 2.500 GHz
-*
-* Change 20 to 1 to print every source at every 1 MHz point.
-* =============================================================================
-
-reset
-
-echo ============================================================
-echo TARGET_BAND_NOISE_BREAKDOWN_BEGIN
-echo START_HZ 2.300E9
-echo STOP_HZ 2.500E9
-echo POINTS 201
-echo DEVICE_SUMMARY_EVERY_POINTS 20
-echo ============================================================
-
-noise v(rf_out_ext) V1 lin 201 2.3G 2.5G 20
-
-* Save total spectral noise.
-setplot noise3
-wrdata lna_noise_band_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_band_spectral.raw all
-
-* Save and print integrated target-band noise.
-setplot noise4
-print onoise_total inoise_total
-write lna_noise_band_integrated.raw all
-
-echo ============================================================
-echo TARGET_BAND_NOISE_BREAKDOWN_END
-echo ============================================================
-
-echo IDEAL_CAPACITORS_AND_INDUCTORS_HAVE_ZERO_INTRINSIC_NOISE
-echo INDUCTOR_LOSS_APPEARS_UNDER_ITS_EXPLICIT_SERIES_RESISTOR
-echo PAD_NOISE_APPEARS_USING_HIERARCHICAL_X3_AND_X4_INTERNAL_NAMES
-
-echo ============================================================
-echo GENERATED_DATA_FILES
-echo CENTER_TOTAL_PSD lna_noise_center_total_psd.dat
-echo CENTER_SPECTRAL_RAW lna_noise_center_spectral.raw
-echo CENTER_INTEGRATED_RAW lna_noise_center_integrated.raw
-echo BAND_TOTAL_PSD lna_noise_band_total_psd.dat
-echo BAND_SPECTRAL_RAW lna_noise_band_spectral.raw
-echo BAND_INTEGRATED_RAW lna_noise_band_integrated.raw
-echo END_PER_SOURCE_NOISE_REPORT
-echo ============================================================
-
-unset sqrnoise
-
-* =============================================================================
-* COMPLETE NOISE-CONTRIBUTION EXTRACTION
-* =============================================================================
-
-set numdgt=12
-set width=240
-set wr_vecnames
-set wr_singlescale
-set sqrnoise
 set filetype=ascii
 
-* Makes noise plot numbering predictable:
-* noise1/noise2 = center contributor analysis
-* noise3/noise4 = band contributor analysis
-* noise5/noise6 = full-resolution total band analysis
-destroy all
-
 * =============================================================================
-* 1. CONTRIBUTOR BREAKDOWN AROUND 2.4 GHz
-* =============================================================================
-
-reset
-noise v(rf_out_ext) V1 lin 3 2.399G 2.401G 1
-
-setplot noise1
-
-* List every vector ngspice generated.
-display > lna_noise_center_vector_names.txt
-
-* ASCII raw-format text file containing every available contributor vector.
-write lna_noise_center_all_sources.txt
-
-* Simple table containing only total noise.
-wrdata lna_noise_center_total_psd.dat onoise_spectrum inoise_spectrum
-
-setplot noise2
-write lna_noise_center_integrated_all.txt
-print onoise_total inoise_total > lna_noise_center_integrated_totals.txt
-
-* =============================================================================
-* 2. CONTRIBUTOR BREAKDOWN ACROSS 2.3–2.5 GHz
+* SEQUENTIAL MATCHING OPTIMIZER FOR:
+* lna_core_06V_cgcs_nc_bias.sch
 *
-* Eleven points:
-* 2.300, 2.320, ..., 2.500 GHz
+* Stage 1:
+*   Sweep input L_IN and C_SH_IN.
+*   Keep the existing output network fixed at:
+*       L_OUT = 1.2 nH
+*       C_SH_OUT = 220 fF
+*   Select and freeze the best input pair.
 *
-* Final argument 1 requests contributor data at every simulated point.
-* =============================================================================
-
-reset
-noise v(rf_out_ext) V1 lin 11 2.3G 2.5G 1
-
-setplot noise3
-
-display > lna_noise_band_vector_names.txt
-write lna_noise_band_all_sources.txt
-wrdata lna_noise_band_summary_total_psd.dat onoise_spectrum inoise_spectrum
-
-setplot noise4
-write lna_noise_band_integrated_all.txt
-print onoise_total inoise_total > lna_noise_band_integrated_totals.txt
-
-* =============================================================================
-* 3. FULL-RESOLUTION TOTAL NOISE
+* Stage 2:
+*   With the best input pair frozen, sweep L_OUT and C_SH_OUT.
+*   Select and freeze the best output pair.
 *
-* No pts_per_summary argument is used here.
-* This preserves all 201 frequency points at 1 MHz spacing.
+* Stage 3:
+*   Run final 2.3-2.5 GHz results and 10 MHz-30 GHz stability.
+*
+* Main files:
+*   lna_match_sweep_results.txt
+*   lna_match_sweep_final_band.dat
+*   lna_match_sweep_stability.dat
+*
+* IMPORTANT:
+* Use the corrected manually-scaled extracted pad model before running.
 * =============================================================================
 
+echo ============================================================ > lna_match_sweep_results.txt
+echo GF180MCU_LNA_SEQUENTIAL_MATCHING_OPTIMIZATION >> lna_match_sweep_results.txt
+echo CIRCUIT lna_core_06V_cgcs_nc_bias >> lna_match_sweep_results.txt
+echo TARGET_FREQUENCY_HZ 2.400e9 >> lna_match_sweep_results.txt
+echo TARGET_BAND_HZ 2.300e9 2.500e9 >> lna_match_sweep_results.txt
+echo PACKAGE_L_BW_H 3e-9 PACKAGE_R_BW_OHM 0.2 >> lna_match_sweep_results.txt
+echo METHOD INPUT_FIRST_FREEZE_THEN_OUTPUT_FREEZE >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+
+* =============================================================================
+* Persistent best-value variables.
+* Shell variables are used because they survive reset and plot changes.
+* =============================================================================
+
+set best_input_score=1e99
+set best_l_in=1.5n
+set best_c_sh_in=1f
+set best_input_nf=1e99
+set best_input_s11_worst=0
+set best_input_s21_min=0
+set best_input_mu_min=0
+set best_input_mup_min=0
+
+set best_output_score=1e99
+set best_l_out=1.2n
+set best_c_sh_out=220f
+set best_output_nf=1e99
+set best_output_s11_worst=0
+set best_output_s22_worst=0
+set best_output_s21_min=0
+set best_output_ripple=0
+set best_output_mu_min=0
+set best_output_mup_min=0
+
+* =============================================================================
+* STAGE 1: INPUT SWEEP
+*
+* Broad coarse sweep because this actual circuit differs from the earlier
+* lna_core subcircuit. The present baseline L_IN=1.5n is included.
+*
+* Selection priorities:
+*   1. Worst S11 over 2.3-2.5 GHz should be <= -10 dB.
+*   2. Minimum S21 should remain >= 13 dB.
+*   3. Minimize NF at 2.4 GHz.
+*   4. Require mu and mu-prime >= 1.10 in the target band.
+* =============================================================================
+
+* Hold the output network at the current schematic values.
+alterparam L_OUT=1.2n
+alterparam C_SH_OUT=220f
 reset
-noise v(rf_out_ext) V1 lin 201 2.3G 2.5G
 
-setplot noise5
+echo INPUT_SWEEP_BEGIN >> lna_match_sweep_results.txt
+echo COLUMNS L_IN_H C_SH_IN_F SCORE NF_2P4_DB S11_WORST_DB S21_MIN_DB MU_MIN MUP_MIN >> lna_match_sweep_results.txt
 
-wrdata lna_noise_band_full_resolution_total_psd.dat onoise_spectrum inoise_spectrum
-write lna_noise_band_full_resolution_raw.txt
+foreach sweep_l_in 0.8n 1.2n 1.5n 1.8n 2.2n 2.6n 3.0n 3.4n 3.8n 4.2n
 
-setplot noise6
-print onoise_total inoise_total > lna_noise_band_full_resolution_integrated.txt
+    foreach sweep_c_sh_in 1f 0.10p 0.20p 0.30p 0.40p 0.50p 0.60p 0.80p
 
-unset sqrnoise
+        alterparam L_IN=$sweep_l_in
+        alterparam C_SH_IN=$sweep_c_sh_in
+        alterparam L_OUT=1.2n
+        alterparam C_SH_OUT=220f
+        reset
+
+        * Exactly 2.3, 2.4 and 2.5 GHz.
+        * Final argument 1 enables the SP noise quantities NF and NFmin.
+        sp lin 3 2.3G 2.5G 1
+
+        let in_s11db=db(s_1_1)
+        let in_s21db=db(s_2_1)
+        let in_nfdb=real(NF)
+
+        let in_delta=s_1_1*s_2_2-s_1_2*s_2_1
+        let in_a11=mag(s_1_1)
+        let in_a12=mag(s_1_2)
+        let in_a21=mag(s_2_1)
+        let in_a22=mag(s_2_2)
+
+        let in_mu=(1-in_a11*in_a11)/(mag(s_2_2-in_delta*conj(s_1_1))+mag(s_1_2*s_2_1))
+        let in_mup=(1-in_a22*in_a22)/(mag(s_1_1-in_delta*conj(s_2_2))+mag(s_1_2*s_2_1))
+
+        * Index 1 is exactly 2.4 GHz.
+        let in_nf_c=in_nfdb[1]
+        let in_s11_worst=maximum(in_s11db)
+        let in_s21_min=minimum(in_s21db)
+        let in_mu_min=minimum(in_mu)
+        let in_mup_min=minimum(in_mup)
+
+        * Base objective: lower center-frequency NF is better.
+        let in_score=in_nf_c
+
+        * Strong input-match penalty.
+        if in_s11_worst > -10
+            let in_error=in_s11_worst+10
+            let in_score=in_score+6*in_error*in_error
+        end
+
+        * Preserve gain across the complete target band.
+        if in_s21_min < 13
+            let in_error=13-in_s21_min
+            let in_score=in_score+10*in_error*in_error
+        end
+
+        * Strong target-band stability penalties.
+        if in_mu_min < 1.10
+            let in_error=1.10-in_mu_min
+            let in_score=in_score+2000*in_error*in_error
+        end
+
+        if in_mup_min < 1.10
+            let in_error=1.10-in_mup_min
+            let in_score=in_score+2000*in_error*in_error
+        end
+
+        echo INPUT_CANDIDATE $sweep_l_in $sweep_c_sh_in $&in_score $&in_nf_c $&in_s11_worst $&in_s21_min $&in_mu_min $&in_mup_min >> lna_match_sweep_results.txt
+
+        if in_score < $best_input_score
+            set best_input_score=$&in_score
+            set best_l_in=$sweep_l_in
+            set best_c_sh_in=$sweep_c_sh_in
+            set best_input_nf=$&in_nf_c
+            set best_input_s11_worst=$&in_s11_worst
+            set best_input_s21_min=$&in_s21_min
+            set best_input_mu_min=$&in_mu_min
+            set best_input_mup_min=$&in_mup_min
+        end
+
+        destroy $curplot
+
+    end
+end
+
+echo INPUT_SWEEP_END >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+echo BEST_INPUT_VALUES >> lna_match_sweep_results.txt
+echo L_IN_H $best_l_in >> lna_match_sweep_results.txt
+echo C_SH_IN_F $best_c_sh_in >> lna_match_sweep_results.txt
+echo SCORE $best_input_score >> lna_match_sweep_results.txt
+echo NF_2P4_DB $best_input_nf >> lna_match_sweep_results.txt
+echo S11_WORST_2P3_TO_2P5_DB $best_input_s11_worst >> lna_match_sweep_results.txt
+echo S21_MIN_2P3_TO_2P5_DB $best_input_s21_min >> lna_match_sweep_results.txt
+echo MU_MIN_2P3_TO_2P5 $best_input_mu_min >> lna_match_sweep_results.txt
+echo MUP_MIN_2P3_TO_2P5 $best_input_mup_min >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+
+* Freeze selected input network.
+alterparam L_IN=$best_l_in
+alterparam C_SH_IN=$best_c_sh_in
+reset
+
+* =============================================================================
+* STAGE 2: OUTPUT SWEEP
+*
+* The current baseline L_OUT=1.2n and C_SH_OUT=220f are included.
+*
+* Selection priorities:
+*   1. Worst S22 over 2.3-2.5 GHz should be <= -10 dB.
+*   2. Preserve input matching.
+*   3. Minimum S21 >= 13 dB.
+*   4. Gain ripple <= 1.5 dB.
+*   5. Avoid NF degradation.
+*   6. mu and mu-prime >= 1.10.
+* =============================================================================
+
+echo OUTPUT_SWEEP_BEGIN >> lna_match_sweep_results.txt
+echo COLUMNS L_OUT_H C_SH_OUT_F SCORE NF_2P4_DB S11_WORST_DB S22_WORST_DB S21_MIN_DB RIPPLE_DB MU_MIN MUP_MIN >> lna_match_sweep_results.txt
+
+foreach sweep_l_out 0.3n 0.5n 0.7n 0.9n 1.1n 1.2n 1.3n 1.5n 1.7n 1.9n 2.1n
+
+    foreach sweep_c_sh_out 1f 0.10p 0.20p 0.22p 0.30p 0.40p 0.50p 0.70p 0.90p 1.10p
+
+        alterparam L_IN=$best_l_in
+        alterparam C_SH_IN=$best_c_sh_in
+        alterparam L_OUT=$sweep_l_out
+        alterparam C_SH_OUT=$sweep_c_sh_out
+        reset
+
+        sp lin 3 2.3G 2.5G 1
+
+        let out_s11db=db(s_1_1)
+        let out_s21db=db(s_2_1)
+        let out_s22db=db(s_2_2)
+        let out_nfdb=real(NF)
+
+        let out_delta=s_1_1*s_2_2-s_1_2*s_2_1
+        let out_a11=mag(s_1_1)
+        let out_a12=mag(s_1_2)
+        let out_a21=mag(s_2_1)
+        let out_a22=mag(s_2_2)
+
+        let out_mu=(1-out_a11*out_a11)/(mag(s_2_2-out_delta*conj(s_1_1))+mag(s_1_2*s_2_1))
+        let out_mup=(1-out_a22*out_a22)/(mag(s_1_1-out_delta*conj(s_2_2))+mag(s_1_2*s_2_1))
+
+        let out_nf_c=out_nfdb[1]
+        let out_s11_worst=maximum(out_s11db)
+        let out_s22_worst=maximum(out_s22db)
+        let out_s21_min=minimum(out_s21db)
+        let out_s21_max=maximum(out_s21db)
+        let out_ripple=out_s21_max-out_s21_min
+        let out_mu_min=minimum(out_mu)
+        let out_mup_min=minimum(out_mup)
+
+        * Base objective keeps NF relevant but makes S22 the main output target.
+        let out_score=0.5*out_nf_c
+
+        if out_s22_worst > -10
+            let out_error=out_s22_worst+10
+            let out_score=out_score+6*out_error*out_error
+        end
+
+        * Preserve the frozen input match.
+        if out_s11_worst > -8
+            let out_error=out_s11_worst+8
+            let out_score=out_score+3*out_error*out_error
+        end
+
+        if out_s21_min < 13
+            let out_error=13-out_s21_min
+            let out_score=out_score+10*out_error*out_error
+        end
+
+        if out_ripple > 1.5
+            let out_error=out_ripple-1.5
+            let out_score=out_score+3*out_error*out_error
+        end
+
+        * Do not accept more than 0.2 dB degradation from the input-stage winner.
+        let out_nf_delta=out_nf_c-$best_input_nf
+        if out_nf_delta > 0.2
+            let out_error=out_nf_delta-0.2
+            let out_score=out_score+30*out_error*out_error
+        end
+
+        if out_mu_min < 1.10
+            let out_error=1.10-out_mu_min
+            let out_score=out_score+2000*out_error*out_error
+        end
+
+        if out_mup_min < 1.10
+            let out_error=1.10-out_mup_min
+            let out_score=out_score+2000*out_error*out_error
+        end
+
+        echo OUTPUT_CANDIDATE $sweep_l_out $sweep_c_sh_out $&out_score $&out_nf_c $&out_s11_worst $&out_s22_worst $&out_s21_min $&out_ripple $&out_mu_min $&out_mup_min >> lna_match_sweep_results.txt
+
+        if out_score < $best_output_score
+            set best_output_score=$&out_score
+            set best_l_out=$sweep_l_out
+            set best_c_sh_out=$sweep_c_sh_out
+            set best_output_nf=$&out_nf_c
+            set best_output_s11_worst=$&out_s11_worst
+            set best_output_s22_worst=$&out_s22_worst
+            set best_output_s21_min=$&out_s21_min
+            set best_output_ripple=$&out_ripple
+            set best_output_mu_min=$&out_mu_min
+            set best_output_mup_min=$&out_mup_min
+        end
+
+        destroy $curplot
+
+    end
+end
+
+echo OUTPUT_SWEEP_END >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+echo BEST_OUTPUT_VALUES_WITH_INPUT_FROZEN >> lna_match_sweep_results.txt
+echo L_OUT_H $best_l_out >> lna_match_sweep_results.txt
+echo C_SH_OUT_F $best_c_sh_out >> lna_match_sweep_results.txt
+echo SCORE $best_output_score >> lna_match_sweep_results.txt
+echo NF_2P4_DB $best_output_nf >> lna_match_sweep_results.txt
+echo S11_WORST_2P3_TO_2P5_DB $best_output_s11_worst >> lna_match_sweep_results.txt
+echo S22_WORST_2P3_TO_2P5_DB $best_output_s22_worst >> lna_match_sweep_results.txt
+echo S21_MIN_2P3_TO_2P5_DB $best_output_s21_min >> lna_match_sweep_results.txt
+echo GAIN_RIPPLE_2P3_TO_2P5_DB $best_output_ripple >> lna_match_sweep_results.txt
+echo MU_MIN_2P3_TO_2P5 $best_output_mu_min >> lna_match_sweep_results.txt
+echo MUP_MIN_2P3_TO_2P5 $best_output_mup_min >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+
+* Freeze all selected matching values.
+alterparam L_IN=$best_l_in
+alterparam C_SH_IN=$best_c_sh_in
+alterparam L_OUT=$best_l_out
+alterparam C_SH_OUT=$best_c_sh_out
+reset
+
+* =============================================================================
+* STAGE 3A: FINAL DC OPERATING POINT
+* =============================================================================
+
+op
+
+let final_pdc_mw=1e3*(abs(i(VDD))*v(vdcbias)+abs(i(VDDIO))*v(vddio))
+let final_icore_a=abs(i(VDD))
+let final_iio_a=abs(i(VDDIO))
+
+set final_pdc_mw=$&final_pdc_mw
+set final_icore_a=$&final_icore_a
+set final_iio_a=$&final_iio_a
+
+destroy $curplot
+
+* =============================================================================
+* STAGE 3B: FINAL 2.3-2.5 GHz ANALYSIS
+* =============================================================================
+
+sp lin 201 2.3G 2.5G 1
+set final_band_plot=$curplot
+
+let final_fghz=frequency/1e9
+let final_s11db=db(s_1_1)
+let final_s21db=db(s_2_1)
+let final_s12db=db(s_1_2)
+let final_s22db=db(s_2_2)
+let final_nfdb=real(NF)
+let final_nfmin_db=real(NFmin)
+
+let final_delta=s_1_1*s_2_2-s_1_2*s_2_1
+let final_delta_mag=mag(final_delta)
+let final_a11=mag(s_1_1)
+let final_a12=mag(s_1_2)
+let final_a21=mag(s_2_1)
+let final_a22=mag(s_2_2)
+
+let final_mu=(1-final_a11*final_a11)/(mag(s_2_2-final_delta*conj(s_1_1))+mag(s_1_2*s_2_1))
+let final_mup=(1-final_a22*final_a22)/(mag(s_1_1-final_delta*conj(s_2_2))+mag(s_1_2*s_2_1))
+let final_k=(1-final_a11*final_a11-final_a22*final_a22+final_delta_mag*final_delta_mag)/(2*final_a12*final_a21)
+
+let final_zin=50*(1+s_1_1)/(1-s_1_1)
+let final_zout=50*(1+s_2_2)/(1-s_2_2)
+
+* For 201 points from 2.3 to 2.5 GHz, index 100 is exactly 2.4 GHz.
+let center_index=100
+
+let final_s11_c=final_s11db[center_index]
+let final_s21_c=final_s21db[center_index]
+let final_s12_c=final_s12db[center_index]
+let final_s22_c=final_s22db[center_index]
+let final_nf_c=final_nfdb[center_index]
+let final_nfmin_c=final_nfmin_db[center_index]
+let final_mu_c=final_mu[center_index]
+let final_mup_c=final_mup[center_index]
+let final_k_c=final_k[center_index]
+let final_delta_c=final_delta_mag[center_index]
+let final_zin_re_c=real(final_zin[center_index])
+let final_zin_im_c=imag(final_zin[center_index])
+let final_zout_re_c=real(final_zout[center_index])
+let final_zout_im_c=imag(final_zout[center_index])
+
+let final_s11_best=minimum(final_s11db)
+let final_s11_worst=maximum(final_s11db)
+let final_s22_best=minimum(final_s22db)
+let final_s22_worst=maximum(final_s22db)
+let final_s21_min=minimum(final_s21db)
+let final_s21_max=maximum(final_s21db)
+let final_ripple=final_s21_max-final_s21_min
+let final_nf_min=minimum(final_nfdb)
+let final_nf_max=maximum(final_nfdb)
+let final_mu_min=minimum(final_mu)
+let final_mup_min=minimum(final_mup)
+let final_k_min=minimum(final_k)
+let final_delta_max=maximum(final_delta_mag)
+
+echo FINAL_OPTIMIZED_RESULTS >> lna_match_sweep_results.txt
+echo L_IN_H $best_l_in >> lna_match_sweep_results.txt
+echo C_SH_IN_F $best_c_sh_in >> lna_match_sweep_results.txt
+echo L_OUT_H $best_l_out >> lna_match_sweep_results.txt
+echo C_SH_OUT_F $best_c_sh_out >> lna_match_sweep_results.txt
+echo PDC_MW $final_pdc_mw ICORE_A $final_icore_a IIO_A $final_iio_a >> lna_match_sweep_results.txt
+echo CENTER_FREQUENCY_HZ 2.400e9 >> lna_match_sweep_results.txt
+echo S11_2P4_DB $&final_s11_c >> lna_match_sweep_results.txt
+echo S21_2P4_DB $&final_s21_c >> lna_match_sweep_results.txt
+echo S12_2P4_DB $&final_s12_c >> lna_match_sweep_results.txt
+echo S22_2P4_DB $&final_s22_c >> lna_match_sweep_results.txt
+echo NF_2P4_DB $&final_nf_c NFMIN_2P4_DB $&final_nfmin_c >> lna_match_sweep_results.txt
+echo MU_2P4 $&final_mu_c MUP_2P4 $&final_mup_c K_2P4 $&final_k_c DELTA_2P4 $&final_delta_c >> lna_match_sweep_results.txt
+echo ZIN_2P4_OHM RE $&final_zin_re_c IM $&final_zin_im_c >> lna_match_sweep_results.txt
+echo ZOUT_2P4_OHM RE $&final_zout_re_c IM $&final_zout_im_c >> lna_match_sweep_results.txt
+echo TARGET_BAND_S11_BEST_DB $&final_s11_best S11_WORST_DB $&final_s11_worst >> lna_match_sweep_results.txt
+echo TARGET_BAND_S22_BEST_DB $&final_s22_best S22_WORST_DB $&final_s22_worst >> lna_match_sweep_results.txt
+echo TARGET_BAND_S21_MIN_DB $&final_s21_min S21_MAX_DB $&final_s21_max RIPPLE_DB $&final_ripple >> lna_match_sweep_results.txt
+echo TARGET_BAND_NF_MIN_DB $&final_nf_min NF_MAX_DB $&final_nf_max >> lna_match_sweep_results.txt
+echo TARGET_BAND_MU_MIN $&final_mu_min MUP_MIN $&final_mup_min K_MIN $&final_k_min DELTA_MAX $&final_delta_max >> lna_match_sweep_results.txt
+
+wrdata lna_match_sweep_final_band.dat frequency final_s11db final_s21db final_s12db final_s22db final_nfdb final_nfmin_db final_mu final_mup final_k final_delta_mag
+
+* =============================================================================
+* STAGE 3C: FINAL WIDEBAND STABILITY, 10 MHz-30 GHz
+* =============================================================================
+
+alterparam L_IN=$best_l_in
+alterparam C_SH_IN=$best_c_sh_in
+alterparam L_OUT=$best_l_out
+alterparam C_SH_OUT=$best_c_sh_out
+reset
+
+sp dec 101 10Meg 30G 1
+set final_stability_plot=$curplot
+
+let wb_delta=s_1_1*s_2_2-s_1_2*s_2_1
+let wb_delta_mag=mag(wb_delta)
+let wb_a11=mag(s_1_1)
+let wb_a12=mag(s_1_2)
+let wb_a21=mag(s_2_1)
+let wb_a22=mag(s_2_2)
+
+let wb_mu=(1-wb_a11*wb_a11)/(mag(s_2_2-wb_delta*conj(s_1_1))+mag(s_1_2*s_2_1))
+let wb_mup=(1-wb_a22*wb_a22)/(mag(s_1_1-wb_delta*conj(s_2_2))+mag(s_1_2*s_2_1))
+let wb_k=(1-wb_a11*wb_a11-wb_a22*wb_a22+wb_delta_mag*wb_delta_mag)/(2*wb_a12*wb_a21)
+
+let wb_mu_min=minimum(wb_mu)
+let wb_mup_min=minimum(wb_mup)
+let wb_k_min=minimum(wb_k)
+let wb_delta_max=maximum(wb_delta_mag)
+
+echo WIDEBAND_STABILITY_10MHZ_TO_30GHZ >> lna_match_sweep_results.txt
+echo MU_MIN $&wb_mu_min MUP_MIN $&wb_mup_min K_MIN $&wb_k_min DELTA_MAX $&wb_delta_max >> lna_match_sweep_results.txt
+echo GENERATED_FILES lna_match_sweep_final_band.dat lna_match_sweep_stability.dat >> lna_match_sweep_results.txt
+echo ============================================================ >> lna_match_sweep_results.txt
+
+wrdata lna_match_sweep_stability.dat frequency wb_mu wb_mup wb_k wb_delta_mag
+
+* =============================================================================
+* FINAL CONSOLE SUMMARY
+* =============================================================================
+
+echo ============================================================
+echo SEQUENTIAL_MATCHING_SWEEP_COMPLETE
+echo BEST_L_IN $best_l_in
+echo BEST_C_SH_IN $best_c_sh_in
+echo BEST_L_OUT $best_l_out
+echo BEST_C_SH_OUT $best_c_sh_out
+echo RESULTS_FILE lna_match_sweep_results.txt
+echo FINAL_BAND_FILE lna_match_sweep_final_band.dat
+echo STABILITY_FILE lna_match_sweep_stability.dat
+echo ============================================================
 
 .endc
 
 "
-spice_ignore=true}
+}
 C {ind.sym} 820 -760 3 1 {name=LNC
 m=1
 value=\{L_NC\}

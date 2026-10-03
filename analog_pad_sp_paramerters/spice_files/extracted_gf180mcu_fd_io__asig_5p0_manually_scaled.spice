@@ -19,8 +19,8 @@
 ***************************************************************************************************
 * Subciruit wrapper for the extracted spice
 ***************************************************************************************************
-*.SUBCKT gf180mcu_fd_io__asig_5p0 ASIG5V DVDD DVSS VDD VSS 
-.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
+.SUBCKT gf180mcu_fd_io__asig_5p0 ASIG5V DVDD DVSS VDD VSS 
+*.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
 
 ***************************************************************************************************
 * --- Signal ESD Diodes (150 um^2) ---

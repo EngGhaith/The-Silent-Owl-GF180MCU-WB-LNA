@@ -177,7 +177,7 @@ N 1320 -520 1320 -440 {lab=vx}
 N 890 -900 920 -900 {lab=g_csc
 }
 N 1010 -280 1010 -250 {lab=vss}
-N 810 -830 810 -800 {lab=#net11}
+N 810 -830 810 -800 {lab=vss}
 N 290 -270 290 -240 {lab=vss}
 N 640 -570 680 -570 {lab=vss}
 N 1220 -590 1220 -570 {lab=vss}
@@ -507,7 +507,7 @@ C {lab_pin.sym} 720 -230 2 0 {name=p2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 720 -330 2 0 {name=p12 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 640 -570 0 0 {name=p16 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 810 -830 1 0 {name=p19 sig_type=std_logic lab=vss
-spice_ignore=true}
+spice_ignore=short}
 C {lab_pin.sym} 1260 -830 3 0 {name=p26 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1370 -830 3 0 {name=p27 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 290 -270 1 0 {name=p3 sig_type=std_logic lab=vss}

@@ -1,3 +1,7 @@
 
 # Large simulation result files
 techsweep/simulations/*.mat
+NFmin_Simulation/simulations/run_xschem_gf.sh
+analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0.spice.bak
+xschem/run_xschem_gf.sh
+

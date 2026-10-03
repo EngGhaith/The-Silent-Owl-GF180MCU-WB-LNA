@@ -1,9 +1,9 @@
 * SPICE3 file created from gf180mcu_fd_io__asig_5p0.ext - technology: gf180mcuD
 
-.option scale=5n
+*.option scale=5n disabled
 
 *.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
-.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
+.SUBCKT gf180mcu_fd_io__asig_5p0 ASIG5V DVDD DVSS VDD VSS
 D0 DVSS ASIG5V diode_nd2ps_06v0 pj=21200 area=6e+06
 D1 DVSS ASIG5V diode_nd2ps_06v0 pj=21200 area=6e+06
 D2 ASIG5V DVDD diode_pd2nw_06v0 pj=21200 area=6e+06
@@ -62,5 +62,5 @@ C6 VDD GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS 47.06129f
 C7 ASIG5V GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS 0.27637p
 C8 DVSS GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS 0.20258p
 C9 DVDD GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS 0.35736p
-
+RVSUBS GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS VSS 1G
 .ENDS

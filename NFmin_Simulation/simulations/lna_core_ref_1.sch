@@ -87,25 +87,17 @@ N 1780 -230 1780 -170 {
 lab=#net3}
 N 1780 -670 1780 -630 {
 lab=vdcbias}
-N 1990 -560 1990 -490 {
-lab=vdcbias}
-N 1990 -430 1990 -360 {
+N 2650 -410 2690 -410 {
 lab=vbuf}
-N 1990 -300 1990 -270 {
-lab=GND}
-N 1990 -460 2010 -460 {
-lab=vbuf}
-N 2170 -400 2210 -400 {
-lab=vbuf}
-N 2270 -400 2310 -400 {
+N 2750 -410 2790 -410 {
 lab=#net4}
-N 2370 -400 2420 -400 {
+N 2850 -410 2900 -410 {
 lab=#net5}
-N 2480 -400 2520 -400 {
+N 2960 -410 3000 -410 {
 lab=rf_out_pad}
-N 2500 -400 2500 -320 {
+N 2980 -410 2980 -330 {
 lab=rf_out_pad}
-N 2500 -260 2500 -220 {
+N 2980 -270 2980 -230 {
 lab=GND}
 N 150 -410 150 -370 {
 lab=rf_in_pad}
@@ -133,10 +125,6 @@ N -230 -160 -200 -160 {
 lab=vbias_cas}
 N -320 -160 -290 -160 {
 lab=GND}
-N 2010 -460 2010 -410 {
-lab=vbuf}
-N 1990 -410 2010 -410 {
-lab=vbuf}
 N 1010 -160 1030 -160 {
 lab=GND}
 N 1010 -130 1010 -120 {
@@ -144,10 +132,6 @@ lab=GND}
 N 950 -160 970 -160 {
 lab=vbias_icg}
 N 1010 -120 1010 -100 {
-lab=GND}
-N 1900 -330 1950 -330 {
-lab=vbias_buf}
-N 1990 -330 2040 -330 {
 lab=GND}
 N -470 -40 -440 -40 {
 lab=vbias_buf}
@@ -171,8 +155,8 @@ N 1750 -100 1750 -90 {
 lab=GND}
 N 1780 -90 1780 -70 {
 lab=GND}
-N 1910 -460 1950 -460 {
-lab=#net8}
+N 2150 -460 2190 -460 {
+lab=vy}
 N 1780 -460 1850 -460 {
 lab=vx}
 N -155 -1130 -105 -1130 {
@@ -208,7 +192,7 @@ lab=vddio
 N 1450 -470 1470 -470 {
 lab=GND}
 N 1450 -440 1450 -430 {
-lab=#net9}
+lab=#net8}
 N 1390 -470 1410 -470 {
 lab=g_csc}
 N 1260 -400 1280 -400 {
@@ -216,27 +200,27 @@ lab=vbias_csc}
 N 1340 -400 1370 -400 {
 lab=g_csc}
 N 1450 -430 1450 -370 {
-lab=#net9}
+lab=#net8}
 N 1450 -580 1470 -580 {
 lab=GND}
 N 1450 -550 1450 -540 {
-lab=#net10}
+lab=#net9}
 N 1390 -580 1410 -580 {
 lab=vbias_casc}
 N 1450 -690 1450 -610 {
 lab=vx}
 N 1450 -540 1450 -500 {
-lab=#net10}
+lab=#net9}
 N 1470 -370 1470 -360 {
-lab=#net9}
+lab=#net8}
 N 1420 -370 1470 -370 {
-lab=#net9}
+lab=#net8}
 N 1470 -300 1470 -290 {
 lab=GND}
 N 1420 -290 1470 -290 {
 lab=GND}
 N 1420 -370 1420 -360 {
-lab=#net9}
+lab=#net8}
 N 1420 -300 1420 -290 {
 lab=GND}
 N 1450 -290 1450 -270 {
@@ -253,9 +237,9 @@ lab=vbias_casc}
 N -320 -60 -290 -60 {
 lab=GND}
 N 650 -760 690 -760 {
-lab=#net11}
+lab=#net10}
 N 900 -760 940 -760 {
-lab=#net12}
+lab=#net11}
 N 1010 -330 1010 -320 {
 lab=vm2}
 N 1010 -320 1010 -290 {lab=vm2}
@@ -265,7 +249,7 @@ N -400 210 -368.75 210 {
 lab=GND}
 N 1700 -650 1700 -630 {lab=vdcbias}
 N 1700 -650 1780 -650 {lab=vdcbias}
-N 1700 -570 1700 -550 {lab=#net13}
+N 1700 -570 1700 -550 {lab=#net12}
 N 1860 -570 1860 -560 {lab=vx}
 N 1780 -470 1860 -470 {lab=vx}
 N 1860 -650 1860 -630 {lab=vdcbias}
@@ -285,8 +269,22 @@ N 950 -500 990 -500 {lab=GND}
 N 1760 -620 1760 -600 {lab=GND}
 N 1780 -730 1780 -670 {lab=vdcbias}
 N 970 -810 970 -780 {lab=GND}
-N 1880 -510 1880 -480 {lab=GND}
-N 750 -760 840 -760 {lab=#net14}
+N 2120 -510 2120 -480 {lab=GND}
+N 750 -760 840 -760 {lab=#net13}
+N 2190 -460 2240 -460 {lab=vy}
+N 2280 -430 2280 -380 {lab=GND}
+N 2280 -520 2280 -490 {lab=vbuf}
+N 2280 -650 2280 -580 {lab=vdcbias}
+N 1980 -460 2090 -460 {lab=nbuf_drive}
+N 1850 -460 1920 -460 {lab=vx}
+N 2110 -230 2130 -230 {
+lab=vbias_cs
+spice_ignore=true}
+N 2190 -230 2220 -230 {
+lab=vy
+spice_ignore=true}
+N 2160 -280 2160 -250 {lab=GND
+spice_ignore=true}
 C {vsource.sym} -240 -390 1 0 {name=VBCG value=\{VBIAS_CG\} savecurrent=false}
 C {gnd.sym} 1010 -100 0 0 {name=l1 lab=GND}
 C {vsource.sym} -320 -470 0 0 {name=VDD value=\{VDS\} savecurrent=false}
@@ -363,38 +361,20 @@ C {lab_pin.sym} 1590 -200 0 0 {name=p23 sig_type=std_logic lab=vbias_cs}
 C {lab_pin.sym} 1700 -200 2 0 {name=p24 sig_type=std_logic lab=g_cs}
 C {lab_pin.sym} 1780 -730 0 0 {name=p39 sig_type=std_logic lab=vdcbias
 }
-C {symbols/nfet_06v0.sym} 1970 -460 0 0 {name=M3
-L=0.6u
-W=25u
-nf=10
-m=10
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_06v0
-spiceprefix=X
-}
-C {lab_pin.sym} 1990 -560 0 0 {name=p40 sig_type=std_logic lab=vdcbias
-}
-C {gnd.sym} 1990 -270 0 0 {name=l2 lab=GND}
-C {lab_pin.sym} 1990 -400 0 0 {name=p43 sig_type=std_logic lab=vbuf}
-C {lab_pin.sym} 2170 -400 0 0 {name=p44 sig_type=std_logic lab=vbuf}
-C {lab_pin.sym} 2520 -400 2 0 {name=p45 sig_type=std_logic lab=rf_out_pad}
-C {ind.sym} 2340 -400 1 0 {name=LOUT
+C {lab_pin.sym} 2650 -410 0 0 {name=p44 sig_type=std_logic lab=vbuf}
+C {lab_pin.sym} 3000 -410 2 0 {name=p45 sig_type=std_logic lab=rf_out_pad}
+C {ind.sym} 2820 -410 1 0 {name=LOUT
 m=1
 value=1.2n
 footprint=1206
 device=inductor
 }
-C {res.sym} 2450 -400 1 0 {name=RLOUT
+C {res.sym} 2930 -410 1 0 {name=RLOUT
 value=1.8
 footprint=1206
 device=resistor
 m=1}
-C {lab_pin.sym} 2500 -220 3 0 {name=p42 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 2980 -230 3 0 {name=p42 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 150 -270 3 0 {name=p46 sig_type=std_logic lab=GND}
 C {ind.sym} 230 -410 1 0 {name=LIN
 m=1
@@ -427,8 +407,6 @@ C {vsource.sym} -260 -160 1 0 {name=VBCS1 value=\{VBIAS_CAS\} savecurrent=false}
 C {lab_pin.sym} -200 -160 2 0 {name=p49 sig_type=std_logic lab=vbias_cas}
 C {lab_pin.sym} 1030 -160 2 0 {name=p41 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 950 -160 0 0 {name=p50 sig_type=std_logic lab=vbias_icg}
-C {lab_pin.sym} 1900 -330 0 0 {name=p51 sig_type=std_logic lab=vbias_buf}
-C {lab_pin.sym} 2040 -330 2 0 {name=p52 sig_type=std_logic lab=GND}
 C {vsource.sym} -410 -40 3 0 {name=VBCS2 value=\{VBIAS_BUF\} savecurrent=false}
 C {lab_pin.sym} -470 -40 0 0 {name=p53 sig_type=std_logic lab=vbias_buf}
 C {vsource.sym} -420 -150 3 0 {name=VBCS3 value=\{VBIAS_ICG\} savecurrent=false}
@@ -438,20 +416,6 @@ L=0.5u
 W=15u
 nf=10
 m=1
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_03v3
-spiceprefix=X
-}
-C {symbols/nfet_03v3.sym} 1970 -330 0 0 {name=M6
-L=0.5u
-W=25u
-nf=10
-m=5
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -617,6 +581,9 @@ C {code_shown.sym} 1710 50 0 0 {name=s1 only_toplevel=false value="
 
 .param VBIAS_CASC=3.20
 .param RNC_TEST=1m
+
+RBUF_BIAS vbias_pgate vy 100k
+VBGATE vbias_pgate GND DC 1.5
 
 "}
 C {code.sym} 2022.5 63.75 0 0 {name=s4 only_toplevel=false value="
@@ -1570,13 +1537,13 @@ model=npolyf_s
 spiceprefix=X
 m=1}
 C {lab_pin.sym} 970 -810 1 0 {name=p77 sig_type=std_logic lab=GND}
-C {symbols/npolyf_s.sym} 1880 -460 1 0 {name=R7
+C {symbols/npolyf_s.sym} 2120 -460 1 0 {name=R7
 W=10u
 L=1.32u
 model=npolyf_s
 spiceprefix=X
 m=1}
-C {lab_pin.sym} 1880 -510 1 0 {name=p78 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 2120 -510 1 0 {name=p78 sig_type=std_logic lab=GND}
 C {symbols/cap_mim_2f0fF.sym} 1080 -430 1 0 {name=C1
 W=58.2168u
 L=58.2168u
@@ -1589,13 +1556,13 @@ L=58.2168u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
-C {symbols/cap_mim_2f0fF.sym} 2240 -400 1 0 {name=C3
+C {symbols/cap_mim_2f0fF.sym} 2720 -410 1 0 {name=C3
 W=33.0108u
 L=33.0108u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
-C {symbols/cap_mim_2f0fF.sym} 2500 -290 0 0 {name=C4
+C {symbols/cap_mim_2f0fF.sym} 2980 -300 0 0 {name=C4
 W=10.2776u
 L=10.2776u
 model=cap_mim_2f0_m4m5_noshield
@@ -1642,3 +1609,44 @@ value=\{RNC_TEST\}
 footprint=1206
 device=resistor
 m=1}
+C {symbols/pfet3_06v0.sym} 2260 -460 0 0 {name=M3
+L=0.6u
+W=25u
+body=vbuf
+nf=10
+m=20
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_06v0
+spiceprefix=X
+}
+C {isource.sym} 2280 -550 0 0 {name=I0 value=6m}
+C {lab_pin.sym} 2280 -380 3 0 {name=p40 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 2280 -510 2 0 {name=p43 sig_type=std_logic lab=vbuf}
+C {lab_pin.sym} 2200 -460 1 0 {name=p51 sig_type=std_logic lab=vy}
+C {symbols/cap_mim_2f0fF.sym} 1950 -460 1 0 {name=C11
+W=58.2168u
+L=58.2168u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=1}
+C {lab_pin.sym} 2040 -460 1 0 {name=p52 sig_type=std_logic lab=nbuf_drive}
+C {lab_pin.sym} 2110 -230 0 0 {name=p79 sig_type=std_logic lab=vbias_cs
+spice_ignore=true}
+C {lab_pin.sym} 2220 -230 2 0 {name=p80 sig_type=std_logic lab=vy
+spice_ignore=true}
+C {symbols/ppolyf_u_1k.sym} 2160 -230 1 0 {name=R8
+W=1u
+L=48.35u
+model=ppolyf_u_1k
+spiceprefix=X
+m=1
+spice_ignore=true}
+C {lab_pin.sym} 2160 -280 1 0 {name=p81 sig_type=std_logic lab=GND
+spice_ignore=true}
+C {lab_pin.sym} 2280 -650 0 0 {name=p82 sig_type=std_logic lab=vdcbias
+}
