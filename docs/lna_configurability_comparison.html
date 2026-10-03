@@ -76,6 +76,21 @@
   .sch-dot{fill:var(--text-primary);}
   .sch-box{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1;stroke-dasharray:3 2;}
 
+  .recipe-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  .recipe-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
+  .recipe-card .rhead{display:flex;align-items:baseline;gap:10px;}
+  .recipe-card .rhead code{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:15px;}
+  .recipe-card .rtag{font-size:12.5px;color:var(--text-muted);}
+  .recipe-table td.changes{text-align:left;font-size:12.5px;line-height:1.7;white-space:normal;}
+  .recipe-table td.changes code{font-family:"IBM Plex Mono",monospace;font-size:.95em;background:var(--surface-2);
+    padding:1px 5px;border-radius:4px;color:var(--text-primary);}
+  .recipe-table td.changes .chg{display:block;}
+  .recipe-table td.changes .chg b{color:var(--good);font-weight:600;}
+  .recipe-table td.verdict{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;}
+  .recipe-table td.verdict.works{color:var(--good);}
+  .recipe-table td.verdict.fails{color:var(--bad);}
+
   .gmid-grid{display:grid;grid-template-columns:1fr;gap:14px;}
   .table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);
     border-radius:10px;box-shadow:var(--shadow);}
@@ -138,13 +153,19 @@
   </section>
 
   <section>
-    <div class="section-head"><span class="num">02</span><h2>Transistor operating points (gm/Id)</h2></div>
+    <div class="section-head"><span class="num">02</span><h2>Retuning recipe: what to change, per branch, to move off 2.4&nbsp;GHz</h2></div>
+    <p>Each topology's native design point is 2.3&ndash;2.5&nbsp;GHz. These are the exact, minimal component changes &mdash; nothing else in the schematic moves &mdash; needed to relocate each one to each target band. All three recipes are cap-value changes only; no inductor, transistor size, or topology change was needed anywhere in this study.</p>
+    <div class="recipe-grid" id="recipes"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="num">03</span><h2>Transistor operating points (gm/Id)</h2></div>
     <p>One table per topology. Bias is shared across every band within a topology &mdash; only the AC-tuning capacitors change per band, and caps are open circuits at DC &mdash; so these operating points are identical for all of a topology's band variants. (They are <em>not</em> identical across topologies, or before vs. after this session's own bias re-optimizations.)</p>
     <div class="gmid-grid" id="gmid-tables"></div>
   </section>
 
   <section>
-    <div class="section-head"><span class="num">03</span><h2>Performance by band, all three topologies</h2></div>
+    <div class="section-head"><span class="num">04</span><h2>Performance by band, all three topologies</h2></div>
     <p>Each row is one target band. <b>Bold</b> marks the best S21 at that band. Current is total <code>ICORE</code> drawn from VDD (includes the whole bias ladder, not just the input device).</p>
     <div id="band-sections"></div>
   </section>
@@ -294,6 +315,112 @@ function mainSchematic(){
     '<text class="sch-text sch-value" x="490" y="355" text-anchor="middle">Retuning: C8 resized per band (the one true tank); C3 enlarged per band (fixes the S22 collapse this session found); C2 enlarged per band (fixes a matching S11 collapse, same mechanism); C5 lightly adjusted for the two lowest bands. No new components added anywhere.</text>' +
     '</svg>';
 }
+
+
+const RECIPES = {
+  ilir: {
+    name: "dev_ilir", color: "var(--series-ilir)",
+    base: "2.4 GHz native (as-committed, VBIAS_CG=2.2V, M2 at ~60mA)",
+    baseNote: "A one-time base step applies before any band work: rebias VBIAS_CG 2.2V\u2192<b>1.0V</b> (PR #17) to cut M2's current ~85%. All 4 band recipes below build on that already-rebiased point.",
+    rows: [
+      { band: "GNSS L1 (1575.42MHz)", works: true, changes: [
+        "Add <code>CTUNE_IN</code> 0\u2192<b>31.47\u00b5m\u00b2</b> (rf_in_pad\u2016vss)",
+        "Add <code>CTUNE_M2</code> 0\u2192<b>19.27\u00b5m\u00b2</b> (vm2\u2016vdd)",
+        "Add <code>CTUNE_OUT</code> 0\u2192<b>27.25\u00b5m\u00b2</b> (vout_tank\u2016vdd)",
+      ]},
+      { band: "GNSS L2 (1227.60MHz)", works: true, changes: [
+        "Add <code>CTUNE_IN</code> 0\u2192<b>45.72\u00b5m\u00b2</b>, <code>CTUNE_M2</code> 0\u2192<b>25\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>10\u00b5m\u00b2</b>",
+        "Add <code>CTUNE_DEG</code> 0\u2192<b>40\u00b5m\u00b2</b> (net1\u2016vss, anti-resonates the source-degeneration branch)",
+        "Enlarge series cap <code>C15</code> 1.5p\u2192<b>3p</b> (input coupling, fixes a voltage-divider loss at M2's source)",
+      ]},
+      { band: "LoRa EU868 (868.30MHz)", works: true, changes: [
+        "Add <code>CTUNE_IN</code> 0\u2192<b>69.92\u00b5m\u00b2</b>, <code>CTUNE_M2</code> 0\u2192<b>30\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>2\u00b5m\u00b2</b>",
+        "Add <code>CTUNE_DEG</code> 0\u2192<b>82\u00b5m\u00b2</b>",
+        "Enlarge <code>C15</code> 1.5p\u2192<b>20p</b>",
+      ]},
+      { band: "LoRa EU433 (433.92MHz)", works: false, changes: [
+        "Add <code>CTUNE_IN</code> 0\u2192<b>90\u00b5m\u00b2</b>, <code>CTUNE_M2</code> 0\u2192<b>60\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>1\u00b5m\u00b2</b>",
+        "Add <code>CTUNE_DEG</code> 0\u2192<b>130\u00b5m\u00b2</b>",
+        "Enlarge <code>C15</code> 1.5p\u2192<b>35p</b>",
+        "Even after all of the above: S21 stays at \u22129.4dB \u2014 does not reach positive gain",
+      ]},
+    ],
+  },
+  ghaith: {
+    name: "dev_ghaith", color: "var(--series-ghaith)",
+    base: "2.4 GHz native (as-committed, bias never touched)",
+    baseNote: "No base rebias needed \u2014 M5's active current-sink degeneration is already current-efficient at the as-committed bias.",
+    rows: [
+      { band: "GNSS L1 (1575.42MHz)", works: true, changes: [
+        "Add <code>CTUNE_M2</code> 0\u2192<b>18.90\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>26.73\u00b5m\u00b2</b>",
+        "Resize existing shunt <code>C5</code> 10\u2192<b>15.08\u00b5m\u00b2</b> (input match)",
+      ]},
+      { band: "GNSS L2 (1227.60MHz)", works: true, changes: [
+        "Add <code>CTUNE_M2</code> 0\u2192<b>25\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>10\u00b5m\u00b2</b>",
+        "Shrink <code>C5</code> 10\u2192<b>0.5\u00b5m\u00b2</b> (the original formula overshot it)",
+        "Enlarge series cap <code>C2</code> 30.22\u2192<b>40\u00b5m\u00b2</b> (input coupling)",
+      ]},
+      { band: "LoRa EU868 (868.30MHz)", works: true, changes: [
+        "Add <code>CTUNE_M2</code> 0\u2192<b>32\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>1\u00b5m\u00b2</b>",
+        "Shrink <code>C5</code> 10\u2192<b>0.5\u00b5m\u00b2</b>",
+        "Enlarge <code>C2</code> 30.22\u2192<b>50\u00b5m\u00b2</b>",
+      ]},
+      { band: "LoRa EU433 (433.92MHz)", works: false, changes: [
+        "Add <code>CTUNE_M2</code> 0\u2192<b>60\u00b5m\u00b2</b>, <code>CTUNE_OUT</code> 0\u2192<b>1\u00b5m\u00b2</b>",
+        "Shrink <code>C5</code> 10\u2192<b>0.5\u00b5m\u00b2</b>",
+        "Enlarge <code>C2</code> 30.22\u2192<b>100\u00b5m\u00b2</b>",
+        "Even after all of the above: S21 stays at \u22125.9dB \u2014 does not reach positive gain",
+      ]},
+    ],
+  },
+  main: {
+    name: "main", color: "var(--series-main)",
+    base: "2.4 GHz as-committed (bias defaults)",
+    baseNote: "A one-time base step first: re-optimize bias for best S11/S21/S22/NF/bandwidth \u2014 <code>VBIAS_CS</code> 1.20\u21921.38V, <code>VBIAS_CAS</code> 3.70\u21924.30V, <code>VBIAS_CSC</code> 0.90\u21921.035V. All 4 band recipes below build on that optimized 2.4GHz point and need <b>no further bias changes</b> \u2014 confirmed by re-sweeping bias per band and finding zero to marginal (&lt;0.4dB) extra headroom.",
+    rows: [
+      { band: "GNSS L1 (1575.42MHz)", works: true, changes: [
+        "Resize <code>C8</code> 12.64\u2192<b>24.2\u00b5m\u00b2</b> (vx tank cap \u2014 the only true resonant node in this topology)",
+        "Enlarge <code>C2</code> 58.22\u2192<b>80\u00b5m\u00b2</b> (input coupling, fixes S11)",
+        "Enlarge <code>C3</code> 33.01\u2192<b>60\u00b5m\u00b2</b> (output coupling, fixes S22)",
+      ]},
+      { band: "GNSS L2 (1227.60MHz)", works: true, changes: [
+        "Resize <code>C8</code> 12.64\u2192<b>30\u00b5m\u00b2</b>",
+        "Enlarge <code>C2</code> 58.22\u2192<b>90\u00b5m\u00b2</b>",
+        "Enlarge <code>C3</code> 33.01\u2192<b>75\u00b5m\u00b2</b>",
+      ]},
+      { band: "LoRa EU868 (868.30MHz)", works: true, changes: [
+        "Resize <code>C8</code> 12.64\u2192<b>42\u00b5m\u00b2</b>",
+        "Shrink input shunt <code>C5</code> 15.13\u2192<b>10\u00b5m\u00b2</b>",
+        "Enlarge <code>C2</code> 58.22\u2192<b>120\u00b5m\u00b2</b>, <code>C3</code> 33.01\u2192<b>95\u00b5m\u00b2</b>",
+      ]},
+      { band: "LoRa EU433 (433.92MHz)", works: true, changes: [
+        "Resize <code>C8</code> 12.64\u2192<b>65\u00b5m\u00b2</b>",
+        "Shrink <code>C5</code> 15.13\u2192<b>5\u00b5m\u00b2</b>",
+        "Enlarge <code>C2</code> 58.22\u2192<b>200\u00b5m\u00b2</b>, <code>C3</code> 33.01\u2192<b>130\u00b5m\u00b2</b>",
+        "Reaches +13.2dB gain \u2014 the only topology of the three that works at this band",
+      ]},
+    ],
+  },
+};
+
+const recipesEl = document.getElementById("recipes");
+recipesEl.innerHTML = Object.values(RECIPES).map(topo => {
+  const rows = topo.rows.map(r => `
+    <tr>
+      <td>${r.band}</td>
+      <td class="changes">${r.changes.map(c=>`<span class="chg">${c}</span>`).join("")}</td>
+      <td class="verdict ${r.works?'works':'fails'}">${r.works?'WORKS':'NO GAIN'}</td>
+    </tr>`).join("");
+  return `
+    <div class="recipe-card">
+      <div class="rhead"><code style="color:${topo.color}">${topo.name}</code><span class="rtag">from ${topo.base}</span></div>
+      <p style="margin:0;font-size:12.5px;color:var(--text-secondary);line-height:1.6;">${topo.baseNote}</p>
+      <div class="table-wrap">
+        <table class="recipe-table"><thead><tr><th>Target band</th><th style="text-align:left">Changes needed</th><th>Result</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
+}).join("");
 
 document.getElementById("schematics").innerHTML =
   '<div class="sch-card"><div class="shead"><code style="color:var(--series-ilir)">dev_ilir</code><span class="stag">3 live transistors · passive source degeneration</span></div>' + ilirSchematic() + '</div>' +
