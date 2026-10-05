@@ -153,19 +153,11 @@ sa=0 sb=0 sd=0
 model=nfet_06v0
 spiceprefix=X
 }
-C {symbols/nfet_03v3.sym} 740 -420 0 0 {name=M5
-L=0.5u
-W=15u
-nf=10
+C {ind.sym} 760 -420 0 0 {name=LDEG
 m=1
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_03v3
-spiceprefix=X
+value=12n
+footprint=1206
+device=inductor
 }
 C {res.sym} 1300 -420 0 0 {name=RS_EQ
 value=0.05
@@ -222,15 +214,15 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
 C {symbols/cap_mim_2f0fF.sym} 460 -580 1 0 {name=C2
-W=30.2168u
-L=30.2168u
+W=25u
+L=25u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1
 }
 C {symbols/cap_mim_2f0fF.sym} 170 -510 0 0 {name=C5
-W=10u
-L=10u
+W=15u
+L=15u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1

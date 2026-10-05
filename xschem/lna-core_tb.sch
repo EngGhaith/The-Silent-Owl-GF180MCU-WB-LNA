@@ -1162,7 +1162,7 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 .param VDDIO_SUP=5.0
 
 
-.param VBIAS_CG=2.20
+.param VBIAS_CG=0.80
 .param VBIAS_CS=1.20
 
 .param VBIAS_CAS=4.80
