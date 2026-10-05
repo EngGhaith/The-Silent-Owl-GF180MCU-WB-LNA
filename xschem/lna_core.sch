@@ -193,7 +193,7 @@ C {lab_pin.sym} 760 -888.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1300 -618.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {ind.sym} 1300 -1030 0 0 {name=LD2
 m=1
-value=4n
+value=7.0n
 footprint=1206
 device=inductor
 }
@@ -267,7 +267,7 @@ C {iopin.sym} 130 -940 2 0 {name=p13 lab=vbias_casc
 }
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
-value=4p
+value=0.8p
 footprint=1206
 device="ceramic capacitor"
 }
