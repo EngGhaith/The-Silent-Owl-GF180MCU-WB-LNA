@@ -1153,13 +1153,13 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 
 
 .param VBIAS_CG=2.20
-.param VBIAS_CS=1.20
+.param VBIAS_CS=1.38
 
-.param VBIAS_CAS=3.70
+.param VBIAS_CAS=4.30
 .param VBIAS_ICG=1.90
 .param VBIAS_BUF=1.30
 
-.param VBIAS_CSC=0.90
+.param VBIAS_CSC=1.035
 
 
 .param VBIAS_CASC=3.20
