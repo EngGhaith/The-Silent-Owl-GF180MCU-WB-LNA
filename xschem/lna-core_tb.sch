@@ -1152,11 +1152,11 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 .param R_BW=0.2
 
 
-.param VBIAS_CG=2.20
+.param VBIAS_CG=1.40
 .param VBIAS_CS=1.20
 
 .param VBIAS_CAS=4.80
-.param VBIAS_ICG=2.10
+.param VBIAS_ICG=2.20
 .param VBIAS_BUF=1.30
 
 .param VBIAS_CSC=1.035

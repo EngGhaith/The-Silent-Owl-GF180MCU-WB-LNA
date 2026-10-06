@@ -21,7 +21,7 @@ N 800 -500 840 -500 {
 lab=g_cs}
 N 700 -300 700 -290 {
 lab=s}
-N 700 -290 700 -260 {
+N 700 -290 700 -280 {
 lab=s}
 N 640 -330 660 -330 {
 lab=g_cg}
@@ -198,7 +198,7 @@ footprint=1206
 device=inductor
 }
 C {res.sym} 310 -280 1 0 {name=RLIN
-value=12.7
+value=5
 footprint=1206
 device=resistor
 m=1}
@@ -375,3 +375,20 @@ C {lab_pin.sym} 1340 -480 1 0 {name=p35 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -350 2 0 {name=p41 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -240 2 0 {name=p42 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1500 -300 2 0 {name=p48 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 700 -260 0 0 {name=p900 sig_type=std_logic lab=s_tail}
+C {ind.sym} 2000 -230 0 0 {name=LCHOKE
+m=1
+value=12n
+footprint=1206
+device=inductor
+}
+C {lab_pin.sym} 2000 -260 0 0 {name=p901 sig_type=std_logic lab=s}
+C {lab_pin.sym} 2000 -200 0 0 {name=p902 sig_type=std_logic lab=s_tail}
+C {capa.sym} 2000 -130 0 0 {name=CBYPASS
+m=1
+value=30p
+footprint=1206
+device="ceramic capacitor"
+}
+C {lab_pin.sym} 2000 -160 0 0 {name=p903 sig_type=std_logic lab=s_tail}
+C {lab_pin.sym} 2000 -100 0 0 {name=p904 sig_type=std_logic lab=vss}
