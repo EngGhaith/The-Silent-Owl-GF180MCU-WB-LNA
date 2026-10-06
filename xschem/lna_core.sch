@@ -506,16 +506,16 @@ C {lab_pin.sym} 340 -80 3 0 {name=p10 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 720 -230 2 0 {name=p2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 720 -330 2 0 {name=p12 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 640 -570 0 0 {name=p16 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 810 -830 1 0 {name=p19 sig_type=std_logic lab=vss
-spice_ignore=short}
 C {lab_pin.sym} 1260 -830 3 0 {name=p26 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1370 -830 3 0 {name=p27 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 290 -270 1 0 {name=p3 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1010 -280 1 0 {name=p31 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 860 -950 1 0 {name=p33 sig_type=std_logic lab=vss
+C {lab_pin.sym} 810 -830 1 0 {name=p33 sig_type=std_logic lab=vss
 }
 C {lab_pin.sym} 1220 -590 1 0 {name=p34 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1340 -480 1 0 {name=p35 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -350 2 0 {name=p41 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -240 2 0 {name=p42 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1500 -300 2 0 {name=p48 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 860 -950 1 0 {name=p15 sig_type=std_logic lab=vss
+}

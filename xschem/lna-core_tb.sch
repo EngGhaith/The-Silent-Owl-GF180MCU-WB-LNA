@@ -116,7 +116,6 @@ N -590 -1020 -560 -1020 {
 lab=vbias_casc}
 N -680 -1020 -650 -1020 {
 lab=GND}
-C {lna_core.sym} 480 -910 0 0 {name=x1}
 C {vsource.sym} -200 -510 0 0 {name=VDD value=\{VDD\} savecurrent=false}
 C {lab_pin.sym} -340 -840 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
 C {lab_pin.sym} -340 -780 2 0 {name=p6 sig_type=std_logic lab=GND
@@ -201,8 +200,8 @@ value="
 .lib $\{::180MCU_MODELS\}/sm141064.ngspice bjt_typical
 
 .lib /home/arjun/eda/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice mimcap_typical
-.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
-*.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
+*.include /home/arjun/eda/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include /home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/analog_pad_sp_paramerters/spice_files/extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice
 
 "}
 C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
@@ -1178,3 +1177,4 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 "}
 C {/home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/NFmin_Simulation/simulations/port_diff.sym} -380 -810 0 0 {name=V1 portnum=1 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=}
 C {/home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/NFmin_Simulation/simulations/port_diff.sym} -380 -660 0 0 {name=V2 portnum=2 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=}
+C {/home/arjun/eda/projects/The-Silent-Owl-GF180MCU-WB-LNA/xschem/lna_core.sym} 480 -910 0 0 {name=x1}

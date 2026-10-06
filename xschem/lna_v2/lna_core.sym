@@ -1,0 +1,40 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=x1"
+}
+V {}
+S {}
+F {}
+E {}
+L 7 0 -160 0 -140 {}
+L 7 -170 -100 -150 -100 {}
+L 7 -170 -60 -150 -60 {}
+L 7 -170 -20 -150 -20 {}
+L 7 -170 20 -150 20 {}
+L 7 -170 60 -150 60 {}
+L 7 -170 100 -150 100 {}
+L 7 150 0 170 0 {}
+L 7 0 140 0 160 {}
+B 5 -2.5 -162.5 2.5 -157.5 {name=vdd dir=inout}
+B 5 -172.5 -102.5 -167.5 -97.5 {name=rf_in_pad dir=inout}
+B 5 -172.5 -62.5 -167.5 -57.5 {name=vbias_cg dir=inout}
+B 5 -172.5 -22.5 -167.5 -17.5 {name=vbias_cs dir=inout}
+B 5 -172.5 17.5 -167.5 22.5 {name=vbias_csc dir=inout}
+B 5 -172.5 57.5 -167.5 62.5 {name=vbias_cas dir=inout}
+B 5 -172.5 97.5 -167.5 102.5 {name=vbias_casc dir=inout}
+B 5 167.5 -2.5 172.5 2.5 {name=rf_out_pad dir=inout}
+B 5 -2.5 157.5 2.5 162.5 {name=vss dir=inout}
+P 4 5 -150 -140 150 -140 150 140 -150 140 -150 -140 {}
+T {LNA_CORE} -40 -10 0 0 0.3 0.3 {}
+T {vdd} 4 -152 0 0 0.2 0.2 {}
+T {rf_in_pad} -145 -106 0 0 0.2 0.2 {}
+T {vbias_cg} -145 -66 0 0 0.2 0.2 {}
+T {vbias_cs} -145 -26 0 0 0.2 0.2 {}
+T {vbias_csc} -145 14 0 0 0.2 0.2 {}
+T {vbias_cas} -145 54 0 0 0.2 0.2 {}
+T {vbias_casc} -145 94 0 0 0.2 0.2 {}
+T {rf_out_pad} 145 -6 0 1 0.2 0.2 {}
+T {vss} 4 140 0 0 0.2 0.2 {}
