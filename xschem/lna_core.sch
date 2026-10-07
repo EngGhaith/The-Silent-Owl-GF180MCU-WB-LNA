@@ -549,7 +549,7 @@ m=1
 spice_ignore=true}
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
-value=4p
+value=7p
 footprint=1206
 device="ceramic capacitor"
 }
@@ -599,7 +599,7 @@ m=1
 }
 C {capa.sym} 620 -580 3 0 {name=C15
 m=1
-value=1.5p
+value=1.25p
 footprint=1206
 device="ceramic capacitor"
 }
@@ -646,7 +646,7 @@ footprint=1206
 device=inductor
 spice_ignore=true}
 C {res.sym} 510 -510 0 0 {name=Rs1
-value=3
+value=0.3
 footprint=1206
 device=resistor
 m=1
