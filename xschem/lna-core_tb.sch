@@ -1181,7 +1181,7 @@ device=inductor
 C {lab_pin.sym} 900 -1490 0 0 {name=p900 sig_type=std_logic lab=rf_in_pad}
 C {lab_pin.sym} 900 -1430 0 0 {name=p901 sig_type=std_logic lab=nlshin}
 C {res.sym} 1000 -1460 0 0 {name=RLSHIN
-value=2.8903
+value=1.8974
 footprint=1206
 device=resistor
 m=1}
@@ -1196,7 +1196,7 @@ device=inductor
 C {lab_pin.sym} 900 -1125 0 0 {name=p902 sig_type=std_logic lab=rf_out_pad}
 C {lab_pin.sym} 900 -1065 0 0 {name=p903 sig_type=std_logic lab=nlshout}
 C {res.sym} 1000 -1095 0 0 {name=RLSHOUT
-value=3.1416
+value=2.0623
 footprint=1206
 device=resistor
 m=1}
