@@ -181,12 +181,12 @@ C {lab_pin.sym} 1450 -370 0 0 {name=p43 sig_type=std_logic lab=vbuf}
 C {lab_pin.sym} 1950 -370 2 0 {name=p45 sig_type=std_logic lab=rf_out_pad}
 C {ind.sym} 1770 -370 1 0 {name=LOUT
 m=1
-value=1.2n
+value=2.4n
 footprint=1206
 device=inductor
 }
 C {res.sym} 1880 -370 1 0 {name=RLOUT
-value=1.8
+value=3.0159
 footprint=1206
 device=resistor
 m=1}
@@ -198,7 +198,7 @@ footprint=1206
 device=inductor
 }
 C {res.sym} 310 -280 1 0 {name=RLIN
-value=5
+value=5.2779
 footprint=1206
 device=resistor
 m=1}
