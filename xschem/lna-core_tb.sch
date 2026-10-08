@@ -1172,33 +1172,3 @@ C {gf180mcu_fd_io__asig_5p0.sym} -185 -1460 0 0 {name=x2 model=gf180mcu_fd_io__a
 }
 C {gf180mcu_fd_io__asig_5p0.sym} -185 -1095 0 0 {name=x3 model=gf180mcu_fd_io__asig_5p0
 }
-C {ind.sym} 900 -1460 0 0 {name=LSHUNT
-m=1
-value=2.3n
-footprint=1206
-device=inductor
-}
-C {lab_pin.sym} 900 -1490 0 0 {name=p900 sig_type=std_logic lab=rf_in_pad}
-C {lab_pin.sym} 900 -1430 0 0 {name=p901 sig_type=std_logic lab=nlshin}
-C {res.sym} 1000 -1460 0 0 {name=RLSHIN
-value=1.4784
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 1000 -1430 0 0 {name=p904 sig_type=std_logic lab=nlshin}
-C {lab_pin.sym} 1000 -1490 0 0 {name=p905 sig_type=std_logic lab=vss}
-C {ind.sym} 900 -1095 0 0 {name=LSHUNT_OUT
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
-C {lab_pin.sym} 900 -1125 0 0 {name=p902 sig_type=std_logic lab=rf_out_pad}
-C {lab_pin.sym} 900 -1065 0 0 {name=p903 sig_type=std_logic lab=nlshout}
-C {res.sym} 1000 -1095 0 0 {name=RLSHOUT
-value=1.6069
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 1000 -1065 0 0 {name=p906 sig_type=std_logic lab=nlshout}
-C {lab_pin.sym} 1000 -1125 0 0 {name=p907 sig_type=std_logic lab=vss}
