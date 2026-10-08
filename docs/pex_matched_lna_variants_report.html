@@ -550,10 +550,6 @@ const rows = [
   {key: 'c8', label: 'C8', sub: 'CG-tank @ vx'},
   {key: 'c4', label: 'C4', sub: 'shunt @ rf_out_pad'},
   {key: 'c3', label: 'C3', sub: 'series → LOUT'},
-  {key: 'rlin', label: 'RLIN', sub: 'ω·LIN/Q loss (LIN=4.2nH fixed)'},
-  {key: 'rlshin', label: 'RLSHIN', sub: 'ω·LSHUNT/Q loss (LSHUNT=2.3nH fixed)'},
-  {key: 'rlout', label: 'RLOUT', sub: 'ω·LOUT/Q loss (LOUT=2.4nH fixed)'},
-  {key: 'rlshout', label: 'RLSHOUT', sub: 'ω·LSHUNT_OUT/Q loss (LSHUNT_OUT=2.5nH fixed)'},
 ];
 const unit = (k) => k.startsWith('c') ? 'µm' : 'Ω';
 const comp = document.getElementById('comp-table');
