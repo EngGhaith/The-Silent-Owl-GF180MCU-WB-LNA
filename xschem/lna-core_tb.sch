@@ -1189,7 +1189,7 @@ footprint=1206
 device=resistor
 m=1
 spice_ignore=true}
-C {code_shown.sym} 760 -1730 0 0 {name=ngspice_s1 only_toplevel=true 
+C {code_shown.sym} 1210 -1840 0 0 {name=ngspice_s1 only_toplevel=true 
 value="
 
 .temp 25
@@ -1219,33 +1219,3 @@ wrs2p /foss/designs/lna_core_tb.s2p
 .endc
 "
 spice_ignore=true}
-C {ind.sym} 900 -1460 0 0 {name=LSHUNT
-m=1
-value=2.4n
-footprint=1206
-device=inductor
-}
-C {lab_pin.sym} 900 -1490 0 0 {name=p908 sig_type=std_logic lab=rf_in_pad}
-C {lab_pin.sym} 900 -1430 0 0 {name=p909 sig_type=std_logic lab=nlshin}
-C {res.sym} 1000 -1460 0 0 {name=RLSHIN
-value=3.0159
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 1000 -1430 0 0 {name=p910 sig_type=std_logic lab=nlshin}
-C {lab_pin.sym} 1000 -1490 0 0 {name=p911 sig_type=std_logic lab=vss}
-C {ind.sym} 900 -1095 0 0 {name=LSHUNT_OUT
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
-C {lab_pin.sym} 900 -1125 0 0 {name=p912 sig_type=std_logic lab=rf_out_pad}
-C {lab_pin.sym} 900 -1065 0 0 {name=p913 sig_type=std_logic lab=nlshout}
-C {res.sym} 1000 -1095 0 0 {name=RLSHOUT
-value=3.1416
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 1000 -1065 0 0 {name=p914 sig_type=std_logic lab=nlshout}
-C {lab_pin.sym} 1000 -1125 0 0 {name=p915 sig_type=std_logic lab=vss}
