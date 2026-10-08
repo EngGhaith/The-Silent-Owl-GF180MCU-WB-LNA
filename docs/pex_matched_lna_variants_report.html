@@ -14,6 +14,52 @@ const COMPONENTS = [
 
 const BIAS = {VBIAS_CG: {old: 1.40, new: 1.40}, VBIAS_CS: {old: 1.20, new: 1.30}, VBIAS_CAS: {old: 4.80, new: 5.00}, VBIAS_ICG: {old: 2.20, new: 2.80}, VBIAS_BUF: {old: 1.30, new: 1.50}};
 
+const TRANSISTORS = {
+  "main_lowtailnoise_pexmatched": {
+    label: "main_lowtailnoise_pexmatched (all 4 bands — bias is DC, unaffected by caps/R retuning)",
+    devices: [
+      {name: "M2", role: "CG input stage", l: 0.6, w: 40, gm: 21.592, id: 2.125, gmid: 10.161},
+      {name: "M1", role: "CS gain stage (cascoded by M4)", l: 0.28, w: 20, gm: 36.219, id: 17.926, gmid: 2.021},
+      {name: "M4", role: "Cascode above M1, drain at tank (vx)", l: 0.6, w: 35, gm: 16.252, id: 17.928, gmid: 0.907},
+      {name: "M3", role: "Output source-follower", l: 0.6, w: 25, gm: 20.649, id: 9.242, gmid: 2.235},
+      {name: "M5", role: "CG tail current source (RF-choked)", l: 0.5, w: 15, gm: 0.640, id: 2.125, gmid: 0.301},
+      {name: "M6", role: "Output-buffer tail current source", l: 0.5, w: 25, gm: 17.681, id: 9.201, gmid: 1.922},
+    ]
+  },
+  "dev_ilir_pexmatched": {
+    label: "dev_ilir_pexmatched (2.4GHz only)",
+    devices: [
+      {name: "M2", role: "Fed-back CG input (degenerated source)", l: 0.6, w: 40, gm: 38.855, id: 8.749, gmid: 4.441},
+      {name: "M1", role: "CS gain stage (cascoded by M4)", l: 0.28, w: 20, gm: 33.400, id: 13.204, gmid: 2.529},
+      {name: "M4", role: "Cascode, drives output pad directly", l: 0.6, w: 35, gm: 15.342, id: 13.204, gmid: 1.162},
+    ]
+  }
+};
+
+// Fixed (non-band-varying) R/L/C in main_lowtailnoise_pexmatched -- everything NOT in the
+// per-band comparison table above. Inductor loss resistors (RLIN/RLSHIN/RLOUT/RLSHOUT, and
+// the tank's RLD2) are excluded throughout, per the same "no Rs for inductors" convention.
+const FIXED_COMPONENTS = {
+  inductors: [
+    {name: "LIN", value: "4.2nH", role: "series, input pad → RLIN → C2"},
+    {name: "LSHUNT", value: "2.3nH", role: "shunt @ rf_in_pad (PEX match)"},
+    {name: "LOUT", value: "2.4nH", role: "series, vbuf → C3 → LOUT → pad"},
+    {name: "LSHUNT_OUT", value: "2.5nH", role: "shunt @ rf_out_pad (PEX match)"},
+    {name: "LD2", value: "6.8nH", role: "CG-tank inductor @ vx"},
+  ],
+  resistors: [
+    {name: "R1", value: "49.8kΩ", role: "vbias_cg → g_cg gate-bias feed (ppolyf_u_1k)"},
+    {name: "R2", value: "49.8kΩ", role: "vbias_cs → g_cs gate-bias feed (ppolyf_u_1k)"},
+    {name: "R4", value: "835Ω", role: "vm2 → vdd (ppolyf_u)"},
+    {name: "R5", value: "635Ω", role: "vx → vdd (ppolyf_u)"},
+    {name: "R7", value: "0.9Ω", role: "vx → net5, tank-to-M3-gate (npolyf_s)"},
+  ],
+  capacitors: [
+    {name: "C1", value: "93.15µm", role: "interstage, vm2 (M2 drain) → g_cs (M1 gate)"},
+    {name: "C9", value: "79.82µm × m=4", role: "bypass, vss ↔ g_cg"},
+  ]
+};
+
 </script>
 <style>
   :root {
@@ -233,6 +279,11 @@ const BIAS = {VBIAS_CG: {old: 1.40, new: 1.40}, VBIAS_CS: {old: 1.20, new: 1.30}
 
   /* component table */
   .comp-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: auto; }
+  .transistor-table-title {
+    font-size: 12.5px; font-weight: 600; color: var(--text-dim);
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
   table.comp-table { width: 100%; border-collapse: collapse; min-width: 720px; }
   table.comp-table th, table.comp-table td { padding: 10px 14px; text-align: left; }
   table.comp-table thead th {
@@ -336,6 +387,20 @@ const BIAS = {VBIAS_CG: {old: 1.40, new: 1.40}, VBIAS_CS: {old: 1.20, new: 1.30}
       <table class="comp-table" id="comp-table"></table>
     </div>
     <div class="note-box" id="bias-note"></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Transistor sizing &amp; DC bias point</h2>
+    <div id="transistor-tables"></div>
+    <p class="table-note">gm and gm/Id are simulated DC operating-point values (ngspice <code>.op</code>), not schematic parameters &mdash; they depend on the actual bias point. main_lowtailnoise_pexmatched's bias is identical across all four bands (only caps/resistors change, which are DC-open/DC-short and don't shift the operating point), so these values hold for every one of its band variants.</p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Fixed (non-changing) components &mdash; main_lowtailnoise</h2>
+    <div class="comp-table-wrap">
+      <table class="comp-table" id="fixed-comp-table"></table>
+    </div>
+    <p class="table-note">Everything in main_lowtailnoise_pexmatched NOT already covered by the per-band table above &mdash; i.e. never touched across any of the four band relocations. Inductor loss resistors (RLIN/RLSHIN/RLOUT/RLSHOUT, and the tank's RLD2) are omitted throughout, consistent with the per-band table.</p>
   </section>
 
   <footer class="page-footer">
@@ -578,6 +643,64 @@ comp.querySelectorAll('thead th.num').forEach((th, i) => { th.title = COMPONENTS
 // ---- Bias note ----
 const bn = document.getElementById('bias-note');
 bn.innerHTML = `<b>Bias (shared across all four main_lowtailnoise bands):</b> VBIAS_CG ${BIAS.VBIAS_CG.old}→${BIAS.VBIAS_CG.new}V, VBIAS_CS ${BIAS.VBIAS_CS.old}→${BIAS.VBIAS_CS.new}V, VBIAS_CAS ${BIAS.VBIAS_CAS.old}→${BIAS.VBIAS_CAS.new}V, VBIAS_ICG ${BIAS.VBIAS_ICG.old}→${BIAS.VBIAS_ICG.new}V (capped below M5's 3.3V gate rating), VBIAS_BUF ${BIAS.VBIAS_BUF.old}→${BIAS.VBIAS_BUF.new}V &mdash; optimized once at 2.4GHz (Icc 22.1→29.3mA, under the 40mA budget) and reused unchanged across all relocated bands. VBIAS_CSC and VBIAS_CASC have no effect in this topology (dead nodes) and were left alone.`;
+
+// ---- Transistor sizing tables ----
+const transistorContainer = document.getElementById('transistor-tables');
+transistorContainer.innerHTML = Object.entries(TRANSISTORS).map(([branch, data]) => `
+  <div class="comp-table-wrap" style="margin-bottom:16px;">
+    <div class="transistor-table-title">${data.label} <span class="branch-badge">${branch}</span></div>
+    <table class="comp-table">
+      <thead><tr>
+        <th>Device</th>
+        <th>Role</th>
+        <th class="num">L</th>
+        <th class="num">W</th>
+        <th class="num">gm</th>
+        <th class="num">Id</th>
+        <th class="num">gm/Id</th>
+      </tr></thead>
+      <tbody>
+        ${data.devices.map(d => `
+          <tr>
+            <td class="rowhead">${d.name}</td>
+            <td class="fixed-tag" style="text-transform:none;">${d.role}</td>
+            <td class="num">${d.l}µm</td>
+            <td class="num">${d.w}µm</td>
+            <td class="num">${d.gm.toFixed(2)}mS</td>
+            <td class="num">${d.id.toFixed(2)}mA</td>
+            <td class="num">${d.gmid.toFixed(2)}&nbsp;/V</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+`).join('');
+
+// ---- Fixed (non-changing) components table ----
+const fixedTable = document.getElementById('fixed-comp-table');
+function fixedRows(items, groupLabel) {
+  return items.map((it, i) => `
+    <tr>
+      ${i === 0 ? `<td class="rowhead" rowspan="${items.length}" style="vertical-align:top; border-right:1px solid var(--border);">${groupLabel}</td>` : ''}
+      <td class="rowhead">${it.name}</td>
+      <td class="fixed-tag" style="text-transform:none;">${it.role}</td>
+      <td class="num">${it.value}</td>
+    </tr>
+  `).join('');
+}
+fixedTable.innerHTML = `
+  <thead><tr>
+    <th>Type</th>
+    <th>Component</th>
+    <th>Role</th>
+    <th class="num">Value</th>
+  </tr></thead>
+  <tbody>
+    ${fixedRows(FIXED_COMPONENTS.inductors, 'L')}
+    ${fixedRows(FIXED_COMPONENTS.resistors, 'R')}
+    ${fixedRows(FIXED_COMPONENTS.capacitors, 'C')}
+  </tbody>
+`;
 
 // ---- Network diagram (abstract matching topology) ----
 const svg = document.getElementById('network-svg');
