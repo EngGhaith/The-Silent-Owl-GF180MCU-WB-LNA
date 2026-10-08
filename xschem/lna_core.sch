@@ -93,8 +93,6 @@ N 220 -580 270 -580 {lab=rf_in_pad}
 N 170 -580 220 -580 {lab=rf_in_pad}
 N 510 -480 510 -470 {lab=#net6}
 N 270 -580 330 -580 {lab=rf_in_pad}
-N 370 -490 370 -470 {lab=#net7}
-N 370 -580 370 -550 {lab=rf_in_pad}
 N 1580 -750 1580 -675 {lab=rf_out_pad}
 N 1300 -1175 1300 -1160 {lab=vdd}
 N 1300 -1180 1300 -1175 {lab=vdd}
@@ -125,9 +123,9 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
-C {ind.sym} 510 -440 0 0 {name=Lmatch
+C {ind.sym} 510 -440 0 0 {name=LEQ
 m=1
-value=3n
+value=1.3333n
 footprint=1206
 device=inductor
 }
@@ -215,6 +213,8 @@ C {iopin.sym} 1240 -670 0 1 {name=p61 lab=vbias_cas}
 C {iopin.sym} 70 -770 0 1 {name=p62 lab=vss}
 C {iopin.sym} 180 -1230 3 0 {name=p64 lab=vbias_buf
 }
+C {iopin.sym} 1010 -330 0 1 {name=p65 lab=vbias_icg
+spice_ignore=true}
 C {lab_pin.sym} 1300 -360 3 0 {name=p7 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 550 -690 3 0 {name=p10 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 780 -830 2 0 {name=p12 sig_type=std_logic lab=vss}
@@ -263,24 +263,12 @@ value=1.25p
 footprint=1206
 device="ceramic capacitor"
 }
-C {res.sym} 510 -510 0 0 {name=Rs1
-value=0.3
+C {res.sym} 510 -510 0 0 {name=RLEQ
+value=1.6755
 footprint=1206
 device=resistor
 m=1
 }
-C {ind.sym} 370 -520 0 0 {name=LSHUNT
-m=1
-value=2.4n
-footprint=1206
-device=inductor
-}
-C {res.sym} 370 -440 2 0 {name=RLSHIN
-value=3.0159
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 370 -410 2 0 {name=p911 sig_type=std_logic lab=vss}
 C {ind.sym} 1580 -645 0 0 {name=LSHUNT_OUT
 m=1
 value=2.5n
