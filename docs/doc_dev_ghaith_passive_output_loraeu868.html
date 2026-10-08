@@ -1,0 +1,104 @@
+<meta charset="utf-8">
+<title>dev_ghaith_passive_output_loraeu868</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f8; --surface: #ffffff; --surface-2: #ebeef3; --border: #dde1e9;
+    --text: #1a2030; --text-dim: #5c6676; --text-faint: #8891a1;
+    --accent: #2f63e0; --accent-soft: #e8edfc;
+    --good-bg: #e4f6ec; --good-text: #137a45;
+    --bad-bg: #fbe7e5; --bad-text: #b3392f;
+    --warn-bg: #fdf3da; --warn-text: #8a6413;
+    --shadow: 0 1px 2px rgba(20,30,50,0.04), 0 8px 24px -12px rgba(20,30,50,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+      --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+      --accent: #6a93f5; --accent-soft: #1d2740;
+      --good-bg: #113826; --good-text: #5fd99a;
+      --bad-bg: #3a1f1c; --bad-text: #f0988c;
+      --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+    --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+    --accent: #6a93f5; --accent-soft: #1d2740;
+    --good-bg: #113826; --good-text: #5fd99a;
+    --bad-bg: #3a1f1c; --bad-text: #f0988c;
+    --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "IBM Plex Sans", -apple-system, sans-serif; font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-size: 26px; font-weight: 700; margin: 8px 0 4px; letter-spacing: -0.01em; font-family: "IBM Plex Mono", monospace; }
+  .subtitle { color: var(--text-dim); margin-bottom: 20px; }
+  .status-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 20px; }
+  .status-pill.good { background: var(--good-bg); color: var(--good-text); }
+  .status-pill.bad { background: var(--bad-bg); color: var(--bad-text); }
+  .status-pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p { margin: 0 0 12px; }
+  ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+  .metrics-grid .m { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+  .metrics-grid .m .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .metrics-grid .m .v { font-family: "IBM Plex Mono", monospace; font-size: 16px; font-weight: 600; margin-top: 3px; }
+  .note { font-size: 12.5px; color: var(--text-faint); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: left; font-size: 13.5px; }
+  th { background: var(--surface-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-faint); }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+  tr + tr td { border-top: 1px solid var(--border); }
+  .branch-badge { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 5px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-faint); }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">dev_ghaith variant &middot; active CG degeneration &middot; archived to old_tries/xschem_dev_ghaith_passive_output_loraeu868/</div>
+  <h1>dev_ghaith_passive_output_loraeu868</h1>
+  <p class="subtitle">passive-output variant relocated to LoRa EU868 (868.30 MHz) with inductors held fixed across bands, caps/R/bias only.</p>
+  <span class="status-pill good">Functional</span>
+
+  <h2>Design</h2>
+  <p>Same L-match output as dev_ghaith_passive_output, relocated with inductors fixed. Needed more extensive retuning than the GNSS siblings: both a tank-resistor change and an output-side resistor/cap rebalance to recover S22.</p>
+  <ul>
+    <li>LD4 and LD2 reverted to their native 2.4GHz values (8n, 7.0n)</li>
+    <li>CTUNE_M2 (3.7pF, vm2-to-vdd) and CTUNE_OUT (0.8pF, vx-to-vdd) added</li>
+    <li>RLD3 lowered 30 &rarr; 8&Omega; &mdash; CTUNE_M2 alone cannot push the gain peak below ~1.2GHz no matter how large it's made</li>
+    <li>RLD2 (output tank resistor) raised 50 &rarr; 70&Omega; and C11 enlarged 0.8p &rarr; 16p to recover S22; input series cap C2 widened 30.2168u &rarr; 60.4336u</li>
+  </ul>
+
+  <h2>Performance &mdash; LoRa EU868 (0.868 GHz)</h2>
+  <div class="metrics-grid">
+    <div class="m"><div class="k">S11</div><div class="v">-26.93 dB</div></div>
+    <div class="m"><div class="k">S21</div><div class="v">12.86 dB</div></div>
+    <div class="m"><div class="k">S22</div><div class="v">-12.60 dB</div></div>
+    <div class="m"><div class="k">NF</div><div class="v">3.96 dB</div></div>
+    <div class="m"><div class="k">Icc</div><div class="v">16.12 mA</div></div>
+  </div>
+  <p class="note">Re-simulated 2026-10-08 against the idealized PDK pad model (not the PEX-extracted netlist), via ngspice S-parameter/noise analysis, ngspice sp lin 7000-point sweep, 1 MHz&ndash;7 GHz, nearest sample to target reported.</p>
+
+  <h2>History</h2>
+  <p>Two relocation commits on top of dev_ghaith_passive_output. The corrected commit reports S11=-27.73dB, S21=12.63dB, S22=-12.63dB, NF=3.93dB.</p>
+  <table>
+    <thead><tr><th>Commit</th><th>Message</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">ca6338d</td><td>Fix LoRa EU868 relocation: no inductor changes band to band, caps/R/bias only</td></tr>
+      <tr><td class="mono">c1a8d11</td><td>Relocate passive-output dev_ghaith to LoRa EU868 (868.30MHz)</td></tr>
+      <tr><td class="mono">f80a3fa</td><td>Replace dev_ghaith's output coupling with a tuned passive L-match network</td></tr>
+      <tr><td class="mono">2cf9c0e</td><td>Cleaned the schematics</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Archived from <code>dev_ghaith_passive_output_loraeu868</code> &middot; design files under <code>xschem_dev_ghaith_passive_output_loraeu868/</code> in this branch (<code>old_tries</code>).
+  </footer>
+</div>

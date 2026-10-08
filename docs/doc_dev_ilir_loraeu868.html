@@ -1,0 +1,104 @@
+<meta charset="utf-8">
+<title>dev_ilir_loraeu868</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f8; --surface: #ffffff; --surface-2: #ebeef3; --border: #dde1e9;
+    --text: #1a2030; --text-dim: #5c6676; --text-faint: #8891a1;
+    --accent: #2f63e0; --accent-soft: #e8edfc;
+    --good-bg: #e4f6ec; --good-text: #137a45;
+    --bad-bg: #fbe7e5; --bad-text: #b3392f;
+    --warn-bg: #fdf3da; --warn-text: #8a6413;
+    --shadow: 0 1px 2px rgba(20,30,50,0.04), 0 8px 24px -12px rgba(20,30,50,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+      --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+      --accent: #6a93f5; --accent-soft: #1d2740;
+      --good-bg: #113826; --good-text: #5fd99a;
+      --bad-bg: #3a1f1c; --bad-text: #f0988c;
+      --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+    --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+    --accent: #6a93f5; --accent-soft: #1d2740;
+    --good-bg: #113826; --good-text: #5fd99a;
+    --bad-bg: #3a1f1c; --bad-text: #f0988c;
+    --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "IBM Plex Sans", -apple-system, sans-serif; font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-size: 26px; font-weight: 700; margin: 8px 0 4px; letter-spacing: -0.01em; font-family: "IBM Plex Mono", monospace; }
+  .subtitle { color: var(--text-dim); margin-bottom: 20px; }
+  .status-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 20px; }
+  .status-pill.good { background: var(--good-bg); color: var(--good-text); }
+  .status-pill.bad { background: var(--bad-bg); color: var(--bad-text); }
+  .status-pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p { margin: 0 0 12px; }
+  ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+  .metrics-grid .m { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+  .metrics-grid .m .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .metrics-grid .m .v { font-family: "IBM Plex Mono", monospace; font-size: 16px; font-weight: 600; margin-top: 3px; }
+  .note { font-size: 12.5px; color: var(--text-faint); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: left; font-size: 13.5px; }
+  th { background: var(--surface-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-faint); }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+  tr + tr td { border-top: 1px solid var(--border); }
+  .branch-badge { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 5px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-faint); }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">dev_ilir variant &mdash; fed-back common-gate &middot; archived to old_tries/xschem_dev_ilir_loraeu868/</div>
+  <h1>dev_ilir_loraeu868</h1>
+  <p class="subtitle">dev_ilir retuned to LoRa EU868 (868.30 MHz); root-caused a series AC-coupling-cap voltage divider that the shunt-cap grid search alone couldn't fix.</p>
+  <span class="status-pill warn">Marginal</span>
+
+  <h2>Design</h2>
+  <p>Three-stage LNA core: a common-gate (CG) input stage (M2, actively source-degenerated by current-sink M5) feeds a cascoded common-source (CS) gain stage (M1/M4), with a source-follower buffer (M3) and a separate CS noise-cancellation branch (M9) summed at the output. This is the original IlirShala1 dev_ilir topology (PR #15), later rebiased by EngGhaith (PR #17, VBIAS_CG 2.2V -> 1.0V) to fix the CG stage's operating point. This branch relocates the passband to LoRa EU868, with the key fix being the series input-coupling cap C15 rather than the shunt tank caps.</p>
+  <ul>
+    <li>Initial shunt-cap-only retune (b903d16) plus CTUNE_DEG fix (174357b) and joint-trim CTUNE_M2=30u, CTUNE_OUT=2u (7a67f64) left the amplifier non-functional.</li>
+    <li>Root cause: C15 is the series AC-coupling cap from rf_in_pad into M2's source; at 868.30MHz its reactance (122&Omega;) was 5x M2's own 1/gm (~26&Omega; after the 1.0V rebias), dropping most of the RF signal across itself.</li>
+    <li>Scaling C15 from 1.5p to 20p (8279f6c) restores its 2.4GHz-era reactance and crosses the design from non-functional to a working, if weak, amplifier.</li>
+  </ul>
+
+  <h2>Performance &mdash; LoRa EU868 (0.868 GHz)</h2>
+  <div class="metrics-grid">
+    <div class="m"><div class="k">S11</div><div class="v">-5.21 dB</div></div>
+    <div class="m"><div class="k">S21</div><div class="v">2.93 dB</div></div>
+    <div class="m"><div class="k">S22</div><div class="v">-13.34 dB</div></div>
+    <div class="m"><div class="k">NF</div><div class="v">7.38 dB</div></div>
+    <div class="m"><div class="k">Icc</div><div class="v">22.18 mA</div></div>
+  </div>
+  <p class="note">Re-simulated 2026-10-08 against the idealized PDK pad model (not the PEX-extracted netlist), via ngspice S-parameter/noise analysis, 1 MHz-step AC sweep from 1 MHz to 7 GHz (7001 points).</p>
+
+  <h2>History</h2>
+  <p>Direct band-retune of the rebiased dev_ilir base for LoRa EU868; notable for discovering that the series coupling cap, not the shunt tank caps, was the dominant factor limiting gain this far below the 2.4GHz design point.</p>
+  <table>
+    <thead><tr><th>Commit</th><th>Message</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">8279f6c</td><td>Extend retuning to series caps: C15 1.5p -> 20p for LoRa EU868</td></tr>
+      <tr><td class="mono">7a67f64</td><td>Joint-trim shunt caps for LoRa EU868: CTUNE_M2=30u, CTUNE_OUT=2u</td></tr>
+      <tr><td class="mono">174357b</td><td>Fix CTUNE_DEG: was tied to a stray net, not M2's real source node</td></tr>
+      <tr><td class="mono">fcdc3e9</td><td>Add CTUNE_DEG shunt cap at M2 source-degeneration node (net1||vss), placeholder value</td></tr>
+      <tr><td class="mono">b903d16</td><td>Retune dev_ilir core to LoRaWAN EU863-870, 868.30 MHz via shunt caps only</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Archived from <code>dev_ilir_loraeu868</code> &middot; design files under <code>xschem_dev_ilir_loraeu868/</code> in this branch (<code>old_tries</code>).
+  </footer>
+</div>

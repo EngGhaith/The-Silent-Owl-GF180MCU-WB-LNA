@@ -1,0 +1,104 @@
+<meta charset="utf-8">
+<title>main_gnssl1</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f8; --surface: #ffffff; --surface-2: #ebeef3; --border: #dde1e9;
+    --text: #1a2030; --text-dim: #5c6676; --text-faint: #8891a1;
+    --accent: #2f63e0; --accent-soft: #e8edfc;
+    --good-bg: #e4f6ec; --good-text: #137a45;
+    --bad-bg: #fbe7e5; --bad-text: #b3392f;
+    --warn-bg: #fdf3da; --warn-text: #8a6413;
+    --shadow: 0 1px 2px rgba(20,30,50,0.04), 0 8px 24px -12px rgba(20,30,50,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+      --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+      --accent: #6a93f5; --accent-soft: #1d2740;
+      --good-bg: #113826; --good-text: #5fd99a;
+      --bad-bg: #3a1f1c; --bad-text: #f0988c;
+      --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+    --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+    --accent: #6a93f5; --accent-soft: #1d2740;
+    --good-bg: #113826; --good-text: #5fd99a;
+    --bad-bg: #3a1f1c; --bad-text: #f0988c;
+    --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "IBM Plex Sans", -apple-system, sans-serif; font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-size: 26px; font-weight: 700; margin: 8px 0 4px; letter-spacing: -0.01em; font-family: "IBM Plex Mono", monospace; }
+  .subtitle { color: var(--text-dim); margin-bottom: 20px; }
+  .status-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 20px; }
+  .status-pill.good { background: var(--good-bg); color: var(--good-text); }
+  .status-pill.bad { background: var(--bad-bg); color: var(--bad-text); }
+  .status-pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p { margin: 0 0 12px; }
+  ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+  .metrics-grid .m { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+  .metrics-grid .m .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .metrics-grid .m .v { font-family: "IBM Plex Mono", monospace; font-size: 16px; font-weight: 600; margin-top: 3px; }
+  .note { font-size: 12.5px; color: var(--text-faint); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: left; font-size: 13.5px; }
+  th { background: var(--surface-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-faint); }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+  tr + tr td { border-top: 1px solid var(--border); }
+  .branch-badge { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 5px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-faint); }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">pre-PEX main &mdash; no-cancellation core &middot; archived to old_tries/xschem_main_gnssl1/</div>
+  <h1>main_gnssl1</h1>
+  <p class="subtitle">Relocates the no-cancellation core to GNSS L1 (1575.42MHz) by retuning the vx tank cap C8 (12.64u&rarr;24.2u), then enlarging C2 and C3 to recover the S11/S22 match the retune disturbed.</p>
+  <span class="status-pill good">Functional</span>
+
+  <h2>Design</h2>
+  <p>This is the "no-cancellation core": common-gate (CG) input stage feeding a common-source (CS) main gain device, both cascoded, with a source-follower output buffer, biased from an on-chip resistor-ladder bias network. It replaced an earlier main topology that also carried an auxiliary noise-cancellation path (M7, M9, C7, C10, R6, R3); an A/B test on that lineage measured zero NF benefit from the cancellation path while it loaded nodes vx and s with extra parasitics and drew current, so it was dropped and the remaining core was re-optimized from scratch. This branch relocates that re-optimized core to a new target band by retuning passives and bias, without touching main's later RF-choke/bypass or PEX-matching work.</p>
+  <ul>
+    <li>Common-gate (CG) input device + common-source (CS) gain device, both cascoded, with a source-follower output buffer.</li>
+    <li>Noise-cancellation path (M7, M9, C7, C10, R6, R3) already removed relative to the earlier main lineage; bias and passives re-optimized from scratch after removal.</li>
+    <li>Band relocation done via the output/vx tank cap (C8) plus, in this branch, follow-up enlargement of the input coupling cap C2 and output coupling cap C3 to recover S11/S22 match that the retune disturbed.</li>
+    <li>Predates both main's RF-choke/bypass CG-tail noise reduction and all PEX-pad-matching work.</li>
+  </ul>
+
+  <h2>Performance &mdash; GNSS L1 (1.575 GHz)</h2>
+  <div class="metrics-grid">
+    <div class="m"><div class="k">S11</div><div class="v">-19.54 dB</div></div>
+    <div class="m"><div class="k">S21</div><div class="v">8.02 dB</div></div>
+    <div class="m"><div class="k">S22</div><div class="v">-16.97 dB</div></div>
+    <div class="m"><div class="k">NF</div><div class="v">4.41 dB</div></div>
+    <div class="m"><div class="k">Icc</div><div class="v">15.13 mA</div></div>
+  </div>
+  <p class="note">Re-simulated 2026-10-08 against the idealized PDK pad model (not the PEX-extracted netlist), via ngspice S-parameter/noise analysis, linear sweep, 7000 points from 1MHz to 7GHz.</p>
+
+  <h2>History</h2>
+  <p>This no-cancellation core is an earlier iteration of the topology at the heart of today's main: it already dropped the auxiliary noise-cancellation path (M7/M9/C7/C10/R6/R3) that an A/B test showed gave zero NF benefit, but it predates main's later RF-choke/bypass CG-tail noise reduction and all of the current PEX-pad-matching and bias-optimization work. Re-simulated here with the idealized PDK pad model, matching this family's original (pre-PEX) sign-off methodology.</p>
+  <table>
+    <thead><tr><th>Commit</th><th>Message</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">fb6869e</td><td>Relocate optimized main core to GNSS L1 (1575.42MHz): C8 12.64u -&gt; 24.2u</td></tr>
+      <tr><td class="mono">f2608d1</td><td>Fix S22 degradation: enlarge C3 (output coupling cap) for gnssl1</td></tr>
+      <tr><td class="mono">41f6a32</td><td>Fix S11 degradation: enlarge C2 (input coupling cap)</td></tr>
+      <tr><td class="mono">d7a482f</td><td>Relocate retuned no-cancellation core to GNSS L1 (1575.42MHz)</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Archived from <code>main_gnssl1</code> &middot; design files under <code>xschem_main_gnssl1/</code> in this branch (<code>old_tries</code>).
+  </footer>
+</div>

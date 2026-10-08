@@ -1,0 +1,103 @@
+<meta charset="utf-8">
+<title>dev_ilir_inductive_degen_loraeu433</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f8; --surface: #ffffff; --surface-2: #ebeef3; --border: #dde1e9;
+    --text: #1a2030; --text-dim: #5c6676; --text-faint: #8891a1;
+    --accent: #2f63e0; --accent-soft: #e8edfc;
+    --good-bg: #e4f6ec; --good-text: #137a45;
+    --bad-bg: #fbe7e5; --bad-text: #b3392f;
+    --warn-bg: #fdf3da; --warn-text: #8a6413;
+    --shadow: 0 1px 2px rgba(20,30,50,0.04), 0 8px 24px -12px rgba(20,30,50,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+      --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+      --accent: #6a93f5; --accent-soft: #1d2740;
+      --good-bg: #113826; --good-text: #5fd99a;
+      --bad-bg: #3a1f1c; --bad-text: #f0988c;
+      --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+    --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+    --accent: #6a93f5; --accent-soft: #1d2740;
+    --good-bg: #113826; --good-text: #5fd99a;
+    --bad-bg: #3a1f1c; --bad-text: #f0988c;
+    --warn-bg: #3a2f10; --warn-text: #f0cf7e;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "IBM Plex Sans", -apple-system, sans-serif; font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-size: 26px; font-weight: 700; margin: 8px 0 4px; letter-spacing: -0.01em; font-family: "IBM Plex Mono", monospace; }
+  .subtitle { color: var(--text-dim); margin-bottom: 20px; }
+  .status-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 20px; }
+  .status-pill.good { background: var(--good-bg); color: var(--good-text); }
+  .status-pill.bad { background: var(--bad-bg); color: var(--bad-text); }
+  .status-pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p { margin: 0 0 12px; }
+  ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+  .metrics-grid .m { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+  .metrics-grid .m .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .metrics-grid .m .v { font-family: "IBM Plex Mono", monospace; font-size: 16px; font-weight: 600; margin-top: 3px; }
+  .note { font-size: 12.5px; color: var(--text-faint); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 8px 12px; text-align: left; font-size: 13.5px; }
+  th { background: var(--surface-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-faint); }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+  tr + tr td { border-top: 1px solid var(--border); }
+  .branch-badge { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 5px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-faint); }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">dev_ilir variant &mdash; passive inductive degeneration &middot; archived to old_tries/xschem_dev_ilir_inductive_degen_loraeu433/</div>
+  <h1>dev_ilir_inductive_degen_loraeu433</h1>
+  <p class="subtitle">Attempted LoRa EU433 (433.92 MHz) relocation with LDEG/LD2/LD4 held fixed; confirmed structural failure (negative gain), matching the already-documented EU433 failure of this output-stage lineage.</p>
+  <span class="status-pill bad">Structural failure</span>
+
+  <h2>Design</h2>
+  <p>A structurally different lineage from plain dev_ilir: built on top of dev_ghaith_passive_output's output stage, this variant removes the CG input stage's active current-sink degeneration (M5) entirely and replaces it with a single passive degeneration inductor LDEG=12n from the CG source node to VSS &mdash; the classic inductively-degenerated CG/CS input-matching technique, where Zin's real part comes from gm&middot;Ldeg/Cgs rather than from a biasing device. VBIAS_CG was rederived from scratch (2.20V -> 0.80V) since the bias point no longer inherits from M5's current-setting. This is NOT a band-retune of dev_ilir; it is a separate topology variant that happens to share the "dev_ilir" name prefix. This branch attempts to relocate the passband to LoRa EU433 using the same caps/R/bias-only methodology that worked for GNSS L1, L2, and LoRa EU868 on this variant &mdash; and fails.</p>
+  <ul>
+    <li>Swept RLD3 down to 1&Omega; and CTUNE_M2 up to 25pF (61ecae1); the CG-stage tank gain crosses zero near 520-550MHz and goes negative for any CTUNE_M2 large enough to pull the peak further down.</li>
+    <li>Best achievable operating point: RLD3=1&Omega;, CTUNE_M2=16pF, giving S11=-0.41dB, S21=-7.42dB (negative gain), S22=-0.23dB, NF=9.72dB at 434MHz.</li>
+    <li>Mirrors the already-documented EU433 failure for dev_ghaith_passive_output (this variant's own output-stage ancestor) and for the original unmodified dev_ghaith, neither of which ever reached EU433 either.</li>
+    <li>This is a legitimate, confirmed structural limit of this output-stage lineage at EU433, not a tuning gap &mdash; consistent with the sibling dev_ghaith_lowtailnoise_loraeu433 branch's documented failure at the same band.</li>
+  </ul>
+
+  <h2>Performance &mdash; LoRa EU433 (0.434 GHz)</h2>
+  <div class="metrics-grid">
+    <div class="m"><div class="k">S11</div><div class="v">-0.41 dB</div></div>
+    <div class="m"><div class="k">S21</div><div class="v">-7.42 dB</div></div>
+    <div class="m"><div class="k">S22</div><div class="v">-0.23 dB</div></div>
+    <div class="m"><div class="k">NF</div><div class="v">9.72 dB</div></div>
+    <div class="m"><div class="k">Icc</div><div class="v">17.56 mA</div></div>
+  </div>
+  <p class="note">Re-simulated 2026-10-08 against the idealized PDK pad model (not the PEX-extracted netlist), via ngspice S-parameter/noise analysis, 1 MHz-step AC sweep from 1 MHz to 7 GHz (7001 points).</p>
+
+  <h2>History</h2>
+  <p>Band-retune attempt of the passive-inductive-degeneration dev_ilir base for LoRa EU433; the band is not reachable with positive gain under the fixed-inductor constraint used elsewhere in this sub-family.</p>
+  <table>
+    <thead><tr><th>Commit</th><th>Message</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">61ecae1</td><td>dev_ilir_inductive_degen: attempt LoRa EU433 relocation, caps/R/bias only</td></tr>
+      <tr><td class="mono">05107ff</td><td>Replace dev_ghaith's active CG degeneration with a passive inductor (new dev_ilir)</td></tr>
+      <tr><td class="mono">f80a3fa</td><td>Replace dev_ghaith's output coupling with a tuned passive L-match network</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Archived from <code>dev_ilir_inductive_degen_loraeu433</code> &middot; design files under <code>xschem_dev_ilir_inductive_degen_loraeu433/</code> in this branch (<code>old_tries</code>).
+  </footer>
+</div>
