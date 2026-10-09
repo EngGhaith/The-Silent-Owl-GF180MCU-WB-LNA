@@ -226,6 +226,8 @@ C {iopin.sym} 230 -1230 3 0 {name=p6 lab=vbias_csc
 }
 C {iopin.sym} 280 -1230 3 0 {name=p13 lab=vbias_casc
 }
+C {iopin.sym} 330 -1230 3 0 {name=p65 lab=vbias_icg
+spice_ignore=true}
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
 value=7p
