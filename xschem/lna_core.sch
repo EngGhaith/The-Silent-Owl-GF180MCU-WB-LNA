@@ -7,6 +7,11 @@ F {}
 E {}
 N 760 -830 780 -830 {
 lab=vss}
+N 760 -900 920 -900 {lab=vm2}
+N 920 -900 920 -860 {lab=vm2}
+N 760 -860 800 -860 {lab=vm2_cas}
+N 800 -860 800 -800 {lab=vm2_cas}
+N 800 -800 920 -800 {lab=vm2_cas}
 N 490 -580 510 -580 {
 lab=rf_in_pad}
 N 760 -1000 800 -1000 {
@@ -55,7 +60,6 @@ N 1300 -750 1370 -750 {
 lab=vx}
 N 760 -900 760 -890 {
 lab=vm2}
-N 760 -890 760 -860 {lab=vm2}
 N 1300 -1160 1300 -1140 {lab=vdd}
 N 1300 -1080 1300 -1060 {lab=#net3}
 N 760 -960 760 -900 {lab=vm2}
@@ -120,6 +124,25 @@ sa=0 sb=0 sd=0
 model=nfet_06v0
 spiceprefix=X
 }
+C {lab_pin.sym} 760 -860 0 0 {name=p73 sig_type=std_logic lab=vm2_cas}
+C {symbols/nfet_06v0.sym} 900 -830 0 0 {name=M2C
+L=0.6u
+W=40u
+nf=10
+m=14
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=nfet_06v0
+spiceprefix=X
+}
+C {lab_pin.sym} 920 -860 0 0 {name=p74 sig_type=std_logic lab=vm2}
+C {lab_pin.sym} 880 -830 0 0 {name=p75 sig_type=std_logic lab=vdd}
+C {lab_pin.sym} 920 -800 0 0 {name=p76 sig_type=std_logic lab=vm2_cas}
+C {lab_pin.sym} 920 -830 0 0 {name=p77 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 340 -830 0 0 {name=p4 sig_type=std_logic lab=g_cg}
 C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 }
