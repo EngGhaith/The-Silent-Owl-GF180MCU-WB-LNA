@@ -1,0 +1,354 @@
+<meta charset="utf-8">
+<title>dev_ilir_pexmatched — Design Review</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f8;
+    --surface: #ffffff;
+    --surface-2: #ebeef3;
+    --border: #dde1e9;
+    --text: #1a2030;
+    --text-dim: #5c6676;
+    --text-faint: #8891a1;
+    --accent: #2f63e0;
+    --accent-soft: #e8edfc;
+    --s11: #c2831f;
+    --s21: #1f9d66;
+    --s22: #1f93b0;
+    --nf: #9b5de5;
+    --bad-bg: #fbe9e7;
+    --bad-text: #b8391f;
+    --good-bg: #e4f6ec;
+    --good-text: #137a45;
+    --warn-bg: #fdf3da;
+    --warn-text: #92650a;
+    --mono-badge-bg: #eef1f7;
+    --shadow: 0 1px 2px rgba(20,30,50,0.04), 0 8px 24px -12px rgba(20,30,50,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+      --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+      --accent: #6a93f5; --accent-soft: #1d2740;
+      --s11: #e0ab52; --s21: #49c98c; --s22: #4fc3e0; --nf: #c79bf2;
+      --bad-bg: #3a2019; --bad-text: #ef8a6f;
+      --good-bg: #113826; --good-text: #5fd99a;
+      --warn-bg: #3a2f10; --warn-text: #e8c165;
+      --mono-badge-bg: #1e2531;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131a; --surface: #171b24; --surface-2: #1e232e; --border: #2a303d;
+    --text: #e7eaf1; --text-dim: #9aa3b5; --text-faint: #6c7689;
+    --accent: #6a93f5; --accent-soft: #1d2740;
+    --s11: #e0ab52; --s21: #49c98c; --s22: #4fc3e0; --nf: #c79bf2;
+    --bad-bg: #3a2019; --bad-text: #ef8a6f;
+    --good-bg: #113826; --good-text: #5fd99a;
+    --warn-bg: #3a2f10; --warn-text: #e8c165;
+    --mono-badge-bg: #1e2531;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.55;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 44px 24px 90px; }
+  code, .mono, .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  header.top { margin-bottom: 40px; }
+  header.top .eyebrow {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  header.top h1 { font-size: 32px; font-weight: 700; margin: 8px 0 10px; text-wrap: balance; letter-spacing: -0.01em; }
+  header.top p.lede { color: var(--text-dim); max-width: 74ch; font-size: 15.5px; }
+  .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 600; font-size: 13px; padding: 6px 12px; border-radius: 999px;
+  }
+  .pill.good { background: var(--good-bg); color: var(--good-text); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad-text); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn-text); }
+
+  section { margin-bottom: 52px; }
+  h2.section-title {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-faint); margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+
+  .evo-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .evo-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
+  }
+  .evo-card .evo-step { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+  .evo-card h3 { margin: 0; font-size: 16px; font-weight: 700; }
+  .evo-card .evo-commit { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--text-faint); }
+  .evo-card img {
+    width: 100%; border-radius: 8px; border: 1px solid var(--border); background: #fff;
+    display: block;
+  }
+  .evo-card p { margin: 0; color: var(--text-dim); font-size: 13.5px; }
+  .evo-card .evo-verdict { margin-top: auto; font-size: 12.5px; font-weight: 600; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .evo-verdict.v-good { color: var(--good-text); }
+  .evo-verdict.v-warn { color: var(--warn-text); }
+  .evo-verdict.v-bad { color: var(--bad-text); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 22px; box-shadow: var(--shadow);
+  }
+
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.cmp th {
+    text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text-faint); font-weight: 600; padding: 0 10px 10px; border-bottom: 1px solid var(--border);
+  }
+  table.cmp th.num, table.cmp td.num { text-align: right; }
+  table.cmp td { padding: 11px 10px; border-bottom: 1px solid var(--border); }
+  table.cmp tr:last-child td { border-bottom: none; }
+  table.cmp td.label { font-weight: 600; }
+  table.cmp td.sub { color: var(--text-faint); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+  .delta-bad { color: var(--bad-text); }
+  .delta-good { color: var(--good-text); }
+  .delta-flat { color: var(--text-faint); }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
+
+  .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+  .chart-card { background: var(--surface-2); border-radius: 10px; padding: 16px 18px; }
+  .chart-card .chart-title { font-size: 13px; font-weight: 600; color: var(--text-dim); margin-bottom: 2px; }
+  .chart-card .chart-sub { font-size: 11.5px; color: var(--text-faint); margin-bottom: 8px; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-faint); margin-top: 8px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .verdict-card {
+    background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--good-text);
+    border-radius: 10px; padding: 22px 24px; box-shadow: var(--shadow);
+  }
+  .verdict-card h3 { margin: 0 0 10px; font-size: 17px; }
+  .verdict-card p { margin: 8px 0; color: var(--text-dim); font-size: 14.5px; }
+  .verdict-card ul { margin: 10px 0; padding-left: 20px; color: var(--text-dim); font-size: 14.5px; }
+  .verdict-card li { margin: 4px 0; }
+
+  .note {
+    font-size: 13px; color: var(--text-faint); margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+
+  footer.page-footer {
+    margin-top: 54px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 12.5px; color: var(--text-faint); display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .evo-row, .chart-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">GF180MCU &middot; The Silent Owl WB-LNA &middot; dev_ilir_pexmatched</div>
+    <h1>Design Review: dev_ilir_pexmatched</h1>
+    <p class="lede">A walkthrough of the branch's three design points &mdash; the adopted CG-tank baseline, a tested single-inductor input simplification, and a cascode experiment &mdash; each simulated against the real PEX-extracted pad netlist (same convention used across every topology in this project). All numbers below are at 2.4&nbsp;GHz unless noted.</p>
+    <div class="badge-row">
+      <span class="pill good">&#10003; Baseline (two-branch + CG-tank) &mdash; recommended</span>
+      <span class="pill warn">&#9679; Single-L &mdash; viable simplification, ~0.5&nbsp;dB NF cost</span>
+      <span class="pill bad">&#10005; Cascode &mdash; not adopted</span>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Design evolution</h2>
+    <div class="evo-row">
+      <div class="evo-card">
+        <div class="evo-step">Step 1 &middot; Adopted</div>
+        <h3>Primary (two-branch input)</h3>
+        <div class="evo-commit">commit 68e4718</div>
+        <img src="lna_core_primary.png" alt="Primary dev_ilir_pexmatched schematic, two-branch input with LSHUNT/Rs1 and Lmatch">
+        <p>The CG input stage (M2) is matched with two separate branches &mdash; a shunt inductor+resistor (LSHUNT/Rs1) and a series match inductor (Lmatch) &mdash; plus the established LD4(8nH)/RLD3(30&Omega;) shunt-peaking load on the CG drain.</p>
+        <div class="evo-verdict v-good">Best NF and widest match &mdash; the reference design (&ldquo;ilir24&rdquo;)</div>
+      </div>
+      <div class="evo-card">
+        <div class="evo-step">Step 2 &middot; Tested</div>
+        <h3>Single-L input</h3>
+        <div class="evo-commit">commit 6c00a85</div>
+        <img src="lna_core_singleL.png" alt="dev_ilir_pexmatched_singleL schematic, merged single Leq input inductor">
+        <p>LSHUNT and Lmatch merged into one equivalent inductor Leq, dropping one component from the input network while re-matching at 2.4&nbsp;GHz against the same pad.</p>
+        <div class="evo-verdict v-warn">Simpler BOM, but S11 margin and NF both give up some ground</div>
+      </div>
+      <div class="evo-card">
+        <div class="evo-step">Step 3 &middot; Exploratory</div>
+        <h3>+ Cascode (M2C)</h3>
+        <div class="evo-commit">commit 7809891</div>
+        <img src="lna_core_cascode.png" alt="dev_ilir_pexmatched with cascode M2C schematic, cascode on CG input device">
+        <p>A cascode device M2C stacked on M2's drain, gate tied to vdd (a free AC ground in this testbench). Motivation was better reverse isolation; S12 did improve substantially &mdash; isolation was never the bottleneck here.</p>
+        <div class="evo-verdict v-bad">M2C's channel noise injects directly at the shared output node &mdash; NF degrades, not recovered by resizing (see cascode report)</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Headline comparison @ 2.4&nbsp;GHz</h2>
+    <div class="card">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th>Variant</th>
+            <th class="num">S11 (dB)</th>
+            <th class="num">S21 (dB)</th>
+            <th class="num">S22 (dB)</th>
+            <th class="num">NF (dB)</th>
+            <th class="num">Matched BW&sup1;</th>
+          </tr>
+        </thead>
+        <tbody id="cmp-body"></tbody>
+      </table>
+      <p class="note">&sup1; Matched bandwidth = contiguous band where S11&nbsp;&le;&nbsp;&minus;10&nbsp;dB, S22&nbsp;&le;&nbsp;&minus;10&nbsp;dB and S21&nbsp;&ge;&nbsp;10&nbsp;dB simultaneously hold, from the swept data below. Deltas shown are vs. the primary (adopted) baseline.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Swept response (200&nbsp;MHz&ndash;7&nbsp;GHz)</h2>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">S11 &mdash; input match</div>
+        <div class="chart-sub">Lower is better; &minus;10&nbsp;dB line is the usual match criterion</div>
+        <svg id="chart-s11" viewBox="0 0 460 200" width="100%"></svg>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">S21 &mdash; gain</div>
+        <div class="chart-sub">Peak gain and the shape of the passband</div>
+        <svg id="chart-s21" viewBox="0 0 460 200" width="100%"></svg>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">S22 &mdash; output match</div>
+        <div class="chart-sub">Lower is better; &minus;10&nbsp;dB line is the usual match criterion</div>
+        <svg id="chart-s22" viewBox="0 0 460 200" width="100%"></svg>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">NF &mdash; noise figure</div>
+        <div class="chart-sub">Lower is better</div>
+        <svg id="chart-nf" viewBox="0 0 460 200" width="100%"></svg>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:16px">
+      <span><span class="sw" style="background:var(--accent)"></span>Primary (adopted baseline)</span>
+      <span><span class="sw" style="background:var(--s22)"></span>Single-L</span>
+      <span><span class="sw" style="background:var(--bad-text)"></span>+ Cascode (M2C)</span>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Recommendation</h2>
+    <div class="verdict-card">
+      <h3>Ship the primary two-branch design; single-L is a fair fallback; cascode stays out.</h3>
+      <p>The original two-branch input (LSHUNT/Rs1 + Lmatch) with the LD4/RLD3 CG-tank load remains the best-performing dev_ilir_pexmatched configuration against the real PEX pad: S11&nbsp;&asymp;&nbsp;&minus;23.1&nbsp;dB, S21&nbsp;&asymp;&nbsp;18.0&nbsp;dB, NF&nbsp;&asymp;&nbsp;2.49&nbsp;dB at 2.4&nbsp;GHz, with the widest matched bandwidth of the three (&asymp;394&nbsp;MHz, 16.8%).</p>
+      <ul>
+        <li><b>Single-L</b> is a legitimate component-count reduction if board/die area matters more than the last ~0.5&nbsp;dB of NF and ~30&nbsp;MHz of matched bandwidth &mdash; it's not a regression driven by a mistake, just a real one-inductor-for-performance trade.</li>
+        <li><b>Cascode</b> was motivated by reverse isolation, which this design never lacked; the measured cost (NF 2.49&rarr;3.35&nbsp;dB, S21 down &asymp;1.7&nbsp;dB, matched BW down to &asymp;296&nbsp;MHz) is a straight loss with no offsetting benefit on this topology. Full root-cause (DC operating-point noise analysis, sizing sweep, body-effect test) is in the companion <a href="https://claude.ai/code/artifact/2d46d9cf-6695-4f88-8f1f-bda2b1e8f512" target="_blank">CG Cascode Exploration report</a>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <span>Related: <a href="https://claude.ai/code/artifact/82a3bac2-f30d-4b30-a400-1ce78959d1df" target="_blank">Chosen Topologies (9-variant PEX comparison)</a></span>
+    <span><a href="https://claude.ai/code/artifact/2d46d9cf-6695-4f88-8f1f-bda2b1e8f512" target="_blank">CG Cascode Exploration (main + dev_ilir)</a></span>
+    <span>All sweeps vs. <code>.simpatches/gf180mcu_fd_io_pex.spice</code> (md5 0e23a048&hellip;)</span>
+  </footer>
+</div>
+
+<script src="ilir_data.js"></script>
+<script>
+const fmt = (x, d=2) => (x === undefined || x === null) ? '&mdash;' : x.toFixed(d);
+const fmtSigned = (x) => (x > 0 ? '+' : '') + fmt(x, 2);
+function deltaClass(delta, goodIsNegative) {
+  if (Math.abs(delta) < 0.05) return 'delta-flat';
+  const good = goodIsNegative ? delta < 0 : delta > 0;
+  return good ? 'delta-good' : 'delta-bad';
+}
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+function buildCmpRows() {
+  const tbody = document.getElementById('cmp-body');
+  const base = ILIR_DATA.baseline, sl = ILIR_DATA.singleL, cas = ILIR_DATA.cascode;
+  const rows = [
+    {label: 'Primary (two-branch)', sub: 'adopted baseline', dotColor: cssVar('--accent'), vals: base.at_f0, deltas: null, bw: base.bw},
+    {label: 'Single-L input', sub: 'tested simplification', dotColor: cssVar('--s22'), vals: sl.at_f0, deltas: {
+      s11: sl.at_f0.s11 - base.at_f0.s11, s21: sl.at_f0.s21 - base.at_f0.s21, s22: sl.at_f0.s22 - base.at_f0.s22, nf: sl.at_f0.nf - base.at_f0.nf
+    }, bw: sl.bw},
+    {label: '+ Cascode (M2C)', sub: 'exploratory, not adopted', dotColor: cssVar('--bad-text'), vals: cas.at_f0, deltas: {
+      s11: cas.at_f0.s11 - base.at_f0.s11, s21: cas.at_f0.s21 - base.at_f0.s21, s22: cas.at_f0.s22 - base.at_f0.s22, nf: cas.at_f0.nf - base.at_f0.nf
+    }, bw: cas.bw},
+  ];
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td class="label"><span class="dot" style="background:${r.dotColor}"></span>${r.label}<span class="sub">${r.sub}</span></td>
+      <td class="num">${fmt(r.vals.s11)}${r.deltas ? ` <span class="${deltaClass(r.deltas.s11, true)}">(${fmtSigned(r.deltas.s11)})</span>` : ''}</td>
+      <td class="num">${fmt(r.vals.s21)}${r.deltas ? ` <span class="${deltaClass(r.deltas.s21, false)}">(${fmtSigned(r.deltas.s21)})</span>` : ''}</td>
+      <td class="num">${fmt(r.vals.s22)}${r.deltas ? ` <span class="${deltaClass(r.deltas.s22, true)}">(${fmtSigned(r.deltas.s22)})</span>` : ''}</td>
+      <td class="num">${fmt(r.vals.nf)}${r.deltas ? ` <span class="${deltaClass(r.deltas.nf, true)}">(${fmtSigned(r.deltas.nf)})</span>` : ''}</td>
+      <td class="num">${r.bw ? `${r.bw.abs_mhz.toFixed(0)}&nbsp;MHz <span class="sub" style="display:inline">(${r.bw.rel_pct.toFixed(1)}%)</span>` : '&mdash;'}</td>
+    </tr>
+  `).join('');
+}
+
+function buildChart(svgId, key, yIsDb=true) {
+  const svg = document.getElementById(svgId);
+  const W = 460, H = 200, PAD_L = 40, PAD_R = 14, PAD_T = 10, PAD_B = 26;
+  const plotW = W - PAD_L - PAD_R, plotH = H - PAD_T - PAD_B;
+
+  const series = [
+    {d: ILIR_DATA.baseline.sweep, color: cssVar('--accent')},
+    {d: ILIR_DATA.singleL.sweep, color: cssVar('--s22')},
+    {d: ILIR_DATA.cascode.sweep, color: cssVar('--bad-text')},
+  ];
+  const fMin = Math.min(...series.map(s => Math.min(...s.d.freq)));
+  const fMax = Math.max(...series.map(s => Math.max(...s.d.freq)));
+  const allVals = series.flatMap(s => s.d[key]);
+  const vMin = Math.min(...allVals), vMax = Math.max(...allVals);
+  const vPad = (vMax - vMin) * 0.1 || 1;
+  const yMin = vMin - vPad, yMax = vMax + vPad;
+  const xToPx = f => PAD_L + ((f - fMin) / (fMax - fMin)) * plotW;
+  const yToPx = v => PAD_T + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+  const pathFor = (freqArr, arr) => arr.map((v, i) => `${i === 0 ? 'M' : 'L'}${xToPx(freqArr[i]).toFixed(1)},${yToPx(v).toFixed(1)}`).join(' ');
+
+  let svgContent = '';
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD_T + (plotH * i / 4);
+    svgContent += `<line x1="${PAD_L}" y1="${y.toFixed(1)}" x2="${W-PAD_R}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`;
+  }
+  if (yIsDb && yMin < -10 && yMax > -10) {
+    const y10 = yToPx(-10);
+    svgContent += `<line x1="${PAD_L}" y1="${y10.toFixed(1)}" x2="${W-PAD_R}" y2="${y10.toFixed(1)}" stroke="var(--text-faint)" stroke-width="1" stroke-dasharray="3,3"/>`;
+  }
+  const fMid = (fMin + fMax) / 2;
+  [[fMin, 'start'], [fMid, 'middle'], [fMax, 'end']].forEach(([f, anchor]) => {
+    const x = xToPx(f);
+    svgContent += `<text x="${x.toFixed(1)}" y="${H-6}" font-size="10" fill="var(--text-faint)" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace">${Math.round(f)}</text>`;
+  });
+  [yMax, (yMax+yMin)/2, yMin].forEach((v, i) => {
+    const y = PAD_T + (plotH * i / 2);
+    svgContent += `<text x="${PAD_L-6}" y="${(y+3).toFixed(1)}" font-size="10" fill="var(--text-faint)" text-anchor="end" font-family="IBM Plex Mono, monospace">${v.toFixed(1)}</text>`;
+  });
+  series.forEach(s => {
+    svgContent += `<path d="${pathFor(s.d.freq, s.d[key])}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+  });
+  svg.innerHTML = svgContent;
+  svg.style.overflow = 'visible';
+}
+
+buildCmpRows();
+buildChart('chart-s11', 's11');
+buildChart('chart-s21', 's21', false);
+buildChart('chart-s22', 's22');
+buildChart('chart-nf', 'nf', false);
+</script>
