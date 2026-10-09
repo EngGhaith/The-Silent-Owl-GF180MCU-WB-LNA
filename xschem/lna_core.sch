@@ -9,8 +9,10 @@ N 700 -330 720 -330 {
 lab=vss}
 N 700 -540 700 -460 {
 lab=vm2}
-N 700 -630 700 -600 {
+N 700 -750 700 -720 {
 lab=vdd}
+N 700 -660 700 -600 {
+lab=#net7}
 N 440 -280 460 -280 {
 lab=s}
 N 110 -280 140 -280 {
@@ -147,7 +149,13 @@ N 700 -205 700 -200 {lab=s_tail}
 N 800 -185 845 -185 {lab=s_tail}
 N 845 -185 845 -135 {lab=s_tail}
 N 700 -185 800 -185 {}
-C {lab_pin.sym} 700 -630 0 0 {name=p11 sig_type=std_logic lab=vdd
+C {lab_pin.sym} 700 -750 0 0 {name=p11 sig_type=std_logic lab=vdd
+}
+C {ind.sym} 700 -690 0 0 {name=LD1
+m=1
+value=32n
+footprint=1206
+device=inductor
 }
 C {lab_pin.sym} 700 -280 2 0 {name=p1 sig_type=std_logic lab=s}
 C {symbols/nfet_06v0.sym} 680 -330 0 0 {name=M2
@@ -298,11 +306,10 @@ L=48.35u
 model=ppolyf_u_1k
 spiceprefix=X
 m=1}
-C {symbols/ppolyf_u.sym} 700 -570 0 0 {name=R4
-W=8u
-L=18.96u
-model=ppolyf_u
-spiceprefix=X
+C {res.sym} 700 -570 0 0 {name=RLD1
+value=30
+footprint=1206
+device=resistor
 m=1}
 C {symbols/ppolyf_u.sym} 1240 -570 0 0 {name=R5
 W=8u
