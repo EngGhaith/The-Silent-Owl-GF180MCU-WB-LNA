@@ -108,8 +108,8 @@ lab=#net5}
 N 1240 -430 1310 -430 {
 lab=vx}
 N 700 -400 700 -390 {
-lab=vm2}
-N 700 -390 700 -360 {lab=vm2}
+lab=vm2_cas}
+N 700 -390 700 -360 {lab=vm2_cas}
 N 1160 -620 1160 -600 {lab=vdd}
 N 1160 -620 1240 -620 {lab=vdd}
 N 1160 -540 1160 -520 {lab=#net6}
@@ -118,8 +118,8 @@ N 1240 -440 1320 -440 {lab=vx}
 N 1320 -620 1320 -600 {lab=vdd}
 N 1240 -620 1320 -620 {lab=vdd}
 N 1320 -530 1320 -520 {lab=vx}
-N 700 -460 700 -400 {lab=vm2}
 N 1240 -460 1240 -380 {lab=vx}
+N 640 -430 660 -430 {lab=vdd}
 N 1160 -460 1160 -440 {lab=vx}
 N 1160 -440 1240 -440 {lab=vx}
 N 1320 -520 1320 -440 {lab=vx}
@@ -270,7 +270,23 @@ model=nfet_03v3
 spiceprefix=X
 }
 C {lab_pin.sym} 1240 -420 0 0 {name=p36 sig_type=std_logic lab=vx}
-C {lab_pin.sym} 700 -388.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
+C {lab_pin.sym} 700 -388.75 0 0 {name=p71 sig_type=std_logic lab=vm2_cas}
+C {lab_pin.sym} 640 -430 0 0 {name=p73 sig_type=std_logic lab=vdd}
+C {lab_pin.sym} 700 -430 0 0 {name=p74 sig_type=std_logic lab=vss}
+C {symbols/nfet_06v0.sym} 680 -430 0 0 {name=M2C
+L=0.6u
+W=40u
+nf=10
+m=14
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=nfet_06v0
+spiceprefix=X
+}
 C {lab_pin.sym} 1240 -298.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {ind.sym} 1160 -490 0 0 {name=LD2
 m=1
