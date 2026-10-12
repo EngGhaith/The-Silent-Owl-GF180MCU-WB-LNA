@@ -192,17 +192,16 @@ m=1
 C {lab_pin.sym} 80 -1370 0 0 {name=p37 sig_type=std_logic lab=rf_out_ext}
 C {lab_pin.sym} 320 -1370 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
 C {code_shown.sym} 50 -505 0 0 {name=MODELS only_toplevel=true
-format="tcleval( @value )"
 value="
-.include $::180MCU_MODELS/design.ngspice
-.lib $::180MCU_MODELS/sm141064.ngspice typical
-.lib $::180MCU_MODELS/sm141064.ngspice cap_mim
-.lib $::180MCU_MODELS/sm141064.ngspice res_typical
-.lib $::180MCU_MODELS/sm141064.ngspice moscap_typical
-.lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
-.lib $::180MCU_MODELS/sm141064.ngspice diode_typical
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice cap_mim
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice res_typical
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice moscap_typical
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice mimcap_typical
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice diode_typical
 
-.include /foss/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include /foss/designs/The-Silent-Owl-GF180MCU-WB-LNA/.simpatches/gf180mcu_fd_io_pex.spice
 "}
 C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 
@@ -1188,34 +1187,4 @@ value=1u
 footprint=1206
 device=resistor
 m=1
-spice_ignore=true}
-C {code_shown.sym} 1210 -1840 0 0 {name=ngspice_s1 only_toplevel=true 
-value="
-
-.temp 25
-
-.control
-
-*set spnum = 1
-
-*foreach Lval 1n 2n 3n 4n 5n 10n
-*	alter l.x1.l1 $Lval
-
-*foreach Rval 2.5 5 7.5 10 12.5 15
-*	alter r.x1.Rs $Rval
-
-	sp lin 500 100e6 10e9 1
-*end
-
-*plot vdb(sp1.s_2_1) vdb(sp2.s_2_1) vdb(sp3.s_2_1) vdb(sp4.s_2_1) vdb(sp5.s_2_1) vdb(sp6.s_2_1)
-plot vdb(sp1.s_2_1)
-plot nf NFmin
-plot vdb(sp1.s_1_1)
-write lna-core_tb.raw
-
-let Rbase = 50
-wrs2p /foss/designs/lna_core_tb.s2p
-
-.endc
-"
 spice_ignore=true}
