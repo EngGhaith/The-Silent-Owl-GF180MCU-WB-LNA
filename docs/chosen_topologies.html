@@ -13,6 +13,10 @@ const COMPONENTS = [
 ];
 
 const BIAS = {VBIAS_CG: {old: 1.40, new: 1.40}, VBIAS_CS: {old: 1.20, new: 1.30}, VBIAS_CAS: {old: 4.80, new: 5.00}, VBIAS_ICG: {old: 2.20, new: 2.80}, VBIAS_BUF: {old: 1.30, new: 1.50}};
+// Dead-node bias generator outputs on main_lowtailnoise_pexmatched (no effect on this topology, listed for completeness).
+const BIAS_DEAD_MLN = {VBIAS_CASC: 3.2, VBIAS_CSC: 1.035};
+// dev_ilir_pexmatched has its own, separately-optimized bias ladder (VDD=5V), re-extracted directly from a live .op run.
+const BIAS_ILIR = {VDD: 5.0, VBIAS_CAS: 3.7, VBIAS_CASC: 3.2, VBIAS_CG: 1.0, VBIAS_ICG: 1.9, VBIAS_BUF: 1.3, VBIAS_CS: 1.2, VBIAS_CSC: 0.9};
 
 const TRANSISTORS = {
   "main_lowtailnoise_pexmatched": {
@@ -403,6 +407,11 @@ const FIXED_COMPONENTS = {
     <p class="table-note">Everything in main_lowtailnoise_pexmatched NOT already covered by the per-band table above &mdash; i.e. never touched across any of the four band relocations. Inductor loss resistors (RLIN/RLSHIN/RLOUT/RLSHOUT, and the tank's RLD2) are omitted throughout, consistent with the per-band table.</p>
   </section>
 
+  <section>
+    <h2 class="section-title">dev_ilir_pexmatched &mdash; DC bias point</h2>
+    <div class="note-box" id="bias-note-ilir"></div>
+  </section>
+
   <footer class="page-footer">
     Generated from ngspice S-parameter/noise sweeps against <code>gf180mcu_fd_io__asig_5p0</code>'s Magic-extracted PEX netlist. Branch names link to their state at the time of this report. See also: <a href="cg_cascode_exploration.html">CG Cascode Exploration</a> (a tried-and-not-adopted architecture comparison).
   </footer>
@@ -642,7 +651,11 @@ comp.querySelectorAll('thead th.num').forEach((th, i) => { th.title = COMPONENTS
 
 // ---- Bias note ----
 const bn = document.getElementById('bias-note');
-bn.innerHTML = `<b>Bias (shared across all four main_lowtailnoise bands):</b> VBIAS_CG ${BIAS.VBIAS_CG.old}→${BIAS.VBIAS_CG.new}V, VBIAS_CS ${BIAS.VBIAS_CS.old}→${BIAS.VBIAS_CS.new}V, VBIAS_CAS ${BIAS.VBIAS_CAS.old}→${BIAS.VBIAS_CAS.new}V, VBIAS_ICG ${BIAS.VBIAS_ICG.old}→${BIAS.VBIAS_ICG.new}V (capped below M5's 3.3V gate rating), VBIAS_BUF ${BIAS.VBIAS_BUF.old}→${BIAS.VBIAS_BUF.new}V &mdash; optimized once at 2.4GHz (Icc 22.1→29.3mA, under the 40mA budget) and reused unchanged across all relocated bands. VBIAS_CSC and VBIAS_CASC have no effect in this topology (dead nodes) and were left alone.`;
+bn.innerHTML = `<b>Bias (shared across all four main_lowtailnoise bands):</b> VBIAS_CG ${BIAS.VBIAS_CG.old}→${BIAS.VBIAS_CG.new}V, VBIAS_CS ${BIAS.VBIAS_CS.old}→${BIAS.VBIAS_CS.new}V, VBIAS_CAS ${BIAS.VBIAS_CAS.old}→${BIAS.VBIAS_CAS.new}V, VBIAS_ICG ${BIAS.VBIAS_ICG.old}→${BIAS.VBIAS_ICG.new}V (capped below M5's 3.3V gate rating), VBIAS_BUF ${BIAS.VBIAS_BUF.old}→${BIAS.VBIAS_BUF.new}V &mdash; optimized once at 2.4GHz (Icc 22.1→29.3mA, under the 40mA budget) and reused unchanged across all relocated bands (main24/gnssl1/gnssl2/eu868, both with and without the CG-tank load). VBIAS_CSC (${BIAS_DEAD_MLN.VBIAS_CSC}V) and VBIAS_CASC (${BIAS_DEAD_MLN.VBIAS_CASC}V) have no effect in this topology (dead nodes) and were left alone &mdash; listed here only for a complete bias-point snapshot. VDD=5V throughout.`;
+
+// ---- dev_ilir_pexmatched bias note (separate branch, separate bias ladder) ----
+const bnIlir = document.getElementById('bias-note-ilir');
+bnIlir.innerHTML = `<b>Full bias ladder (ilir24, re-extracted directly from a live <code>.op</code> run):</b> VDD ${BIAS_ILIR.VDD}V, VBIAS_CAS ${BIAS_ILIR.VBIAS_CAS}V, VBIAS_CASC ${BIAS_ILIR.VBIAS_CASC}V, VBIAS_CG ${BIAS_ILIR.VBIAS_CG}V, VBIAS_ICG ${BIAS_ILIR.VBIAS_ICG}V, VBIAS_BUF ${BIAS_ILIR.VBIAS_BUF}V, VBIAS_CS ${BIAS_ILIR.VBIAS_CS}V, VBIAS_CSC ${BIAS_ILIR.VBIAS_CSC}V &mdash; independently developed and optimized from main_lowtailnoise_pexmatched's bias point above, not a variant of it. Unaffected by the CG cascode (M2C) exploration on this branch, since M2C's gate ties directly to vdd rather than drawing from this ladder.`;
 
 // ---- Transistor sizing tables ----
 const transistorContainer = document.getElementById('transistor-tables');
