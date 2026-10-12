@@ -18,7 +18,7 @@
 * NGSPICE file created from gf180mcu_fd_io__asig_5p0_flat.ext - technology: gf180mcuD
 
 *.subckt gf180mcu_fd_io__asig_5p0_flat ASIG5V DVDD DVSS VDD VSS
-.SUBCKT gf180mcu_fd_io__asig_5p0 DVDD ASIG5V DVSS VDD VSS
+.SUBCKT gf180mcu_fd_io__asig_5p0 ASIG5V DVDD DVSS VDD VSS
 X0 DVDD.t23 VSS.t17 cap_nmos_06v0 c_width=15u c_length=15u
 X1 DVDD.t12 VSS.t28 cap_nmos_06v0 c_width=15u c_length=15u
 X2 DVDD.t10 VSS.t30 cap_nmos_06v0 c_width=15u c_length=15u
