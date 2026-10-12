@@ -183,7 +183,6 @@ m=1}
 C {lab_pin.sym} 80 -1370 0 0 {name=p37 sig_type=std_logic lab=rf_out_ext}
 C {lab_pin.sym} 320 -1370 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
 C {code_shown.sym} 50 -505 0 0 {name=MODELS only_toplevel=true
-format="tcleval( @value )"
 value="
 .include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
 .lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
