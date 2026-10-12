@@ -9,8 +9,10 @@ N 700 -330 720 -330 {
 lab=vss}
 N 700 -540 700 -460 {
 lab=vm2}
-N 700 -630 700 -600 {
+N 700 -750 700 -720 {
 lab=vdd}
+N 700 -660 700 -600 {
+lab=#net7}
 N 440 -280 460 -280 {
 lab=s}
 N 110 -280 140 -280 {
@@ -87,13 +89,13 @@ N 1470 -430 1470 -380 {
 lab=vbuf}
 N 1450 -380 1470 -380 {
 lab=vbuf}
-N 700 -130 720 -130 {
+N 700 -230 720 -230 {
 lab=vss}
-N 700 -100 700 -90 {
+N 700 -200 700 -190 {
 lab=vss}
-N 640 -130 660 -130 {
+N 640 -230 660 -230 {
 lab=vbias_icg}
-N 700 -90 700 -70 {
+N 700 -190 700 -170 {
 lab=vss}
 N 1360 -300 1410 -300 {
 lab=vbias_buf}
@@ -137,21 +139,13 @@ N 1630 -370 1640 -370 {lab=vbuf}
 N 1070 -240 1180 -240 {lab=g_cs}
 N 840 -500 1070 -500 {lab=g_cs}
 N 1070 -500 1070 -240 {lab=g_cs}
-N 700 -190 700 -160 {lab=s_tail}
-N 810 -180 810 -160 {lab=s_tail}
-N 700 -180 810 -180 {lab=s_tail}
-N 810 -100 810 -70 {lab=vss}
-N 700 -200 700 -190 {lab=s_tail}
-N 700 -280 700 -260 {lab=s}
-N 0 -190 0 -170 {lab=#net7}
-N 2155 -290 2155 -270 {lab=#net8}
-N 2155 -210 2155 -190 {lab=vss}
-N -85 -280 110 -280 {lab=rf_in_pad}
-N 0 -280 0 -250 {lab=rf_in_pad}
-N 0 -110 0 -50 {lab=vss}
-N 2155 -370 2155 -350 {lab=#net9}
-N 1950 -370 2230 -370 {}
-C {lab_pin.sym} 700 -630 0 0 {name=p11 sig_type=std_logic lab=vdd
+C {lab_pin.sym} 700 -750 0 0 {name=p11 sig_type=std_logic lab=vdd
+}
+C {ind.sym} 700 -690 0 0 {name=LD1
+m=1
+value=8n
+footprint=1206
+device=inductor
 }
 C {lab_pin.sym} 700 -280 2 0 {name=p1 sig_type=std_logic lab=s}
 C {symbols/nfet_06v0.sym} 680 -330 0 0 {name=M2
@@ -169,7 +163,7 @@ model=nfet_06v0
 spiceprefix=X
 }
 C {lab_pin.sym} 120 -680 1 0 {name=p20 sig_type=std_logic lab=vbias_cg}
-C {lab_pin.sym} -85 -280 0 0 {name=p13 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 110 -280 0 0 {name=p13 sig_type=std_logic lab=rf_in_pad}
 C {lab_pin.sym} 640 -330 0 0 {name=p4 sig_type=std_logic lab=g_cg}
 C {lab_wire.sym} 1190 -240 0 0 {name=p18 sig_type=std_logic lab=g_cs}
 C {lab_pin.sym} 960 -240 0 0 {name=p23 sig_type=std_logic lab=vbias_cs}
@@ -192,7 +186,7 @@ spiceprefix=X
 C {lab_pin.sym} 1450 -530 0 0 {name=p40 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 1450 -370 0 0 {name=p43 sig_type=std_logic lab=vbuf}
-C {lab_pin.sym} 2230 -370 2 0 {name=p45 sig_type=std_logic lab=rf_out_pad}
+C {lab_pin.sym} 1950 -370 2 0 {name=p45 sig_type=std_logic lab=rf_out_pad}
 C {ind.sym} 1770 -370 1 0 {name=LOUT
 m=1
 value=2.4n
@@ -231,9 +225,9 @@ model=nfet_06v0
 spiceprefix=X
 }
 C {lab_pin.sym} 1180 -350 0 0 {name=p47 sig_type=std_logic lab=vbias_cas}
-C {lab_pin.sym} 640 -130 0 0 {name=p50 sig_type=std_logic lab=vbias_icg}
+C {lab_pin.sym} 640 -230 0 0 {name=p50 sig_type=std_logic lab=vbias_icg}
 C {lab_pin.sym} 1360 -300 0 0 {name=p51 sig_type=std_logic lab=vbias_buf}
-C {symbols/nfet_03v3.sym} 680 -130 0 0 {name=M5
+C {symbols/nfet_03v3.sym} 680 -230 0 0 {name=M5
 L=0.5u
 W=15u
 nf=10
@@ -302,11 +296,10 @@ L=48.35u
 model=ppolyf_u_1k
 spiceprefix=X
 m=1}
-C {symbols/ppolyf_u.sym} 700 -570 0 0 {name=R4
-W=8u
-L=18.96u
-model=ppolyf_u
-spiceprefix=X
+C {res.sym} 700 -570 0 0 {name=RLD1
+value=30
+footprint=1206
+device=resistor
 m=1}
 C {symbols/ppolyf_u.sym} 1240 -570 0 0 {name=R5
 W=8u
@@ -374,12 +367,12 @@ C {iopin.sym} -180 -740 0 0 {name=p63 lab=vbias_casc}
 C {iopin.sym} -180 -700 0 0 {name=p64 lab=vbias_buf}
 C {iopin.sym} -180 -660 0 0 {name=p65 lab=vbias_icg}
 C {iopin.sym} -180 -620 0 0 {name=p79 lab=vbias_csc}
-C {lab_pin.sym} 700 -70 3 0 {name=p5 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 700 -170 3 0 {name=p5 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1240 -120 3 0 {name=p7 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1450 -240 3 0 {name=p8 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1930 -190 3 0 {name=p9 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 120 -430 3 0 {name=p10 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 720 -130 2 0 {name=p2 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 720 -230 2 0 {name=p2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 720 -330 2 0 {name=p12 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 640 -570 0 0 {name=p16 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 170 -630 2 0 {name=p3 sig_type=std_logic lab=vss}
@@ -389,41 +382,20 @@ C {lab_pin.sym} 1340 -480 1 0 {name=p35 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -350 2 0 {name=p41 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1260 -240 2 0 {name=p42 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 1500 -300 2 0 {name=p48 sig_type=std_logic lab=vss}
-C {ind.sym} 700 -230 0 0 {name=LCHOKE
+C {lab_pin.sym} 700 -260 0 0 {name=p900 sig_type=std_logic lab=s_tail}
+C {ind.sym} 2000 -230 0 0 {name=LCHOKE
 m=1
 value=12n
 footprint=1206
 device=inductor
 }
-C {capa.sym} 810 -130 0 0 {name=CBYPASS
+C {lab_pin.sym} 2000 -260 0 0 {name=p901 sig_type=std_logic lab=s}
+C {lab_pin.sym} 2000 -200 0 0 {name=p902 sig_type=std_logic lab=s_tail}
+C {capa.sym} 2000 -130 0 0 {name=CBYPASS
 m=1
 value=30p
 footprint=1206
 device="ceramic capacitor"
 }
-C {lab_pin.sym} 810 -180 0 1 {name=p903 sig_type=std_logic lab=s_tail}
-C {lab_pin.sym} 810 -70 3 0 {name=p6 sig_type=std_logic lab=vss}
-C {ind.sym} 0 -220 0 0 {name=LSHUNT
-m=1
-value=2.3n
-footprint=1206
-device=inductor
-}
-C {res.sym} 0 -140 2 0 {name=RLSHIN
-value=2.8903
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 0 -50 3 0 {name=p905 sig_type=std_logic lab=vss}
-C {ind.sym} 2155 -320 0 0 {name=LSHUNT_OUT
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
-C {res.sym} 2155 -240 2 0 {name=RLSHOUT
-value=3.1416
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 2155 -190 2 0 {name=p907 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 2000 -160 0 0 {name=p903 sig_type=std_logic lab=s_tail}
+C {lab_pin.sym} 2000 -100 0 0 {name=p904 sig_type=std_logic lab=vss}
