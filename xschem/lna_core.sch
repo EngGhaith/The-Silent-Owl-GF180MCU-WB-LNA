@@ -129,12 +129,12 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 C {lab_pin.sym} 170 -440 3 0 {name=p46 sig_type=std_logic lab=vss}
 C {ind.sym} 250 -580 1 0 {name=LIN
 m=1
-value=7n
+value=4.3735n
 footprint=1206
 device=inductor
 }
 C {res.sym} 360 -580 1 0 {name=RLIN
-value=14
+value=5.496
 footprint=1206
 device=resistor
 m=1
@@ -155,7 +155,7 @@ spiceprefix=X
 }
 C {ind.sym} 760 -420 0 0 {name=LDEG
 m=1
-value=12n
+value=0.8447n
 footprint=1206
 device=inductor
 }
@@ -185,12 +185,12 @@ C {lab_pin.sym} 760 -888.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1300 -618.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {ind.sym} 1300 -1030 0 0 {name=LD2
 m=1
-value=7.0n
+value=3.7781n
 footprint=1206
 device=inductor
 }
 C {res.sym} 1300 -1110 0 0 {name=RLD2
-value=50
+value=11.78
 footprint=1206
 device=resistor
 m=1
@@ -259,18 +259,18 @@ C {iopin.sym} 130 -940 2 0 {name=p13 lab=vbias_casc
 }
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
-value=0.8p
+value=2.5085p
 footprint=1206
 device="ceramic capacitor"
 }
 C {ind.sym} 620 -1040 0 0 {name=LD4
 m=1
-value=8n
+value=8.7081n
 footprint=1206
 device=inductor
 }
 C {res.sym} 620 -1120 0 0 {name=RLD3
-value=30
+value=12.55
 footprint=1206
 device=resistor
 m=1
