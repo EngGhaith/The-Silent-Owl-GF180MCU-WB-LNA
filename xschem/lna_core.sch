@@ -129,12 +129,12 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 C {lab_pin.sym} 170 -440 3 0 {name=p46 sig_type=std_logic lab=vss}
 C {ind.sym} 250 -580 1 0 {name=LIN
 m=1
-value=7n
+value=5n
 footprint=1206
 device=inductor
 }
 C {res.sym} 360 -580 1 0 {name=RLIN
-value=14
+value=6.283
 footprint=1206
 device=resistor
 m=1
