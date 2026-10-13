@@ -102482,10 +102482,5 @@ C19328 VDD.n617 VSS 0.10687f
 C19329 VDD.n618 VSS 0.05573f
 C19330 VDD.n619 VSS 0.06489f
 C19331 VDD.n620 VSS 0.06489f
-* --- fix: the extraction never tied the top-level ASIG5V port into its own RC mesh
-* (every other port -- DVDD, DVSS, VDD, VSS -- has such a tie; ASIG5V did not, leaving it
-* floating). Tied here to a well-connected hub node of the ASIG5V mesh (ASIG5V.n9972).
-R_ASIG5V_PIN_TIE ASIG5V ASIG5V.n9972 0.01
-
 .ends
 
