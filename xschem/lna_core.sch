@@ -125,7 +125,7 @@ C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
 C {ind.sym} 510 -440 0 0 {name=LEQ
 m=1
-value=1.3333n
+value=1.5693n
 footprint=1206
 device=inductor
 }
@@ -228,7 +228,7 @@ C {iopin.sym} 280 -1230 3 0 {name=p13 lab=vbias_casc
 }
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
-value=7p
+value=3.0844p
 footprint=1206
 device="ceramic capacitor"
 }
@@ -259,24 +259,24 @@ m=1
 }
 C {capa.sym} 620 -580 3 0 {name=C15
 m=1
-value=1.25p
+value=1.5578p
 footprint=1206
 device="ceramic capacitor"
 }
 C {res.sym} 510 -510 0 0 {name=RLEQ
-value=1.6755
+value=1.972
 footprint=1206
 device=resistor
 m=1
 }
 C {ind.sym} 1580 -645 0 0 {name=LSHUNT_OUT
 m=1
-value=2.5n
+value=4.0607n
 footprint=1206
 device=inductor
 }
 C {res.sym} 1580 -585 2 0 {name=RLSHOUT
-value=3.1416
+value=5.1028
 footprint=1206
 device=resistor
 m=1}
