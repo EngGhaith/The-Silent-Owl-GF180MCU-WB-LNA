@@ -1,0 +1,112 @@
+***************************************************************************************************
+***************************************************************************************************
+* SSCS-Chipathon 2026, Team A38: The Silent Owl
+* Derived from: extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice (Ahmed M. Elnaggar)
+***************************************************************************************************
+* Why this file exists:
+*
+* 1) Pin order: the gf180mcu_fd_io__asig_5p0.sym symbol (xschem/gf180mcu_fd_io__asig_5p0.sym) orders
+*    its pins by "pinnumber" as ASIG5V(1) DVDD(2) DVSS(3) VDD(4) VSS(5). Testbenches generated from
+*    that symbol instantiate the pad in that order (e.g. "x2 rf_in_pad vddio GND vddio GND
+*    gf180mcu_fd_io__asig_5p0"). The source file's .SUBCKT line used DVDD ASIG5V DVSS VDD VSS instead
+*    (first two pins swapped) -- fixed below to ASIG5V DVDD DVSS VDD VSS so a plain ".include" of this
+*    file lines up positionally with those instances. Internal nodes are name-based, so swapping only
+*    the port names on the .SUBCKT line is sufficient.
+*
+* 2) Why use this (layout-capacitance-extracted) model instead of the raw PDK pad cell
+*    (/foss/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice): the raw PDK cell's
+*    asig_5p0 subckt instantiates its MOS capacitor with a device multiplicity (m=36). Elaborating
+*    that with ngspice-47 in this testbench deterministically aborts netlist load with a corrupted
+*    internal line ("unknown parameter (e9)") while expanding the cap_nmos_06v0 compact model -- the
+*    same ngspice/cap_nmos_06v0 "m=" elaboration bug already hit and worked around elsewhere this
+*    project by manually expanding the multiplicity into individual same-size instances instead of
+*    using "m=". extracted_gf180mcu_fd_io__asig_5p0_manually_scaled.spice already does exactly that
+*    (36 unit 15um x 15um instances, no "m="), so it is reused here as-is (pin order fixed only).
+***************************************************************************************************
+* Magic Base Resolution (lambda) = 5nm (5e-9 m)
+* Linear Scale Factor = 5e-9 m
+* Area Scale Factor = (5e-9 m)^2 = 25e-18 m^2
+***************************************************************************************************
+
+.SUBCKT gf180mcu_fd_io__asig_5p0 ASIG5V DVDD DVSS VDD VSS
+
+***************************************************************************************************
+* --- Signal ESD Diodes (150 um^2) ---
+***************************************************************************************************
+D0 DVSS   ASIG5V diode_nd2ps_06v0 pj=106e-6 area=150e-12
+D1 DVSS   ASIG5V diode_nd2ps_06v0 pj=106e-6 area=150e-12
+D2 ASIG5V DVDD   diode_pd2nw_06v0 pj=106e-6 area=150e-12
+D3 DVSS   ASIG5V diode_nd2ps_06v0 pj=106e-6 area=150e-12
+D4 DVSS   ASIG5V diode_nd2ps_06v0 pj=106e-6 area=150e-12
+D5 ASIG5V DVDD   diode_pd2nw_06v0 pj=106e-6 area=150e-12
+D6 ASIG5V DVDD   diode_pd2nw_06v0 pj=106e-6 area=150e-12
+D7 ASIG5V DVDD   diode_pd2nw_06v0 pj=106e-6 area=150e-12
+
+***************************************************************************************************
+* --- MOSCAPs (15 um x 15 um), instantiated individually (no "m=" multiplier) ---
+***************************************************************************************************
+X0  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X1  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X2  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X3  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X4  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X5  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X6  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X7  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X8  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X9  DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X10 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X11 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X12 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X13 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X14 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X15 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X16 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X17 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X18 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X19 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X20 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X21 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X22 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X23 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X24 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X25 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X26 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X27 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X28 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X29 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X30 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X31 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X32 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X33 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X34 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+X35 DVDD DVSS cap_nmos_06v0 c_width=15e-6 c_length=15e-6
+
+***************************************************************************************************
+* --- Core Power Clamp Diodes (40 um^2) ---
+***************************************************************************************************
+D8  DVSS DVDD diode_nd2ps_06v0 pj=82e-6 area=40e-12
+D9  DVSS DVDD diode_nd2ps_06v0 pj=82e-6 area=40e-12
+D10 DVSS DVDD diode_nd2ps_06v0 pj=82e-6 area=40e-12
+D11 DVSS DVDD diode_nd2ps_06v0 pj=82e-6 area=40e-12
+
+***************************************************************************************************
+* --- Parasitic Routing Capacitance ---
+***************************************************************************************************
+C0 VDD  DVDD   48.08535f
+C1 VDD  ASIG5V 21.91101f
+C2 DVDD ASIG5V 0.62445p
+C3 VDD  DVSS   50.97537f
+C4 DVDD DVSS   1.55036p
+C5 DVSS ASIG5V 0.47973p
+
+***************************************************************************************************
+* --- Substrate Parasitics (Topological Fix) ---
+* Note: Floating node 'GF_NI_ASIG_5P0_BASE_0/comp018green_esd_hbm_0/VSUBS' replaced with global pin VSS.
+***************************************************************************************************
+C6 VDD    VSS 47.06129f
+C7 ASIG5V VSS 0.27637p
+C8 DVSS   VSS 0.20258p
+C9 DVDD   VSS 0.35736p
+
+.ENDS
