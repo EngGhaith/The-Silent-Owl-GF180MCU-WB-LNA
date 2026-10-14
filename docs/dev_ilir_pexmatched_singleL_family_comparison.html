@@ -95,28 +95,28 @@ RLD2 could <b>not</b> be left Q=12-derived from LD2: across a 6000-point search 
 <h2>Results @ 2.4 GHz</h2>
 <div class="tablewrap">
 <table>
-<tr><th></th><th class="num">S11</th><th class="num">S21</th><th class="num">S22</th><th class="num">NF</th><th class="num">Worst S11<sup>&dagger;</sup></th><th class="num">Worst S22<sup>&dagger;</sup></th><th class="num">Peak S21</th><th class="num">10dB BW</th><th class="num">K<sub>min</sub></th></tr>
+<tr><th></th><th class="num">S11</th><th class="num">S21</th><th class="num">S22</th><th class="num">NF</th><th class="num">Worst S11<sup>&dagger;</sup></th><th class="num">Worst S22<sup>&dagger;</sup></th><th class="num">Peak S21</th><th class="num">Gain BW<sup>&Dagger;</sup></th><th class="num">Matched BW<sup>&sect;</sup></th><th class="num">K<sub>min</sub></th></tr>
 <tr>
   <td>noBuf_pex (PEX pad)</td>
   <td class="num">-18.37 dB</td><td class="num">17.35 dB</td><td class="num">-21.26 dB</td>
   <td class="num">3.01 dB</td><td class="num">-13.66 dB</td><td class="num">-15.86 dB</td>
-  <td class="num">17.38 dB</td><td class="num">38.6%</td><td class="num">342</td>
+  <td class="num">17.38 dB</td><td class="num">38.6%</td><td class="num">17.7%</td><td class="num">342</td>
 </tr>
 <tr>
   <td>gen_v1 (generic pad)</td>
   <td class="num">-12.69 dB</td><td class="num">18.57 dB</td><td class="num">-18.28 dB</td>
   <td class="num">2.64 dB</td><td class="num">-10.63 dB</td><td class="num">-14.88 dB</td>
-  <td class="num">18.57 dB</td><td class="num">51.2%</td><td class="num">248</td>
+  <td class="num">18.57 dB</td><td class="num">51.2%</td><td class="num"><b>23.0%</b></td><td class="num">248</td>
 </tr>
 <tr>
   <td>gen_v2 (generic pad)</td>
   <td class="num">-13.55 dB</td><td class="num">23.40 dB</td><td class="num">-12.92 dB</td>
   <td class="num">2.49 dB</td><td class="num">-10.95 dB</td><td class="num">-10.78 dB</td>
-  <td class="num">23.40 dB</td><td class="num">62.9%</td><td class="num">87</td>
+  <td class="num">23.40 dB</td><td class="num">62.9%</td><td class="num">12.9%</td><td class="num">87</td>
 </tr>
 </table>
 </div>
-<p class="caption"><sup>&dagger;</sup>Worst case across the 2.3&ndash;2.5&nbsp;GHz band. All three unconditionally stable (&mu;, &mu;&prime; &gt; 1 everywhere 10&nbsp;MHz&ndash;30&nbsp;GHz); gen_v2's K<sub>min</sub> is lower (87 vs 248/342) but still comfortably &gt;1, consistent with opening more of the circuit to retuning.</p>
+<p class="caption"><sup>&dagger;</sup>Worst case across the 2.3&ndash;2.5&nbsp;GHz band. <sup>&Dagger;</sup>Gain BW: contiguous band where S21&nbsp;&ge;&nbsp;10&nbsp;dB only &mdash; does not require the match to hold across it. <sup>&sect;</sup>Matched BW: contiguous band where S11&nbsp;&le;&nbsp;&minus;10&nbsp;dB <i>and</i> S22&nbsp;&le;&nbsp;&minus;10&nbsp;dB <i>and</i> S21&nbsp;&ge;&nbsp;10&nbsp;dB all hold simultaneously &mdash; the stricter, more meaningful figure (same definition used in the dev_ilir_pexmatched presentation report). All three unconditionally stable (&mu;, &mu;&prime; &gt; 1 everywhere 10&nbsp;MHz&ndash;30&nbsp;GHz); gen_v2's K<sub>min</sub> is lower (87 vs 248/342) but still comfortably &gt;1, consistent with opening more of the circuit to retuning.</p>
 
 <h2>S-parameters &amp; noise figure, 1&nbsp;MHz&ndash;7&nbsp;GHz</h2>
 <div class="grid3">
@@ -466,9 +466,12 @@ RLD2 could <b>not</b> be left Q=12-derived from LD2: across a 6000-point search 
 </div>
 
 <h2>Takeaways</h2>
+<div class="note warn">
+Gain bandwidth and matched bandwidth tell opposite stories here. gen_v2's 62.9% figure is <b>gain-only</b> &mdash; S21 stays above 10&nbsp;dB across a huge span, but S11/S22 only hold &le;&minus;10&nbsp;dB together across a much narrower 12.9% (306&nbsp;MHz) window. gen_v1's match actually holds simultaneously good across the <i>widest</i> band of the three, 23.0% (522&nbsp;MHz) &mdash; wider than both gen_v2 (12.9%) and the PEX baseline (17.7%) &mdash; despite having less than half gen_v2's gain-only figure.
+</div>
 <ul>
-<li><b>gen_v2 wins on every metric except stability margin</b>: best gain (23.4dB vs 17.4/18.6dB), best NF (2.49dB), widest bandwidth (62.9%), and still comfortably matched (worst-case S11/S22 both just past &minus;10dB). The tradeoff is a lower (but still safe) K<sub>min</sub>.</li>
-<li><b>gen_v1 is the more conservative choice</b> if margin matters more than squeezing out the last few dB: simpler retune (4 vs 6 parameters), much higher K<sub>min</sub> (248), and still a clear improvement over naively reusing the PEX-pad matching on a generic pad.</li>
+<li><b>gen_v1 has the widest genuinely-matched band</b> (23.0%, 2.01&ndash;2.53&nbsp;GHz) of all three, plus the highest stability margin (K<sub>min</sub>=248) and a simpler 4-parameter retune. The right default choice if "matched bandwidth" is the spec that matters.</li>
+<li><b>gen_v2 wins on peak gain (23.4dB vs 17.4/18.6dB) and NF (2.49dB)</b>, and still clears &minus;10dB on both S11 and S22 at 2.4&nbsp;GHz &mdash; but that match narrows faster moving away from center than gen_v1's does, and its gain-bandwidth number isn't a matched-bandwidth number. Right choice if raw gain/NF matter more than how far the match extends, and the lower (but still safe) K<sub>min</sub>=87 is acceptable.</li>
 <li>The shunt inductors (LEQ, LSHUNT_OUT) are structural, not PEX-specific: every variant keeps them, just retuned in value. Removing them (either direction) hurts badly.</li>
 <li>RLD2 is a damping/bandwidth-shaping choice, not a coil-loss artifact &mdash; the Q=12 convention that works for LEQ/LSHUNT_OUT/Rs does not apply to it.</li>
 </ul>
