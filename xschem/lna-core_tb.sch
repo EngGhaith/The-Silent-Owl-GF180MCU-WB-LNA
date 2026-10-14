@@ -202,7 +202,7 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
 .lib $::180MCU_MODELS/sm141064.ngspice diode_typical
 
-.include /foss/pdks/gf180mcuD/libs.ref/gf180mcu_fd_io/spice/gf180mcu_fd_io.spice
+.include $::env(PWD)/gf180mcu_fd_io__asig_5p0_pex__pdk_gf180mcuD__rcx__flat__cthresh_0__extresist_0mohm.spice
 "}
 C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 

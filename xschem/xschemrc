@@ -342,4 +342,4 @@ if { [info exists ::env(XSCHEM_USER_LIBRARY_PATH) ] } {
     append XSCHEM_LIBRARY_PATH :$env(XSCHEM_USER_LIBRARY_PATH)
 }
 
-set xschem_execute_scripts 0
+set xschem_execute_scripts 1
