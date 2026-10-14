@@ -589,7 +589,7 @@ destroy $curplot
 * =============================================================================
 
 reset
-sp lin 7000 1Meg 7Gig 1
+sp lin 101 500Meg 5Gig 1
 set rfplot=$curplot
 
 let fghz=frequency/1e9
@@ -939,7 +939,7 @@ alterparam CNC_WIDTH = 1e-6u
 alterparam CNC_LENGTH = 1e-6u
 reset
 
-sp lin 7000 1Meg 7Gig 1
+sp lin 101 500Meg 5Gig 1
 set nc_off_plot=$curplot
 
 let fghz_nc=frequency/1e9
@@ -1063,7 +1063,7 @@ reset
 * WIDEBAND STABILITY 10 MHZ TO 30 GHZ
 * =============================================================================
 
-sp dec 101 10Meg 30G 1
+sp dec 11 100Meg 10G 1
 set stabilityplot=$curplot
 
 let wbdelta=s_1_1*s_2_2-s_1_2*s_2_1
