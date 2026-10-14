@@ -46,7 +46,8 @@ img.sch{width:100%; display:block; border-radius:8px; background:#000; border:1p
 code{background:var(--panel-2); padding:1px 5px; border-radius:4px; font-size:0.85em;}
 .foot{color:var(--text-dim); font-size:0.78rem; margin-top:40px; border-top:1px solid var(--border); padding-top:16px;}
 .chart-box{position:relative;}
-.tooltip{position:absolute; pointer-events:none; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; padding:6px 9px; font-size:0.76rem; line-height:1.5; white-space:nowrap; opacity:0; transition:opacity 0.1s; z-index:10;}
+.charts-col{display:flex; flex-direction:column; gap:16px;}
+.tooltip{position:absolute; pointer-events:none; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:0.86rem; line-height:1.6; white-space:nowrap; opacity:0; transition:opacity 0.1s; z-index:10;}
 .migrate-steps{counter-reset:step; list-style:none; padding:0; margin:10px 0 0;}
 .migrate-steps li{counter-increment:step; padding:10px 0 10px 36px; position:relative; border-bottom:1px solid var(--border); font-size:0.88rem; line-height:1.6;}
 .migrate-steps li:last-child{border-bottom:none;}
@@ -82,7 +83,7 @@ code{background:var(--panel-2); padding:1px 5px; border-radius:4px; font-size:0.
   </div>
 
   <h2>S-parameters &amp; noise figure (1MHz&ndash;7GHz, hover to inspect)</h2>
-  <div class="grid2">
+  <div class="charts-col">
     <div class="card"><div class="chart-box" id="chS11"></div></div>
     <div class="card"><div class="chart-box" id="chS21"></div></div>
     <div class="card"><div class="chart-box" id="chS22"></div></div>
@@ -168,37 +169,38 @@ const labelsMap = {main:'main (gen_v4)', mainpex:'main_pex (singleL)'};
 
 function renderChart(elId, field, yMin, yMax, yStep, title) {
   const el = document.getElementById(elId);
-  const W = 560, H = 320, padL = 52, padR = 16, padT = 30, padB = 36;
+  const W = 1040, H = 440, padL = 70, padR = 24, padT = 48, padB = 48;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const xMin = 0, xMax = 7;
   const xmap = x => padL + (x - xMin) / (xMax - xMin) * plotW;
   const ymap = y => padT + plotH - (y - yMin) / (yMax - yMin) * plotH;
 
   let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`;
-  svg += `<text x="${W/2}" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">${title}</text>`;
+  svg += `<text x="${W/2}" y="26" text-anchor="middle" font-size="18" font-weight="600" fill="var(--text)">${title}</text>`;
   for (let yv = yMin; yv <= yMax; yv += yStep) {
     const yy = ymap(yv);
     svg += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="var(--grid)" stroke-width="1"/>`;
-    svg += `<text x="${padL-6}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--axis)">${yv}</text>`;
+    svg += `<text x="${padL-10}" y="${(yy+5).toFixed(1)}" text-anchor="end" font-size="14" fill="var(--axis)">${yv}</text>`;
   }
   for (let xv = xMin; xv <= xMax; xv += 1) {
     const xx = xmap(xv);
     svg += `<line x1="${xx.toFixed(1)}" y1="${padT}" x2="${xx.toFixed(1)}" y2="${H-padB}" stroke="var(--grid)" stroke-width="1"/>`;
-    svg += `<text x="${xx.toFixed(1)}" y="${H-padB+14}" text-anchor="middle" font-size="9" fill="var(--axis)">${xv}G</text>`;
+    svg += `<text x="${xx.toFixed(1)}" y="${H-padB+22}" text-anchor="middle" font-size="14" fill="var(--axis)">${xv}G</text>`;
   }
+  svg += `<text x="${padL-52}" y="${padT-14}" font-size="13" fill="var(--axis)">dB</text>`;
   ['main','mainpex'].forEach(k => {
     const pts = data[k].freq.map((f,i) => `${xmap(f).toFixed(1)},${ymap(data[k][field][i]).toFixed(1)}`).join(' ');
-    svg += `<polyline points="${pts}" fill="none" stroke="${colors[k]}" stroke-width="2"/>`;
+    svg += `<polyline points="${pts}" fill="none" stroke="${colors[k]}" stroke-width="3"/>`;
   });
   // legend
   ['main','mainpex'].forEach((k,i) => {
-    svg += `<rect x="${padL+4}" y="${padT+6+i*14}" width="9" height="9" fill="${colors[k]}"/>`;
-    svg += `<text x="${padL+17}" y="${padT+14+i*14}" font-size="9" fill="var(--legend)">${labelsMap[k]}</text>`;
+    svg += `<rect x="${padL+10}" y="${padT+12+i*22}" width="14" height="14" rx="3" fill="${colors[k]}"/>`;
+    svg += `<text x="${padL+30}" y="${padT+23+i*22}" font-size="14" fill="var(--legend)">${labelsMap[k]}</text>`;
   });
   svg += `<g id="${elId}_hover" style="display:none">
-    <line id="${elId}_vline" y1="${padT}" y2="${H-padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,3"/>
-    <circle id="${elId}_dot_main" r="3.5" fill="${colors.main}"/>
-    <circle id="${elId}_dot_mainpex" r="3.5" fill="${colors.mainpex}"/>
+    <line id="${elId}_vline" y1="${padT}" y2="${H-padB}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <circle id="${elId}_dot_main" r="5.5" fill="${colors.main}" stroke="var(--panel)" stroke-width="1.5"/>
+    <circle id="${elId}_dot_mainpex" r="5.5" fill="${colors.mainpex}" stroke="var(--panel)" stroke-width="1.5"/>
   </g>`;
   svg += `<rect id="${elId}_overlay" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="transparent"/>`;
   svg += `</svg><div class="tooltip" id="${elId}_tip"></div>`;
