@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <description>DRC Run Report at</description>
+ <original-file>/foss/designs/The-Silent-Owl-GF180MCU-WB-LNA/klayout/test_dcpl_fill.gds</original-file>
+ <generator>drc: script='/foss/pdks/gf180mcuD/libs.tech/klayout/tech/macros/gf180mcu_drc.lydrc'</generator>
+ <top-cell>TOP</top-cell>
+ <tags>
+ </tags>
+ <categories>
+  <category>
+   <name>DF.1a_LV</name>
+   <description>DF.1a_LV : Min. COMP Width. : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.1a_MV</name>
+   <description>DF.1a_MV : Min. COMP Width. : 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.1c</name>
+   <description>DF.1c : Min. COMP Width for MOSCAP. : 1µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.2a_LV</name>
+   <description>DF.2a_LV : Min Channel Width. : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.2a_MV</name>
+   <description>DF.2a_MV : Min Channel Width. : nil,0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.2b</name>
+   <description>DF.2b : Max. COMP width for all cases except those used for capacitors,
+                  marked by 'MOS_CAP_MK' layer: 100um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3a_LV</name>
+   <description>DF.3a_LV : Min. COMP Space is : 0.28µm. [P-substrate tap (PCOMP outside NWELL and DNWELL)
+                  can be butted for different voltage devices as the potential is same]</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3a_MV</name>
+   <description>DF.3a_MV :  Min. COMP Space is : 0.36µm. [P-substrate tap (PCOMP outside NWELL and DNWELL)
+                  can be butted for different voltage devices as the potential is same]</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3b</name>
+   <description>DF.3b : Min./Max. NCOMP Space to PCOMP in the same well for butted COMP
+                  (MOSCAP butting is not allowed): 0 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3c_LV</name>
+   <description>DF.3c_LV : Min. COMP Space in BJT area (area marked by DRC_BJT layer). : 0.32µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3c_MV</name>
+   <description>DF.3c_MV : Min. COMP Space in BJT area (area marked by DRC_BJT layer) hasn't been assessed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4a_LV</name>
+   <description>DF.4a_LV : Min. (LVPWELL Space to NCOMP well tap) inside DNWELL. : 0.12µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4a_MV</name>
+   <description>DF.4a_MV : Min. (LVPWELL Space to NCOMP well tap) inside DNWELL. : 0.16µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4b_LV</name>
+   <description>DF.4b_LV : Min. DNWELL overlap of NCOMP well tap. : 0.62µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4b_MV</name>
+   <description>DF.4b_MV : Min. DNWELL overlap of NCOMP well tap. : 0.66µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4c_LV</name>
+   <description>DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL. : 0.43µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4c_MV</name>
+   <description>DF.4c_MV : Min. (Nwell overlap of PCOMP) outside DNWELL. : 0.6µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4d_LV</name>
+   <description>DF.4d_LV : Min. (Nwell overlap of NCOMP) outside DNWELL. : 0.12µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4d_MV</name>
+   <description>DF.4d_MV : Min. (Nwell overlap of NCOMP) outside DNWELL. : 0.16µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4e_LV</name>
+   <description>DF.4e_LV : Min. DNWELL overlap of PCOMP. : 0.93µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.4e_MV</name>
+   <description>DF.4e_MV : Min. DNWELL overlap of PCOMP. : 1.1µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.5_LV</name>
+   <description>DF.5_LV : Min. (LVPWELL overlap of PCOMP well tap) inside DNWELL. : 0.12µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.5_MV</name>
+   <description>DF.5_MV : Min. (LVPWELL overlap of PCOMP well tap) inside DNWELL. : 0.16µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.6_LV</name>
+   <description>DF.6_LV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.24µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.6_MV</name>
+   <description>DF.6_MV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.7_LV</name>
+   <description>DF.7_LV : Min. (LVPWELL Spacer to PCOMP) inside DNWELL. : 0.43µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.7_MV</name>
+   <description>DF.7_MV : Min. (LVPWELL Spacer to PCOMP) inside DNWELL. : 0.6µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.8_LV</name>
+   <description>DF.8_LV : Min. (LVPWELL overlap of NCOMP) Inside DNWELL. : 0.43µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.8_MV</name>
+   <description>DF.8_MV : Min. (LVPWELL overlap of NCOMP) Inside DNWELL. : 0.6µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.9</name>
+   <description>DF.9 : Min. COMP area (um2). : 0.2025µm²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.10</name>
+   <description>DF.10 : Min. field area (um2). : 0.26µm²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.11</name>
+   <description>DF.11 : Min. Length of butting COMP edge. : 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.12</name>
+   <description>DF.12 : COMP not covered by Nplus or Pplus is forbidden (except those COMP under marking).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.13_LV</name>
+   <description>DF.13_LV : Max distance of Nwell tap (NCOMP inside Nwell) from (PCOMP inside Nwell): 20um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.13_MV</name>
+   <description>DF.13_MV : Max distance of Nwell tap (NCOMP inside Nwell) from (PCOMP inside Nwell): 15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.14_LV</name>
+   <description>DF.14_LV : Max distance of substrate tap (PCOMP outside Nwell) from (NCOMP outside Nwell): 20um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.14_MV</name>
+   <description>DF.14_MV : Max distance of substrate tap (PCOMP outside Nwell) from (NCOMP outside Nwell): 15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.16_LV</name>
+   <description>DF.16_LV : Min. space from (Nwell outside DNWELL) to (NCOMP outside Nwell and DNWELL). : 0.43µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.16_MV</name>
+   <description>DF.16_MV : Min. space from (Nwell outside DNWELL) to (NCOMP outside Nwell and DNWELL). : 0.6µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.17_LV</name>
+   <description>DF.17_LV : Min. space from (Nwell Outside DNWELL) to (PCOMP outside Nwell and DNWELL). : 0.12µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.17_MV</name>
+   <description>DF.17_MV : Min. space from (Nwell Outside DNWELL) to (PCOMP outside Nwell and DNWELL). : 0.16µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.18</name>
+   <description>DF.18 : Min. DNWELL space to (PCOMP outside Nwell and DNWELL). : 2.5µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.19_LV</name>
+   <description>DF.19_LV : Min. DNWELL space to (NCOMP outside Nwell and DNWELL). : 3.2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.19_MV</name>
+   <description>DF.19_MV : Min. DNWELL space to (NCOMP outside Nwell and DNWELL). : 3.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.1</name>
+   <description>CO.1 : Min/max contact size. : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.2a</name>
+   <description>CO.2a : min. contact spacing : 0.25µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.2b</name>
+   <description>CO.2b : Space in 4x4 or larger contact array. : 0.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.3</name>
+   <description>CO.3 : Poly2 overlap of contact. : 0.07µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.4</name>
+   <description>CO.4 : COMP overlap of contact. : 0.07µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.5a</name>
+   <description>CO.5a : Nplus overlap of contact on COMP
+                    (Only for contacts to butted Nplus and Pplus COMP areas). : 0.1µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.5b</name>
+   <description>CO.5b : Pplus overlap of contact on COMP
+                    (Only for contacts to butted Nplus and Pplus COMP areas). : 0.1µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.6</name>
+   <description>CO.6 : Metal1 overlap of contact &gt;= 0.005 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.6a</name>
+   <description>CO.6a : (i) Metal1 (&lt; 0.34um) end-of-line overlap contact
+                      (Applies to all &lt; 0.34µm wide metal lines,
+                      excluding metal branches shorter than 0.24µm) : 0.06µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.6b</name>
+   <description>CO.6b : (ii) If Metal1 overlaps contact by &lt; 0.04um on one side,
+                        adjacent metal1 edges overlap : 0.06µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.7</name>
+   <description>CO.7 : Space from COMP contact to Poly2 on COMP. : 0.15µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.8</name>
+   <description>CO.8 : Space from Poly2 contact to COMP. : 0.17µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.9</name>
+   <description>CO.9 : Contact on NCOMP to PCOMP butting edge is forbidden (contact must not straddle butting edge).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.10</name>
+   <description>CO.10 : Contact on Poly2 gate over COMP is forbidden.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.11</name>
+   <description>CO.11 : Contact on field oxide is forbidden.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DN.1</name>
+   <description>DN.1 : Min. DNWELL Width : 1.7µm</description>
+   <categories>
+   </categories>
+  </category>
+ </categories>
+ <cells>
+  <cell>
+   <name>TOP</name>
+   <variant/>
+   <layout-name/>
+   <references>
+   </references>
+  </cell>
+ </cells>
+ <items>
+ </items>
+</report-database>
