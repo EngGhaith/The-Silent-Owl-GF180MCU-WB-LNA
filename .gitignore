@@ -1,3 +1,9 @@
 
 # Large simulation result files
 techsweep/simulations/*.mat
+techsweep/simulation/
+
+# Editor / notebook / KLayout artefacts
+.ipynb_checkpoints/
+.jupyter_ystore.db
+klayout/backups/

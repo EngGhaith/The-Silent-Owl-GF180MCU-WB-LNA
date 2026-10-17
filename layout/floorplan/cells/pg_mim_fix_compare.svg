@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="510" font-family="sans-serif">
+<rect width="100%" height="100%" fill="white"/>
+<text x="40" y="48" font-size="14" font-weight="bold">Original: MIM 6.3 x 6.3, MIMTM.1 verletzt</text>
+<rect x="40.0" y="60.0" width="360.0" height="360.0" fill="#eaf2f8" stroke="#333"/>
+<rect x="31.7" y="276.7" width="151.6" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="50.8" y="295.8" width="113.4" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="256.7" y="276.7" width="151.6" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="275.8" y="295.8" width="113.4" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="31.7" y="51.7" width="151.6" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="50.8" y="70.8" width="113.4" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="256.7" y="51.7" width="151.6" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="275.8" y="70.8" width="113.4" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="184.0" y="316.5" width="72.0" height="72.0" fill="#e67e22"/>
+<rect x="162.4" y="294.9" width="115.2" height="115.2" fill="none" stroke="#e67e22" stroke-dasharray="2 2"/>
+<text x="186.0" y="356.5" font-size="10" fill="white">VDD</text>
+<rect x="184.0" y="91.5" width="72.0" height="72.0" fill="#e67e22"/>
+<rect x="162.4" y="69.9" width="115.2" height="115.2" fill="none" stroke="#e67e22" stroke-dasharray="2 2"/>
+<text x="186.0" y="131.5" font-size="10" fill="white">VDD</text>
+<text x="40" y="442" font-size="12" fill="#c0392b">Insel -> MIM-Platte: 1.10 um (noetig 1.06 + 1.2 = 2.26 um)</text>
+<text x="440" y="48" font-size="14" font-weight="bold">Vorschlag: MIM 5.1 x 6.3, DRC sauber</text>
+<rect x="440.0" y="60.0" width="360.0" height="360.0" fill="#eaf2f8" stroke="#333"/>
+<rect x="431.7" y="276.7" width="130.0" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="450.8" y="295.8" width="91.8" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="678.3" y="276.7" width="130.0" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="697.4" y="295.8" width="91.8" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="431.7" y="51.7" width="130.0" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="450.8" y="70.8" width="91.8" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="678.3" y="51.7" width="130.0" height="151.6" fill="none" stroke="#8e44ad" stroke-dasharray="4 3"/>
+<rect x="697.4" y="70.8" width="91.8" height="113.4" fill="#8e44ad" fill-opacity="0.6"/>
+<rect x="584.0" y="316.5" width="72.0" height="72.0" fill="#e67e22"/>
+<rect x="562.4" y="294.9" width="115.2" height="115.2" fill="none" stroke="#e67e22" stroke-dasharray="2 2"/>
+<text x="586.0" y="356.5" font-size="10" fill="white">VDD</text>
+<rect x="584.0" y="91.5" width="72.0" height="72.0" fill="#e67e22"/>
+<rect x="562.4" y="69.9" width="115.2" height="115.2" fill="none" stroke="#e67e22" stroke-dasharray="2 2"/>
+<text x="586.0" y="131.5" font-size="10" fill="white">VDD</text>
+<text x="440" y="442" font-size="12" fill="#1e8449">Insel -> MIM-Platte: 2.30 um (noetig 1.06 + 1.2 = 2.26 um)</text>
+<text x="40" y="470" font-size="11" fill="#444">violett = MIM obere Platte (FuseTop), gestrichelt = virtuelle untere Platte (+1.06 um)</text>
+<text x="40" y="486" font-size="11" fill="#444">orange = M4-Insel des VDD-Via-Stapels (M3-M4-M5), gestrichelt = 1.2 um Abstand (MIMTM.1)</text>
+</svg>
