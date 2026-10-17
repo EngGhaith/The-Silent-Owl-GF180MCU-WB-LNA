@@ -1,0 +1,400 @@
+{
+ "M2_row": {
+  "bbox": [
+   -3.84,
+   -6.71,
+   94.22,
+   7.382
+  ],
+  "params": {
+   "volt": "6V",
+   "w_gate": 4.0,
+   "l_gate": 0.6,
+   "nf": 74,
+   "bulk": "None",
+   "gate_con_pos": "top"
+  },
+  "info": "M2 nfet_06v0 W=40/L=0.6 nf=10 m=14: 2 row(s) x 7 units + 2 dummy fingers per row end (M2D), Id 8.75 mA",
+  "rows": 2,
+  "row": [
+   -0.84,
+   -0.71,
+   91.22,
+   5.082
+  ],
+  "buses": {
+   "gate": [
+    -2.84,
+    5.382,
+    93.22,
+    6.382
+   ],
+   "drain": [
+    -2.84,
+    -0.41,
+    93.22,
+    5.082
+   ],
+   "source": [
+    -2.84,
+    -5.71,
+    93.22,
+    -1.21
+   ]
+  },
+  "bus_w": 4.5,
+  "i_row_mA": 4.375
+ },
+ "M4_row": {
+  "bbox": [
+   -3.84,
+   -15.71,
+   57.62,
+   14.09
+  ],
+  "params": {
+   "volt": "6V",
+   "w_gate": 3.5,
+   "l_gate": 0.6,
+   "nf": 44,
+   "bulk": "None",
+   "gate_con_pos": "top"
+  },
+  "info": "M4 nfet_06v0 W=35/L=0.6 nf=10 m=4: 1 row(s) x 4 units + 2 dummy fingers per row end (M4D), Id 13.2 mA",
+  "rows": 1,
+  "row": [
+   -0.84,
+   -0.71,
+   54.62,
+   4.582
+  ],
+  "buses": {
+   "gate": [
+    -2.84,
+    4.882,
+    56.62,
+    5.882
+   ],
+   "drain": [
+    -2.84,
+    -0.41,
+    56.62,
+    13.09
+   ],
+   "source": [
+    -2.84,
+    -14.71,
+    56.62,
+    -1.21
+   ]
+  },
+  "bus_w": 13.5,
+  "i_row_mA": 13.2
+ },
+ "M1_row": {
+  "bbox": [
+   -3.59,
+   -15.3,
+   86.65,
+   14.5
+  ],
+  "params": {
+   "volt": "3.3V",
+   "w_gate": 2.0,
+   "l_gate": 0.28,
+   "nf": 104,
+   "bulk": "None",
+   "gate_con_pos": "top"
+  },
+  "info": "M1 nfet_03v3 W=20/L=0.28 nf=10 m=10: 1 row(s) x 10 units + 2 dummy fingers per row end (M1D), Id 13.2 mA",
+  "rows": 1,
+  "row": [
+   -0.59,
+   -0.3,
+   83.65,
+   2.671
+  ],
+  "buses": {
+   "gate": [
+    -2.59,
+    2.971,
+    85.65,
+    3.971
+   ],
+   "drain": [
+    -2.59,
+    0.0,
+    85.65,
+    13.5
+   ],
+   "source": [
+    -2.59,
+    -14.3,
+    85.65,
+    -0.8
+   ]
+  },
+  "bus_w": 13.5,
+  "i_row_mA": 13.2
+ },
+ "R2": {
+  "bbox": [
+   -1.78,
+   -0.4,
+   49.39,
+   1.4
+  ],
+  "params": {
+   "volt": "3.3V",
+   "w_res": 1.0,
+   "l_res": 48.35
+  },
+  "info": "R2 ppolyf_u_1k W=1 L=48.35"
+ },
+ "R1": {
+  "bbox": [
+   -1.78,
+   -0.4,
+   49.39,
+   1.4
+  ],
+  "params": {
+   "volt": "3.3V",
+   "w_res": 1.0,
+   "l_res": 48.35
+  },
+  "info": "R1 ppolyf_u_1k W=1 L=48.35"
+ },
+ "MIMC_58.2168x58.2168": {
+  "bbox": [
+   -7.6,
+   -1.8,
+   63.017,
+   60.017
+  ],
+  "params": {
+   "mim_option": "MIM-B",
+   "metal_level": "M5",
+   "wc": 58.2168,
+   "lc": 58.2168
+  },
+  "info": "cap_mim_2f0_m4m5_noshield 58.2168 x 58.2168 + bottom-plate tab, leads, 1.2 um halo",
+  "top_plate": [
+   0,
+   0,
+   58.217,
+   58.217
+  ],
+  "bottom_plate": [
+   -3.4,
+   -0.6,
+   58.817,
+   58.817
+  ],
+  "leads": {
+   "bottom": [
+    -7.6,
+    26.108,
+    -3.0,
+    32.108
+   ],
+   "top": [
+    58.217,
+    26.108,
+    63.017,
+    32.108
+   ]
+  },
+  "vias_per_col": 93
+ },
+ "MIMC_49.8865x49.8865": {
+  "bbox": [
+   -7.6,
+   -1.8,
+   54.687,
+   51.687
+  ],
+  "params": {
+   "mim_option": "MIM-B",
+   "metal_level": "M5",
+   "wc": 49.8865,
+   "lc": 49.8865
+  },
+  "info": "cap_mim_2f0_m4m5_noshield 49.8865 x 49.8865 + bottom-plate tab, leads, 1.2 um halo",
+  "top_plate": [
+   0,
+   0,
+   49.886,
+   49.886
+  ],
+  "bottom_plate": [
+   -3.4,
+   -0.6,
+   50.486,
+   50.486
+  ],
+  "leads": {
+   "bottom": [
+    -7.6,
+    21.943,
+    -3.0,
+    27.943
+   ],
+   "top": [
+    49.886,
+    21.943,
+    54.687,
+    27.943
+   ]
+  },
+  "vias_per_col": 79
+ },
+ "MIMC_33.1180x33.1180": {
+  "bbox": [
+   -7.6,
+   -1.8,
+   37.918,
+   34.918
+  ],
+  "params": {
+   "mim_option": "MIM-B",
+   "metal_level": "M5",
+   "wc": 33.118,
+   "lc": 33.118
+  },
+  "info": "cap_mim_2f0_m4m5_noshield 33.118 x 33.118 + bottom-plate tab, leads, 1.2 um halo",
+  "top_plate": [
+   0,
+   0,
+   33.118,
+   33.118
+  ],
+  "bottom_plate": [
+   -3.4,
+   -0.6,
+   33.718,
+   33.718
+  ],
+  "leads": {
+   "bottom": [
+    -7.6,
+    13.559,
+    -3.0,
+    19.559
+   ],
+   "top": [
+    33.118,
+    13.559,
+    37.918,
+    19.559
+   ]
+  },
+  "vias_per_col": 52
+ },
+ "MIMC_34.7078x34.7078": {
+  "bbox": [
+   -7.6,
+   -1.8,
+   39.508,
+   36.508
+  ],
+  "params": {
+   "mim_option": "MIM-B",
+   "metal_level": "M5",
+   "wc": 34.7078,
+   "lc": 34.7078
+  },
+  "info": "cap_mim_2f0_m4m5_noshield 34.7078 x 34.7078 + bottom-plate tab, leads, 1.2 um halo",
+  "top_plate": [
+   0,
+   0,
+   34.708,
+   34.708
+  ],
+  "bottom_plate": [
+   -3.4,
+   -0.6,
+   35.308,
+   35.308
+  ],
+  "leads": {
+   "bottom": [
+    -7.6,
+    14.354,
+    -3.0,
+    20.354
+   ],
+   "top": [
+    34.708,
+    14.354,
+    39.508,
+    20.354
+   ]
+  },
+  "vias_per_col": 55
+ },
+ "MIMC_26.7084x26.7084": {
+  "bbox": [
+   -7.6,
+   -1.8,
+   31.508,
+   28.508
+  ],
+  "params": {
+   "mim_option": "MIM-B",
+   "metal_level": "M5",
+   "wc": 26.7084,
+   "lc": 26.7084
+  },
+  "info": "cap_mim_2f0_m4m5_noshield 26.7084 x 26.7084 + bottom-plate tab, leads, 1.2 um halo",
+  "top_plate": [
+   0,
+   0,
+   26.708,
+   26.708
+  ],
+  "bottom_plate": [
+   -3.4,
+   -0.6,
+   27.308,
+   27.308
+  ],
+  "leads": {
+   "bottom": [
+    -7.6,
+    10.354,
+    -3.0,
+    16.354
+   ],
+   "top": [
+    26.708,
+    10.354,
+    31.508,
+    16.354
+   ]
+  },
+  "vias_per_col": 42
+ },
+ "PG_PLAIN": {
+  "bbox": [
+   -10.0,
+   -10.0,
+   10.0,
+   10.0
+  ],
+  "source": "cells/vss_m1m2m4_vdd_m3m5_20x20.gds",
+  "info": "supply tile vss_m1m2m4_vdd_m3m5_20x20.gds: M5/M3 VDD, M4/M2/M1/SUB VSS",
+  "mim_decap_pF": 0
+ },
+ "PG_MIM": {
+  "bbox": [
+   -10.0,
+   -10.0,
+   10.0,
+   10.0
+  ],
+  "source": "cells/vss_m1m2m4_vdd_m3m5_dcpl_mim_20x20.gds",
+  "info": "supply tile vss_m1m2m4_vdd_m3m5_dcpl_mim_20x20.gds: M5/M3 VDD, M4/M2/M1/SUB VSS, 4 MIM decaps",
+  "mim_decap_pF": 0.34
+ }
+}
