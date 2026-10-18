@@ -1,0 +1,229 @@
+{
+ "lna_core_input_match": {
+  "LEQ1": {
+   "dout_um": 132.09,
+   "turns": 3.25,
+   "centre": [
+    122.435,
+    122.435
+   ]
+  },
+  "C1": {
+   "W": 24.82,
+   "L": 24.82,
+   "pF": 1.25,
+   "schematic_pF": 1.25
+  },
+  "pins": {
+   "rf_in_pad": "Metal5 west edge y=295",
+   "input_cg": "Metal5 east edge x=82.0 y=295",
+   "vss": "Metal5 south edge"
+  }
+ },
+ "lna_core_cg": {
+  "M1": {
+   "rows": 2,
+   "fingers_per_row": 74,
+   "wf": 4.0,
+   "L": 0.6,
+   "sym": "nfet_05v0"
+  },
+  "bus_w_um": {
+   "source": 2.5,
+   "drain": 4.5
+  },
+  "guard_ring": [
+   103.04,
+   279.865,
+   208.3,
+   310.135
+  ],
+  "C3_pF": 20.003,
+  "C2_pF": 6.801,
+  "L2": {
+   "dout_um": 161.32,
+   "centre": [
+    338.53,
+    117.66
+   ]
+  },
+  "LD1": {
+   "dout_um": 240.35,
+   "centre": [
+    589.37,
+    157.175
+   ]
+  },
+  "c9_vss_straps": [
+   [
+    207.0,
+    244.0,
+    209.0,
+    293.89
+   ],
+   [
+    207.0,
+    303.09,
+    209.0,
+    352.98
+   ],
+   [
+    319.98,
+    244.0,
+    321.98,
+    293.89
+   ],
+   [
+    319.98,
+    303.09,
+    321.98,
+    352.98
+   ]
+  ],
+  "c9_plates": [
+   [
+    210.0,
+    244.0,
+    259.89,
+    293.89
+   ],
+   [
+    210.0,
+    303.09,
+    259.89,
+    352.98
+   ],
+   [
+    269.09,
+    244.0,
+    318.98,
+    293.89
+   ],
+   [
+    269.09,
+    303.09,
+    318.98,
+    352.98
+   ]
+  ],
+  "l1_vss_lead_x": [
+   357.19,
+   367.19
+  ],
+  "ld4_vdd_lead": [
+   469.195,
+   267.35,
+   479.195,
+   765
+  ],
+  "vm2_column_x": [
+   202.0,
+   206.0
+  ],
+  "pins": {
+   "input_match": "Metal5 x=82 y=290..300",
+   "output_cs": [
+    268.0,
+    399.5,
+    274.0,
+    405.5
+   ],
+   "g_cg": "Metal4 strip",
+   "vbias_cg": "Metal3 north edge x=112.62",
+   "vbias_cs": "Metal3 north edge x=209.18",
+   "vdd": "Metal5 north edge",
+   "vss": "guard ring, C3 straps, L2 inner (south edge)"
+  }
+ },
+ "lna_core_cs": {
+  "M3": {
+   "rows": 1,
+   "fingers": 104,
+   "wf": 2.0,
+   "L": 0.28,
+   "sym": "nfet_03v3"
+  },
+  "M2": {
+   "rows": 1,
+   "fingers": 44,
+   "wf": 3.5,
+   "L": 0.6,
+   "sym": "nfet_05v0"
+  },
+  "bus_w_um": 7.0,
+  "guard_ring": [
+   279.7,
+   389.7,
+   374.54,
+   426.97
+  ],
+  "LD1": {
+   "dout_um": 189.29,
+   "centre": [
+    614.9,
+    422.0
+   ]
+  },
+  "ld2_vdd_lead": [
+   520.255,
+   506.645,
+   530.255,
+   765
+  ],
+  "vx_column_x": [
+   377.0,
+   387.0
+  ],
+  "pins": {
+   "input_cg": [
+    268.0,
+    399.5,
+    274.0,
+    405.5
+   ],
+   "vbias_cas": "Metal3 north edge x=276.7",
+   "vdd": "Metal5 north edge",
+   "output_match": "Metal5 column x=(377.0, 387.0)",
+   "vss": "guard ring"
+  }
+ },
+ "lna_core_output_match": {
+  "C1": {
+   "W": 64.61,
+   "L": 54.0,
+   "pF": 7.0,
+   "schematic_pF": 7.0
+  },
+  "top_plate": [
+   391.0,
+   466.0,
+   445.0,
+   530.61
+  ],
+  "output_cs_lead_y": 498.305,
+  "rf_out_x": [
+   410.0,
+   420.0
+  ],
+  "LSHUNT_OUT1": {
+   "dout_um": 161.32,
+   "centre": [
+    640.0,
+    647.31
+   ]
+  },
+  "lsh_vss_lead_y": [
+   618.65,
+   628.65
+  ],
+  "macro": [
+   747,
+   765
+  ],
+  "pins": {
+   "output_cs": "Metal5 x=380.0 y=498.305",
+   "rf_out_pad": "Metal5 north edge x=415.0",
+   "vss": "Metal5 east edge"
+  }
+ }
+}
