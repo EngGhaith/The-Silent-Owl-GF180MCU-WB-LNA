@@ -183,10 +183,20 @@ C {lab_pin.sym} 1300 -740 0 0 {name=p36 sig_type=std_logic lab=vx
 C {lab_pin.sym} 760 -888.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1300 -618.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {LD2_model.sym} 1300 -1030 0 0 {name=XLD2}
-N 1200 -1030 1200 -1160 {lab=vdd}
-N 1200 -1160 1300 -1160 {lab=vdd}
-N 1400 -1030 1400 -980 {lab=vx}
-N 1400 -980 1300 -980 {lab=vx}
+C {res.sym} 1200 -1060 0 0 {name=RLD2_T1
+value=0.0571
+footprint=1206
+device=resistor
+m=1
+}
+C {lab_pin.sym} 1200 -1090 3 0 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
+C {res.sym} 1400 -1060 0 0 {name=RLD2_T2
+value=0.0571
+footprint=1206
+device=resistor
+m=1
+}
+C {lab_pin.sym} 1400 -1090 3 0 {name=pRLD2_T2 sig_type=std_logic lab=vx}
 C {symbols/ppolyf_u_1k.sym} 950 -1150 2 1 {name=R2
 W=1u
 L=48.35u
@@ -239,12 +249,36 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
 C {LD4_model.sym} 760 -1055 0 0 {name=XLD4}
-N 660 -1055 660 -1215 {lab=vdd}
-N 660 -1215 760 -1215 {lab=vdd}
-N 860 -1055 860 -1015 {lab=vm2}
-N 860 -1015 760 -1015 {lab=vm2}
+C {res.sym} 660 -1085 0 0 {name=RLD4_T1
+value=0.05
+footprint=1206
+device=resistor
+m=1
+}
+C {lab_pin.sym} 660 -1115 3 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
+C {res.sym} 860 -1085 0 0 {name=RLD4_T2
+value=0.05
+footprint=1206
+device=resistor
+m=1
+}
+C {lab_pin.sym} 860 -1115 3 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
 C {LSHUNT_OUT_model.sym} 800 -440 0 0 {name=XL1}
-N 760 -440 760 -580 {lab=#net1}
+C {res.sym} 700 -470 0 0 {name=RL1_T1
+value=0.0038
+footprint=1206
+device=resistor
+m=1
+}
+N 700 -500 680 -500 {lab=#net1}
+N 680 -500 680 -580 {lab=#net1}
+C {res.sym} 900 -470 0 0 {name=RL1_T2
+value=0.0038
+footprint=1206
+device=resistor
+m=1
+}
+C {lab_pin.sym} 900 -500 3 0 {name=pRL1_T2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 760 -370 3 0 {name=p19 sig_type=std_logic lab=vss}
 C {symbols/cap_mim_2f0fF.sym} 620 -580 3 0 {name=C15
 W=34.7078u
