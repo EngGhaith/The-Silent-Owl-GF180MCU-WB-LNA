@@ -191,6 +191,15 @@ spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1200 -1090 3 0 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
+C {symbols/rm1.sym} 1240 -1060 0 0 {name=RLD2_T1_M
+W=1.75e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=4
+}
+N 1200 -1030 1240 -1030 {lab=net_rld2_t1}
+C {lab_pin.sym} 1240 -1090 3 0 {name=pRLD2_T1_M sig_type=std_logic lab=vdd}
 C {symbols/rm1.sym} 1400 -1060 0 0 {name=RLD2_T2
 W=1.75e-6
 L=2.5e-6
@@ -199,6 +208,15 @@ spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1400 -1090 3 0 {name=pRLD2_T2 sig_type=std_logic lab=vx}
+C {symbols/rm1.sym} 1440 -1060 0 0 {name=RLD2_T2_M
+W=1.75e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=4
+}
+N 1400 -1030 1440 -1030 {lab=net_rld2_t2}
+C {lab_pin.sym} 1440 -1090 3 0 {name=pRLD2_T2_M sig_type=std_logic lab=vx}
 C {symbols/ppolyf_u_1k.sym} 950 -1150 2 1 {name=R2
 W=1u
 L=48.35u
@@ -259,6 +277,15 @@ spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 660 -1115 3 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
+C {symbols/rm1.sym} 700 -1085 0 0 {name=RLD4_T1_M
+W=2.0e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=4
+}
+N 660 -1055 700 -1055 {lab=net_rld4_t1}
+C {lab_pin.sym} 700 -1115 3 0 {name=pRLD4_T1_M sig_type=std_logic lab=vdd}
 C {symbols/rm1.sym} 860 -1085 0 0 {name=RLD4_T2
 W=2.0e-6
 L=2.5e-6
@@ -267,6 +294,15 @@ spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 860 -1115 3 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
+C {symbols/rm1.sym} 900 -1085 0 0 {name=RLD4_T2_M
+W=2.0e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=4
+}
+N 860 -1055 900 -1055 {lab=net_rld4_t2}
+C {lab_pin.sym} 900 -1115 3 0 {name=pRLD4_T2_M sig_type=std_logic lab=vm2}
 C {LSHUNT_OUT_model.sym} 800 -440 0 0 {name=XL1}
 C {symbols/rm1.sym} 700 -470 0 0 {name=RL1_T1
 W=26e-6
@@ -277,6 +313,15 @@ m=1
 }
 N 700 -500 680 -500 {lab=#net1}
 N 680 -500 680 -580 {lab=#net1}
+C {symbols/rm1.sym} 740 -470 0 0 {name=RL1_T1_M
+W=26e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=4
+}
+N 700 -440 740 -440 {lab=net_rl1_t1}
+N 700 -500 740 -500 {lab=net_rl1_t1_top}
 C {symbols/rm1.sym} 900 -470 0 0 {name=RL1_T2
 W=26e-6
 L=2.5e-6
@@ -285,6 +330,15 @@ spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 900 -500 3 0 {name=pRL1_T2 sig_type=std_logic lab=vss}
+C {symbols/rm1.sym} 940 -470 0 0 {name=RL1_T2_M
+W=26e-6
+L=2.5e-6
+model=rm1
+spiceprefix=X
+m=3
+}
+N 900 -440 940 -440 {lab=net_rl1_t2}
+C {lab_pin.sym} 940 -500 3 0 {name=pRL1_T2_M sig_type=std_logic lab=vss}
 C {lab_pin.sym} 760 -370 3 0 {name=p19 sig_type=std_logic lab=vss}
 C {symbols/cap_mim_2f0fF.sym} 620 -580 3 0 {name=C15
 W=34.7078u
