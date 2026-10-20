@@ -1,0 +1,33 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=x1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 100 -150 120 -150 {}
+L 4 220 -185 340 -185 {}
+L 4 120 -185 120 -65 {}
+L 4 220 -15 360 -15 {}
+L 4 360 -185 360 -65 {}
+L 4 340 -185 360 -185 {}
+L 4 180 -185 220 -185 {}
+L 4 360 -65 360 -15 {}
+L 4 120 -15 160 -15 {}
+L 4 120 -65 120 -15 {}
+L 4 160 -15 220 -15 {}
+L 4 120 -185 180 -185 {}
+L 7 240 -15 240 5 {}
+L 7 360 -150 380 -150 {}
+B 5 237.5 2.5 242.5 7.5 {name=vss dir=inout}
+B 5 97.5 -152.5 102.5 -147.5 {name=input_cg dir=out}
+B 5 377.5 -152.5 382.5 -147.5 {name=rf_in_pad dir=inout}
+T {@symname} 328 -111 0 1 0.3 0.3 {}
+T {@name} 325 -87 0 1 0.2 0.2 {}
+T {vss} 236 -20 3 0 0.2 0.2 {}
+T {input_cg} 125 -159 0 0 0.2 0.2 {}
+T {rf_in_pad} 305 -159 0 0 0.2 0.2 {}
