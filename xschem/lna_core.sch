@@ -56,10 +56,7 @@ lab=vx}
 N 760 -900 760 -890 {
 lab=vm2}
 N 760 -890 760 -860 {lab=vm2}
-N 1300 -1160 1300 -1140 {lab=vdd}
-N 1300 -1080 1300 -1060 {lab=#net3}
 N 760 -960 760 -900 {lab=vm2}
-N 1300 -1000 1300 -980 {lab=vx}
 N 900 -1150 930 -1150 {lab=vss}
 N 500 -920 530 -920 {lab=vss}
 N 1300 -1240 1300 -1180 {lab=vdd}
@@ -77,21 +74,12 @@ N 1300 -760 1300 -700 {lab=vx}
 N 1580 -750 1610 -750 {lab=rf_out_pad}
 N 1370 -750 1460 -750 {lab=vx}
 N 1520 -750 1580 -750 {lab=rf_out_pad}
-N 760 -1105 760 -1085 {lab=#net4}
-N 760 -1025 760 -1015 {lab=vm2}
-N 760 -1215 760 -1165 {lab=vdd}
-N 760 -410 760 -370 {lab=vss}
-N 760 -580 760 -560 {lab=#net1}
-N 760 -500 760 -470 {lab=#net5}
 N 650 -580 760 -580 {lab=#net1}
 N 510 -580 590 -580 {lab=rf_in_pad}
 N 430 -580 490 -580 {lab=rf_in_pad}
 N 330 -580 390 -580 {lab=rf_in_pad}
-N 510 -580 510 -540 {lab=rf_in_pad}
-N 510 -410 510 -380 {lab=vss}
 N 220 -580 270 -580 {lab=rf_in_pad}
 N 170 -580 220 -580 {lab=rf_in_pad}
-N 510 -480 510 -470 {lab=#net6}
 N 270 -580 330 -580 {lab=rf_in_pad}
 N 1580 -750 1580 -675 {lab=rf_out_pad}
 N 1300 -1175 1300 -1160 {lab=vdd}
@@ -123,12 +111,8 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
-C {ind.sym} 510 -440 0 0 {name=LEQ
-m=1
-value=1.3333n
-footprint=1206
-device=inductor
-}
+C {LEQ_model.sym} 550 -440 0 0 {name=XLEQ}
+N 510 -440 510 -580 {lab=rf_in_pad}
 C {symbols/nfet_06v0.sym} 1280 -670 0 0 {name=M4
 L=0.6u
 W=35u
@@ -167,18 +151,11 @@ C {lab_pin.sym} 1300 -740 0 0 {name=p36 sig_type=std_logic lab=vx
 }
 C {lab_pin.sym} 760 -888.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1300 -618.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
-C {ind.sym} 1300 -1030 0 0 {name=LD2
-m=1
-value=4n
-footprint=1206
-device=inductor
-}
-C {res.sym} 1300 -1110 0 0 {name=RLD2
-value=50
-footprint=1206
-device=resistor
-m=1
-}
+C {LD2_model.sym} 1300 -1030 0 0 {name=XLD2}
+N 1200 -1030 1200 -1160 {lab=vdd}
+N 1200 -1160 1300 -1160 {lab=vdd}
+N 1400 -1030 1400 -980 {lab=vx}
+N 1400 -980 1300 -980 {lab=vx}
 C {symbols/ppolyf_u_1k.sym} 950 -1150 2 1 {name=R2
 W=1u
 L=48.35u
@@ -230,52 +207,18 @@ value=7p
 footprint=1206
 device="ceramic capacitor"
 }
-C {ind.sym} 760 -1055 0 0 {name=LD4
-m=1
-value=8n
-footprint=1206
-device=inductor
-}
-C {res.sym} 760 -1135 0 0 {name=RLD3
-value=30
-footprint=1206
-device=resistor
-m=1
-}
-C {ind.sym} 760 -440 0 0 {name=L1
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
+C {LD4_model.sym} 760 -1055 0 0 {name=XLD4}
+N 660 -1055 660 -1215 {lab=vdd}
+N 660 -1215 760 -1215 {lab=vdd}
+N 860 -1055 860 -1015 {lab=vm2}
+N 860 -1015 760 -1015 {lab=vm2}
+C {LSHUNT_OUT_model.sym} 800 -440 0 0 {name=XL1}
+N 760 -440 760 -580 {lab=#net1}
 C {lab_pin.sym} 760 -370 3 0 {name=p19 sig_type=std_logic lab=vss}
-C {res.sym} 760 -530 0 0 {name=Rs
-value=2.5
-footprint=1206
-device=resistor
-m=1
-}
 C {capa.sym} 620 -580 3 0 {name=C15
 m=1
 value=1.25p
 footprint=1206
 device="ceramic capacitor"
 }
-C {res.sym} 510 -510 0 0 {name=RLEQ
-value=1.6755
-footprint=1206
-device=resistor
-m=1
-}
-C {ind.sym} 1580 -645 0 0 {name=LSHUNT_OUT
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
-C {res.sym} 1580 -585 2 0 {name=RLSHOUT
-value=3.1416
-footprint=1206
-device=resistor
-m=1}
-C {lab_pin.sym} 1580 -555 2 0 {name=p915 sig_type=std_logic lab=vss}
+C {LSHUNT_OUT_model.sym} 1620 -675 0 0 {name=XLSHUNT_OUT}

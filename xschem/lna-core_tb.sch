@@ -201,6 +201,22 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice diode_typical
 
 .include $::env(PWD)/gf180mcu_fd_io__asig_5p0_pex__pdk_gf180mcuD__rcx__flat__cthresh_0__extresist_0mohm.spice
+
+* ============================================================
+* INDUCTOR MODEL SWEEP CONFIG -- change the shared section name
+* (ideal / rl / snp2le) in all 4 lines below to switch every
+* swept inductor's model at once, or run:
+*   ./set_inductor_model.sh ideal_or_rl_or_snp2le
+* from the xschem/ directory.
+*   ideal  : single ideal inductor (L only)
+*   rl     : EM-derived series L + equivalent series R
+*   snp2le : snp2le broadband vector-fitted macromodel (passive,
+*            DC-pinned, thermal-noise-synthesized), same EM data as rl
+* ============================================================
+.lib $::env(PWD)/LEQ_model.lib rl
+.lib $::env(PWD)/LSHUNT_OUT_model.lib rl
+.lib $::env(PWD)/LD2_model.lib rl
+.lib $::env(PWD)/LD4_model.lib rl
 "}
 C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 
