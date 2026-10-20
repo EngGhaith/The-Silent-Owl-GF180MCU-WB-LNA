@@ -1,0 +1,26 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=x1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 -150 0 -130 0 {}
+L 4 130 0 150 0 {}
+L 4 0 -110 0 -90 {}
+L 4 0 90 0 110 {}
+B 5 -152.5 -2.5 -147.5 2.5 {name=rf_in_pad dir=inout}
+B 5 147.5 -2.5 152.5 2.5 {name=rf_out_pad dir=inout}
+B 5 -2.5 -112.5 2.5 -107.5 {name=vdd dir=inout}
+B 5 -2.5 107.5 2.5 112.5 {name=vss dir=inout}
+P 4 5 -130 -90 130 -90 130 90 -130 90 -130 -90 {}
+T {LNA_TOP} -45 -15 0 0 0.3 0.3 {}
+T {@name} 85 67 0 0 0.2 0.2 {}
+T {rf_in_pad} -125 -6 0 0 0.2 0.2 {}
+T {rf_out_pad} 125 -6 0 1 0.2 0.2 {}
+T {vdd} 5 -84 0 0 0.2 0.2 {}
+T {vss} 5 66 0 0 0.2 0.2 {}
