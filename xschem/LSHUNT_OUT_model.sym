@@ -1,0 +1,18 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {type=primitive
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=x1"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 -40 0 -20 0 {}
+B 5 -42.5 -2.5 -37.5 2.5 {name=p1 dir=inout sim_pinnumber=1}
+P 4 5 -20 -20 20 -20 20 20 -20 20 -20 -20 {}
+T {p1} -45 -19 0 0 0.2 0.2 {}
+T {One-Port} -20 -40 0 0 0.4 0.4 {}
+T {@symname} -40 24 0 0 0.2 0.2 {}
+T {@name} -40 42 0 0 0.2 0.2 {}
