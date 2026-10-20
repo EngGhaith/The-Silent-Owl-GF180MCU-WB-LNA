@@ -112,17 +112,19 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
 C {LEQ_model.sym} 550 -440 0 0 {name=XLEQ}
-C {res.sym} 450 -470 0 0 {name=RLEQ_T1
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 450 -470 0 0 {name=RLEQ_T1
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 450 -500 3 0 {name=pRLEQ_T1 sig_type=std_logic lab=rf_in_pad}
-C {res.sym} 650 -470 0 0 {name=RLEQ_T2
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 650 -470 0 0 {name=RLEQ_T2
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 650 -500 3 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
@@ -165,17 +167,19 @@ C {lab_pin.sym} 1300 -740 0 0 {name=p36 sig_type=std_logic lab=vx
 C {lab_pin.sym} 760 -888.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
 C {lab_pin.sym} 1300 -618.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
 C {LD2_model.sym} 1300 -1030 0 0 {name=XLD2}
-C {res.sym} 1200 -1060 0 0 {name=RLD2_T1
-value=0.0571
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 1200 -1060 0 0 {name=RLD2_T1
+W=1.75e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1200 -1090 3 0 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
-C {res.sym} 1400 -1060 0 0 {name=RLD2_T2
-value=0.0571
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 1400 -1060 0 0 {name=RLD2_T2
+W=1.75e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1400 -1090 3 0 {name=pRLD2_T2 sig_type=std_logic lab=vx}
@@ -231,32 +235,36 @@ footprint=1206
 device="ceramic capacitor"
 }
 C {LD4_model.sym} 760 -1055 0 0 {name=XLD4}
-C {res.sym} 660 -1085 0 0 {name=RLD4_T1
-value=0.05
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 660 -1085 0 0 {name=RLD4_T1
+W=2.0e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 660 -1115 3 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
-C {res.sym} 860 -1085 0 0 {name=RLD4_T2
-value=0.05
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 860 -1085 0 0 {name=RLD4_T2
+W=2.0e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 860 -1115 3 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
 C {LSHUNT_OUT_model.sym} 800 -440 0 0 {name=XL1}
-C {res.sym} 700 -470 0 0 {name=RL1_T1
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 700 -470 0 0 {name=RL1_T1
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 N 700 -500 700 -580 {lab=#net1}
-C {res.sym} 900 -470 0 0 {name=RL1_T2
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 900 -470 0 0 {name=RL1_T2
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 900 -500 3 0 {name=pRL1_T2 sig_type=std_logic lab=vss}
@@ -268,17 +276,19 @@ footprint=1206
 device="ceramic capacitor"
 }
 C {LSHUNT_OUT_model.sym} 1620 -675 0 0 {name=XLSHUNT_OUT}
-C {res.sym} 1520 -705 0 0 {name=RLSHUNT_OUT_T1
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 1520 -705 0 0 {name=RLSHUNT_OUT_T1
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1520 -735 3 0 {name=pRLSH_T1 sig_type=std_logic lab=rf_out_pad}
-C {res.sym} 1720 -705 0 0 {name=RLSHUNT_OUT_T2
-value=0.0038
-footprint=1206
-device=resistor
+C {symbols/rm1.sym} 1720 -705 0 0 {name=RLSHUNT_OUT_T2
+W=26e-6
+L=2.5e-6
+model=tm11k
+spiceprefix=X
 m=1
 }
 C {lab_pin.sym} 1720 -735 3 0 {name=pRLSH_T2 sig_type=std_logic lab=vss}
