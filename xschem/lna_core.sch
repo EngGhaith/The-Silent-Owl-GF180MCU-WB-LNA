@@ -213,8 +213,6 @@ C {iopin.sym} 1240 -670 0 1 {name=p61 lab=vbias_cas}
 C {iopin.sym} 70 -770 0 1 {name=p62 lab=vss}
 C {iopin.sym} 180 -1230 3 0 {name=p64 lab=vbias_buf
 }
-C {iopin.sym} 1010 -330 0 1 {name=p65 lab=vbias_icg
-spice_ignore=true}
 C {lab_pin.sym} 1300 -360 3 0 {name=p7 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 550 -690 3 0 {name=p10 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 780 -830 2 0 {name=p12 sig_type=std_logic lab=vss}

@@ -7,7 +7,6 @@ F {}
 E {}
 N 480 -1080 480 -1040 {lab=vdd}
 N 300 -990 330 -990 {lab=rf_in_pad}
-N 300 -930 330 -930 {lab=vbias_csc}
 N 300 -910 330 -910 {lab=vbias_icg}
 N 300 -890 330 -890 {lab=vbias_cg}
 N 300 -870 330 -870 {lab=vbias_cs}
@@ -154,7 +153,6 @@ C {lab_pin.sym} 15 -1095 2 0 {name=p65 sig_type=std_logic lab=rf_out_pad
 C {vsource.sym} -138.75 -450 1 0 {name=VSS value=0 savecurrent=false}
 C {lab_pin.sym} -78.75 -450 2 0 {name=p73 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 300 -990 0 0 {name=p1 sig_type=std_logic lab=rf_in_pad}
-C {lab_pin.sym} 300 -930 0 0 {name=p2 sig_type=std_logic lab=vbias_csc}
 C {lab_pin.sym} 300 -910 0 0 {name=p3 sig_type=std_logic lab=vbias_icg}
 C {lab_pin.sym} 300 -890 0 0 {name=p4 sig_type=std_logic lab=vbias_cg}
 C {lab_pin.sym} 300 -870 0 0 {name=p11 sig_type=std_logic lab=vbias_cs}
