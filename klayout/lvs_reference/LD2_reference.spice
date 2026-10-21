@@ -1,0 +1,10 @@
+.subckt SPIRALINDUCTOR vdd
+R1 tip_m24 vdd rm2 W=1.75e-6 L=0.5e-6
+R2 tip_m24 vdd rm3 W=1.75e-6 L=0.5e-6
+R3 tip_m24 vdd rm4 W=1.75e-6 L=0.5e-6
+R4 tip_tm vdd tm11k W=1.75e-6 L=0.5e-6
+R5 vdd tip_m24 rm2 W=1.75e-6 L=0.5e-6
+R6 vdd tip_m24 rm3 W=1.75e-6 L=0.5e-6
+R7 vdd tip_m24 rm4 W=1.75e-6 L=0.5e-6
+R8 vdd tip_tm tm11k W=1.75e-6 L=0.5e-6
+.ends SPIRALINDUCTOR
