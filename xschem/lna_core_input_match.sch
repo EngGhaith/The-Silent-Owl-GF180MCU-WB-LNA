@@ -6,42 +6,31 @@ S {}
 F {}
 E {}
 N 270 -340 310 -340 {lab=vss}
-N 640 -270 660 -270 {
+N 730 -260 750 -260 {
 lab=rf_in_pad}
-N 540 -270 580 -270 {
+N 630 -260 670 -260 {
 lab=rf_in_pad}
-N 660 -270 740 -270 {lab=rf_in_pad}
-N 580 -270 640 -270 {lab=rf_in_pad}
-N 480 -270 540 -270 {lab=rf_in_pad}
-N 660 -270 660 -230 {lab=rf_in_pad}
-N 660 -100 660 -70 {lab=vss}
-N 370 -270 420 -270 {lab=rf_in_pad}
-N 320 -270 370 -270 {lab=rf_in_pad}
-N 660 -170 660 -160 {lab=#net1}
-N 420 -270 480 -270 {lab=rf_in_pad}
-N 800 -270 820 -270 {lab=input_cg}
-C {iopin.sym} 320 -270 0 1 {name=p56 lab=rf_in_pad}
+N 890 -260 1000 -260 {lab=input_cg}
+N 750 -260 830 -260 {lab=rf_in_pad}
+N 670 -260 730 -260 {lab=rf_in_pad}
+N 570 -260 630 -260 {lab=rf_in_pad}
+N 460 -260 510 -260 {lab=rf_in_pad}
+N 410 -260 460 -260 {lab=rf_in_pad}
+N 510 -260 570 -260 {lab=rf_in_pad}
+N 1000 -260 1130 -260 {lab=input_cg}
+N 570 -120 610 -120 {lab=rf_in_pad}
+N 810 -120 850 -120 {lab=vss}
+N 570 -260 570 -120 {lab=rf_in_pad}
 C {iopin.sym} 270 -340 0 1 {name=p1 lab=vss}
 C {lab_pin.sym} 310 -340 2 0 {name=p2 sig_type=std_logic lab=vss
 }
-C {opin.sym} 820 -270 0 0 {name=p3 lab=input_cg}
-C {lab_pin.sym} 660 -70 3 0 {name=p4 sig_type=std_logic lab=vss
-}
-C {ind.sym} 660 -130 0 0 {name=LEQ1
-m=1
-value=1.3333n
-footprint=1206
-device=inductor
-}
-C {capa.sym} 770 -270 3 0 {name=C1
+C {opin.sym} 1130 -260 0 0 {name=p3 lab=input_cg}
+C {LEQ_model.sym} 710 -120 0 0 {name=XLEQ}
+C {lab_pin.sym} 850 -120 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
+C {iopin.sym} 410 -260 0 1 {name=p6 lab=rf_in_pad}
+C {capa.sym} 860 -260 3 0 {name=C15
 m=1
 value=1.25p
 footprint=1206
 device="ceramic capacitor"
-}
-C {res.sym} 660 -200 0 0 {name=RLEQ1
-value=1.6755
-footprint=1206
-device=resistor
-m=1
 }

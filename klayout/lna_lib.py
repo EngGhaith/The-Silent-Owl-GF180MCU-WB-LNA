@@ -302,6 +302,58 @@ def spiral(ly, name, dout, n, w=10.0, s=3.0, under="S", lead=0.0, exit_gap=3.0):
     return t, term
 
 
+# ---------------------------------------------------------------- EM-characterised coils (klayout/*_coil.gds)
+COIL_MARK = {"ind": (151, 5), "p1": (201, 0), "p2": (202, 0)}  # IND_MK, port 1 / port 2 markers of the EM setup
+COIL_KEEP = (151, 201, 202, 110)  # marker layers (IND_MK, ports, metal resistor markers) are never trimmed
+
+
+def _coil_read(path):
+    """coil layout with the EM-only parts removed, + geometry (um, coil coordinates): the coils come with a Metal4 +
+    Metal5 bracket east of the ports (EM port return) that shorts port 1 and port 2 -> every shape of the top cell
+    at or beyond the port edge pe is dropped, and the text labels too (the block draws its own)"""
+    src = pya.Layout()
+    src.read(path)
+    t = src.top_cell()
+    mk = {k: pya.Region(t.begin_shapes_rec(src.layer(*v))).bbox().to_dtype(src.dbu) for k, v in COIL_MARK.items()}
+    pe = mk["p1"].right
+    assert abs(mk["p2"].right - pe) < 1e-6, f"{path}: ports not on one edge"
+    for li in src.layer_indexes():
+        keep = src.get_info(li).layer in COIL_KEEP
+        for c in src.each_cell():
+            for s in list(c.shapes(li).each()):
+                if s.is_text() or (c.cell_index() == t.cell_index() and not keep and s.dbbox().left >= pe - 1e-6):
+                    s.delete()
+    b = t.dbbox()
+    geo = {"pe": pe, "p1": (mk["p1"].bottom, mk["p1"].top), "p2": (mk["p2"].bottom, mk["p2"].top),
+           "r": max(abs(b.left), b.right, abs(b.bottom), b.top)}
+    return src, geo
+
+
+def coil_geom(path):
+    """geometry of a coil (see _coil_read): pe = port edge x, p1 / p2 = (y0, y1) of the ports, r = half size"""
+    return _coil_read(path)[1]
+
+
+def coil(ly, name, path):
+    """coil as static cell `name` (sub cells renamed <name>__*), origin = coil centre, ports on the east edge"""
+    src, geo = _coil_read(path)
+    t = src.top_cell()
+    for c in src.each_cell():
+        if c.cell_index() != t.cell_index():
+            c.name = f"{name}__{c.name}"
+    dst = ly.create_cell(name)
+    dst.copy_tree(t)
+    return dst, geo
+
+
+def coil_ports(t, geo, stub=3.5):
+    """(port 1, port 2) Metal5 stubs at port width from the port edge `stub` outwards, through the placement t.
+    The outer winding reaches 0.5 um past the port edge: wide leads may start 3 um past it (the last 0.5 um of the
+    stub), 2.5 um clear of the winding"""
+    pe = geo["pe"]
+    return tuple(tbox(t, (pe, y0, pe + stub, y1)) for y0, y1 in (geo["p1"], geo["p2"]))
+
+
 # ---------------------------------------------------------------- reports
 def write_png(gds, png, w=1600, h=1200, box=None):
     """render a GDS with the PDK layer properties (needs a KLayout with Qt / LayoutView)"""

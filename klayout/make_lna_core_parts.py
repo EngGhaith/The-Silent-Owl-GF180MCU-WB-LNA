@@ -4,19 +4,19 @@ klayout/lna_core_parts.gds: the four lna_core blocks + vss ring + supply tiles (
 
   klayout -b -r make_lna_core_parts.py
 
-Blocks: lna_core_{input_match,cg,cs,output_match}.gds, all at (0, 0) (shared floorplan coordinates).
-Supply (cell lna_core_supply, at (0, 0)), layer plan of the team: M5 / M3 = vdd, M4 / M2 / M1 / SUB = vss
-  macro  747 x 765 um (size from lna_core_layouts.json, written by make_lna_core_layouts.py)
+Blocks: lna_core_{input_match,cg,cs,output_match}.gds and the supply are built in the shared block coordinates
+(macro x 0..W, y Y0..H, lna_core_layouts.json "frame") and placed at (0, -Y0): the macro starts at (0, 0).
+Supply (cell lna_core_supply), layer plan of the team: M5 / M3 = vdd, M4 / M2 / M1 / SUB = vss
   ring   12 um band along the macro edge: P+ substrate tap + Metal1 + Metal2 + Metal4 (vss), Metal3 islands with
-         Via2 / Via3 join Metal2 and Metal4; north band also carries the vdd rail on Metal5 (gap at rf_out_pad,
-         bridged on Metal3, Metal4 cut out around the bridge stacks)
+         Via2 / Via3 join Metal2 and Metal4; north, east and south band also carry the vdd rail on Metal5 (gap at
+         rf_out_pad, bridged on Metal3, Metal4 cut out around the bridge stacks)
   tiles  20 x 20 um supply tiles (layout/floorplan/cells) on a grid flush with the north band, on every site that
-         is >= KEEP from all block shapes and outside the spiral keep-outs (spiral bbox + 25 um). Tiles abut ->
-         continuous planes. Tile groups that touch the ring get vss / vdd from it; the two inner groups east of C9
-         (F) and east of the CS stage (E) get explicit straps, other inner groups are left out.
-  straps vss: CG guard ring -> tiles above (Metal2), CS guard ring -> tiles above and -> group E (Metal2),
-         C9 bottom-plate straps -> Metal5 bar below C9 -> CG guard ring (Metal2) and group F (Metal4),
-         L1 inner end -> ring (Via4); vdd: group E (Metal5) and group F (Metal3 under vm2) -> LD4 vdd lead
+         is >= KEEP from all block shapes and outside the inductor keep-outs (bbox + 25 um). Tiles abut ->
+         continuous planes. Tile groups that touch the north / east / south band get vdd (rail) + vss (ring)
+         there, group B (enclosed, GRP_B_AT) gets explicit straps, groups touching only the west band are left out.
+  straps vss: CG guard ring -> west ring (Metal2), CS guard ring -> C3 bottom-plate bar (Metal2 + stack; the bar
+         joins the CG guard ring inside lna_core_cg), LEQ port 2 -> west ring (Via4); L1 / LSHUNT_OUT port 2
+         enter the south / north band on Metal4 (blocks)
   MIM decap tiles: PG_MIM (fixed tile, MIMTM.1 clean) on at most N_MIM_MAX sites so that the shared vss Metal4
          plane carries <= 10000 um^2 of MIM (MIMTM.11), PG_PLAIN elsewhere.
 Re-running replaces blocks and supply (idempotent); dbu 1 nm.
@@ -38,12 +38,15 @@ SUPPLY = "lna_core_supply"
 CELLS = os.path.join(HERE, "..", "layout", "floorplan", "cells")
 TILES = {"PG_PLAIN": "vss_m1m2m4_vdd_m3m5_20x20.gds", "PG_MIM": "vss_m1m2m4_vdd_m3m5_dcpl_mim_20x20_fix.gds"}
 INFO = json.load(open(os.path.join(HERE, "lna_core_layouts.json")))
-W, H = map(float, INFO["lna_core_output_match"]["macro"])  # 747 x 765 (floorplan + LSHUNT_OUT1 box on top)
+_, Y0, W, H = map(float, INFO["lna_core_output_match"]["frame"])  # macro x 0..W, y Y0..H (block coordinates)
 RING = 12.0
 PITCH, KEEP, SPIRAL_KO = 20.0, 4.0, 25.0
 N_MIM_MAX = 70  # x 4 MIMs x 5.1 x 6.3 um = 9000 um^2 on the common vss Metal4 plane (MIMTM.11: <= 10000)
+GRP_B_AT = (500.0, 300.0)  # a point inside tile group B (east of C3, below the vm2 trace)
+CG_STRAP_Y = (266.0, 270.0)  # Metal2 vss strap CG guard ring -> west band (between LEQ and the input match C1)
+CS_STRAP_X = 332.0  # Metal2 vss strap CS guard ring -> C3 bar (east of C3)
 GX0 = RING
-GY0 = H - RING - PITCH * int((H - 2 * RING) // PITCH)  # grid flush with the north band
+GY0 = H - RING - PITCH * int((H - Y0 - 2 * RING) // PITCH)  # grid flush with the north band
 um = lambda v: int(round(v * 1000))
 
 
@@ -112,8 +115,9 @@ def groups(sites):
     return out
 
 
-def touches_ring(comp):
-    return any(x == RING or y == RING or x + PITCH == W - RING or y + PITCH == H - RING for x, y in comp)
+def touches_rail(comp):
+    """group reaches the north, east or south ring band (vdd rail on Metal5 there, the west band has none)"""
+    return any(y + PITCH == H - RING or x + PITCH == W - RING or y == Y0 + RING for x, y in comp)
 
 
 def group_at(comps, x, y):
@@ -123,38 +127,60 @@ def group_at(comps, x, y):
     raise SystemExit(f"no supply tile group at ({x}, {y}) - block layout changed, update the straps")
 
 
-def lowest_site_above(comp, x0, x1, y):
-    """y0 of the lowest site of comp covering x0..x1 and starting above y"""
-    ys = [sy for sx, sy in comp if sx <= x0 and x1 <= sx + PITCH and sy >= y]
-    assert ys, (x0, x1, y)
-    return min(ys)
+def vss_straps(S):
+    """vss of the inner pieces -> ring: guard rings, LEQ port 2 (drawn before the tiles, which keep clear)"""
+    cg, cs = INFO["lna_core_cg"], INFO["lna_core_cs"]
+    # LEQ port 2 (vss, Metal5 into the west band) -> ring Metal4
+    ly_ = INFO["lna_core_input_match"]["leq_vss_lead_y"]
+    S.stack(2, ly_[0], 10, ly_[1], 4, 5)
+    # CG guard ring -> west band (Metal2, below the input match C1 and above LEQ)
+    R = cg["guard_ring"]
+    ys = CG_STRAP_Y
+    S.box("m2", R[0] + 1, ys[0], R[0] + 5, R[1] + 0.8)
+    S.box("m2", 0, ys[0], R[0] + 5, ys[1])
+    # CS guard ring -> C3 bottom-plate bar (Metal5, drawn in lna_core_cg and joined to the CG guard ring there):
+    # bar extended east, Metal2 column up to the ring
+    Rs = cs["guard_ring"]
+    st = cg["c9_vss_straps"]  # lower left, upper left, lower right, upper right
+    yb0, yb1 = 236.0, 240.0
+    x0 = CS_STRAP_X
+    assert st[2][2] + 6 <= x0 and Rs[0] + 2 <= x0 and x0 + 4 <= Rs[2] - 2
+    S.box("m5", st[2][0], yb0, x0 + 4, yb1)
+    S.stack(x0, yb0, x0 + 4, yb1, 2, 5)
+    S.box("m2", x0, yb0, x0 + 4, Rs[1] + 0.8)
 
 
 def build_supply(ly, top):
     blk, ko = block_geometry(ly, top)
     m3_blk = pya.Region(top.begin_shapes_rec(ly.layer(42, 0)))
     m5_blk = pya.Region(top.begin_shapes_rec(ly.layer(81, 0)))
-    comps = groups(free_sites(blk, ko))
     cg, cs = INFO["lna_core_cg"], INFO["lna_core_cs"]
     ld4 = cg["ld4_vdd_lead"]
-    grp_e = group_at(comps, 440, 400)  # east of the CS stage
-    grp_f = group_at(comps, 440, 330)  # east of C9
-    keep = [c for c in comps if touches_ring(c) or c is grp_e or c is grp_f]
-    sites = sorted(s for c in keep for s in c)
     S = Cell(ly, SUPPLY)
+    vss_straps(S)
+    for li in ly.layer_indexes():
+        blk += pya.Region(S.c.begin_shapes_rec(li))
+    blk.merge()
+    comps = groups(free_sites(blk, ko))
+    grp_b = group_at(comps, *GRP_B_AT)  # enclosed by the core, L1, LD4 and the vm2 trace: own straps
+    keep = [c for c in comps if touches_rail(c) or c is grp_b]
+    sites = sorted(s for c in keep for s in c)
 
     # ---------------- ring
-    band = pya.Region(pya.Box(0, 0, um(W), um(H))) - pya.Region(pya.Box(um(RING), um(RING), um(W - RING), um(H - RING)))
+    band = pya.Region(pya.Box(0, um(Y0), um(W), um(H))) - pya.Region(pya.Box(um(RING), um(Y0 + RING), um(W - RING), um(H - RING)))
     for lay in ("m1", "m2"):
         S.c.shapes(S.li(lay)).insert(band)
-    lib.guard_ring(S, 5.5, 5.5, W - 5.5, H - 5.5, w=1.0)  # P+ tap, contacts, Via1 along the band centre
-    # vdd rail (Metal5) in the north band, gaps around non-vdd Metal5 of the blocks, bridged on Metal3
+    lib.guard_ring(S, 5.5, Y0 + 5.5, W - 5.5, H - 5.5, w=1.0)  # P+ tap, contacts, Via1 along the band centre
+    # vdd rail (Metal5) in the north, east and south band, gaps around non-vdd Metal5 of the blocks (only in the
+    # north band: rf_out), bridged on Metal3
     vdd_leads = pya.Region()
     for b in (ld4, cs["ld2_vdd_lead"]):
         vdd_leads.insert(dbox(b))
-    rail_box = pya.Region(dbox((RING, H - RING, W - RING, H - 2)))
+    north = pya.Region(dbox((RING, H - RING, W - RING, H - 2)))
+    rail_box = north + pya.Region(dbox((W - RING, Y0 + 2, W - 2, H - 2))) + pya.Region(dbox((RING, Y0 + 2, W - RING, Y0 + RING)))
     foreign = (m5_blk & rail_box.sized(um(1))).merged().not_interacting(vdd_leads)
-    rail = rail_box - foreign.sized(um(6))
+    assert (foreign - north.sized(um(1))).is_empty(), "non-vdd Metal5 crosses the east / south vdd rail"
+    rail = rail_box.merged() - foreign.sized(um(6))
     S.c.shapes(S.li("m5")).insert(rail)
     holes = pya.Region()
     bridges = []
@@ -170,12 +196,12 @@ def build_supply(ly, top):
     # Metal3 islands (Via2 + Via3) every 40 um along the band centre, clear of block Metal3 and the bridges
     isl = []
     for k in range(int((W - 12) // 40) + 1):
-        isl += [(6 + 40 * k, 6), (6 + 40 * k, H - 6)]
-    for k in range(int((H - 12) // 40) + 1):
-        isl += [(6, 6 + 40 * k), (W - 6, 6 + 40 * k)]
+        isl += [(6 + 40 * k, Y0 + 6), (6 + 40 * k, H - 6)]
+    for k in range(int((H - Y0 - 12) // 40) + 1):
+        isl += [(6, Y0 + 6 + 40 * k), (W - 6, Y0 + 6 + 40 * k)]
     n_isl = 0
     for x, y in isl:
-        if not (3 <= x <= W - 3 and 3 <= y <= H - 3):
+        if not (3 <= x <= W - 3 and Y0 + 3 <= y <= H - 3):
             continue
         b = (x - 1.5, y - 1.5, x + 1.5, y + 1.5)
         near = pya.Region(dbox(b).enlarged(um(3), um(3)))
@@ -194,49 +220,22 @@ def build_supply(ly, top):
         n_mim += kind == "PG_MIM"
         S.place(cells[kind], x0 + PITCH / 2, y0 + PITCH / 2)
 
-    # ---------------- straps
-    # L2 inner end (vss, Metal5 into the south band) -> ring Metal4
-    lx = cg["l1_vss_lead_x"]
-    S.stack(lx[0], 2, lx[1], 10, 4, 5)
-    # LSHUNT_OUT1 inner end (vss, Metal5 into the east band) -> ring Metal4
-    ly_ = INFO["lna_core_output_match"]["lsh_vss_lead_y"]
-    S.stack(W - 10, ly_[0], W - 2, ly_[1], 4, 5)
-    # CG guard ring -> group above (Metal2)
-    R = cg["guard_ring"]
-    grp_b = group_at(comps, 180, R[3] + 30)
-    yb = lowest_site_above(grp_b, 176, 180, R[3])
-    S.box("m2", 176, R[3] - 0.8, 180, yb + 1)
-    # CS guard ring -> group above (Metal2) and -> group E (Metal2)
-    Rs = cs["guard_ring"]
-    grp_d = group_at(comps, 302, Rs[3] + 30)
-    yd = lowest_site_above(grp_d, 300, 304, Rs[3])
-    S.box("m2", 300, Rs[3] - 0.8, 304, yd + 1)
-    xe = min(sx for sx, sy in grp_e)
-    ye = [sy for sx, sy in grp_e if sx == xe and Rs[1] + 2 <= sy + 10 <= Rs[3] - 2]
-    assert ye, "group E does not face the CS guard ring"
-    yc = ye[0] + 10
-    S.box("m2", Rs[2] - 0.8, yc - 2, xe + 1, yc + 2)
-    # group E vdd -> LD4 vdd lead (Metal5)
-    xe1 = max(sx for sx, sy in grp_e) + PITCH
-    ye5 = [sy for sx, sy in grp_e if sx + PITCH == xe1 and ld4[1] < sy and sy + 14 < 428][0]
-    S.box("m5", xe1 - 1, ye5 + 6, ld4[0] + 1, ye5 + 14)
-    # C3 bottom plates (vss): their Metal5 bar (drawn in lna_core_cg, joined to the CG guard ring there) is
-    # extended east to group F (Metal4)
-    st = cg["c9_vss_straps"]  # lower left, upper left, lower right, upper right
-    yb0, yb1 = 236.0, 240.0
-    xf = min(sx for sx, sy in grp_f)
-    yf = min(sy for sx, sy in grp_f if sx == xf)
-    assert yf - 1 <= yb1 + 4 and xf - 2 > st[2][2] + 4
-    S.box("m5", st[2][0], yb0, xf - 1, yb1)
-    S.stack(xf - 5, yb0, xf - 1, yb1, 4, 5)
-    S.box("m4", xf - 5, yb0, xf + 1, yf + 2)
-    # group F vdd -> LD4 vdd lead (Metal3 under vm2, stack onto the lead)
-    xf1 = max(sx for sx, sy in grp_f) + PITCH
-    yf3 = [sy for sx, sy in grp_f if sx + PITCH == xf1 and sy > ld4[1] + 2][0]
-    S.box("m3", xf1 - 1, yf3 + 8, ld4[2] - 1, yf3 + 12)
-    S.stack(ld4[0] + 1, yf3 + 6, ld4[2] - 1, yf3 + 14, 3, 5)
+    # group B: vss from the CS guard-ring strap (Metal2), vdd from the LD4 vdd lead (Metal3 under the vm2 lead,
+    # stack onto the Metal5 lead east of the LD4 ports)
+    xw = min(sx for sx, sy in grp_b)
+    yw = min(sy for sx, sy in grp_b if sx == xw)
+    S.box("m2", CS_STRAP_X + 2, yw + 8, xw + 1, yw + 12)
+    yt = max(sy for sx, sy in grp_b)
+    xt = max(sx for sx, sy in grp_b if sy == yt)
+    x4 = g(cg["LD4"]["centre"][0] + 6)  # east of LD4 port 1 (cx + 1 .. cx + 3)
+    yv = (ld4[1] + 12, ld4[1] + 22)  # between the LD4 vdd lead and the vm2 trace
+    assert yt + PITCH + 4 <= yv[0] and yv[1] + 1 <= 357
+    S.box("m3", xt + 8, yt + 16, xt + 12, yv[1])
+    S.box("m3", xt + 8, yv[0], x4 + 10, yv[1])
+    S.box("m3", x4, ld4[1], x4 + 10, yv[1])
+    S.stack(x4, ld4[1], x4 + 10, ld4[1] + 10, 3, 5)
 
-    S.label(1, "vss", 6, H / 2)
+    S.label(1, "vss", 6, (Y0 + H) / 2)
     S.label(5, "vdd", W / 2, H - 7)
     stats = {"tiles": len(sites), "PG_MIM": n_mim, "PG_PLAIN": len(sites) - n_mim,
              "decap_pF": round(n_mim * 4 * lib.c_mim_pf(5.1, 6.3), 2), "ring_m3_islands": n_isl,
@@ -295,6 +294,10 @@ def main():
         top.insert(pya.CellInstArray(cell.cell_index(), pya.Trans()))
     sup, stats = build_supply(ly, top)
     top.insert(pya.CellInstArray(sup.c.cell_index(), pya.Trans()))
+    shift = pya.Trans(0, -um(Y0))  # macro lower-left -> (0, 0)
+    for i in list(top.each_inst()):
+        if ly.cell(i.cell_index).name in gen:
+            i.transform(shift)
     top_pin_labels(ly, top)
     ly.write(OUT)
     print(f"wrote {OUT}: top cell {top_name}, bbox {top.dbbox()}")
