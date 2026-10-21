@@ -1,0 +1,11 @@
+.subckt SPIRALINDUCTOR_5L rf_in_pad
+R1 tip_m14 rf_in_pad rm1 W=26e-6 L=0.5e-6
+R2 tip_m14 rf_in_pad rm2 W=26e-6 L=0.5e-6
+R3 tip_m14 rf_in_pad rm3 W=26e-6 L=0.5e-6
+R4 tip_m14 rf_in_pad rm4 W=26e-6 L=0.5e-6
+R5 tip_tm rf_in_pad tm11k W=26e-6 L=0.5e-6
+R6 rf_in_pad tip_m14 rm2 W=26e-6 L=0.5e-6
+R7 rf_in_pad tip_m14 rm3 W=26e-6 L=0.5e-6
+R8 rf_in_pad tip_m14 rm4 W=26e-6 L=0.5e-6
+R9 rf_in_pad tip_tm tm11k W=26e-6 L=0.5e-6
+.ends SPIRALINDUCTOR_5L
