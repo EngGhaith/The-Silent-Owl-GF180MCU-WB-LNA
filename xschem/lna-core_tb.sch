@@ -62,13 +62,13 @@ lab=vss}
 N -200 -450 -168.75 -450 {
 lab=GND}
 N 490 -1220 530 -1220 {
-lab=rf_in_pad}
+lab=rf_in_padext}
 N 390 -1220 430 -1220 {
 lab=#net1}
 N 290 -1220 330 -1220 {
 lab=rf_in_ext}
 N 280 -1370 320 -1370 {
-lab=rf_out_pad}
+lab=rf_out_padext}
 N 180 -1370 220 -1370 {
 lab=#net2
 spice_ignore=short}
@@ -174,7 +174,7 @@ footprint=1206
 device=resistor
 m=1}
 C {lab_pin.sym} 290 -1220 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext}
-C {lab_pin.sym} 530 -1220 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 530 -1220 2 0 {name=p25 sig_type=std_logic lab=rf_in_padext}
 C {ind.sym} 250 -1370 1 0 {name=LBW_IN1
 m=1
 value=\{L_BW\}
@@ -188,7 +188,7 @@ device=resistor
 m=1
 }
 C {lab_pin.sym} 80 -1370 0 0 {name=p37 sig_type=std_logic lab=rf_out_ext}
-C {lab_pin.sym} 320 -1370 2 0 {name=p38 sig_type=std_logic lab=rf_out_pad}
+C {lab_pin.sym} 320 -1370 2 0 {name=p38 sig_type=std_logic lab=rf_out_padext}
 C {code_shown.sym} 50 -505 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -201,6 +201,7 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice diode_typical
 
 .include $::env(PWD)/gf180mcu_fd_io__asig_5p0_pex__pdk_gf180mcuD__rcx__flat__cthresh_0__extresist_0mohm.spice
+.include $::env(PWD)/gf180mcu_fd_io__asig_5p0_extracted.spice
 
 * ============================================================
 * INDUCTOR MODEL SWEEP CONFIG -- change the shared section name
@@ -1193,9 +1194,9 @@ C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 "}
 C {port_diff.sym} -380 -810 0 0 {name=V1 portnum=1 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=}
 C {port_diff.sym} -380 -660 0 0 {name=V2 portnum=2 Z0=50 DCval=0 ACmag=1 ACphase=0 TRANval=}
-C {gf180mcu_fd_io__asig_5p0.sym} -185 -1460 0 0 {name=x2 model=gf180mcu_fd_io__asig_5p0
+C {gf180mcu_fd_io__asig_5p0_extracted.sym} -185 -1460 0 0 {name=x2 model=gf180mcu_fd_io__asig_5p0_extracted
 }
-C {gf180mcu_fd_io__asig_5p0.sym} -185 -1095 0 0 {name=x3 model=gf180mcu_fd_io__asig_5p0
+C {gf180mcu_fd_io__asig_5p0_extracted.sym} -185 -1095 0 0 {name=x3 model=gf180mcu_fd_io__asig_5p0_extracted
 }
 C {res.sym} 200 -1440 3 0 {name=RBW_IN2
 value=1u
@@ -1233,3 +1234,15 @@ wrs2p /foss/designs/lna_core_tb.s2p
 .endc
 "
 spice_ignore=true}
+C {lab_pin.sym} -105 -1460 0 0 {name=p_x2_DVSS sig_type=std_logic lab=GND}
+C {lab_pin.sym} -105 -1620 0 0 {name=p_x2_DVDD sig_type=std_logic lab=vddio}
+C {lab_pin.sym} -65 -1460 0 0 {name=p_x2_VSS sig_type=std_logic lab=GND}
+C {lab_pin.sym} -65 -1620 0 0 {name=p_x2_VDD sig_type=std_logic lab=vddio}
+C {lab_pin.sym} -185 -1540 0 0 {name=p_x2_PAD sig_type=std_logic lab=rf_in_padext}
+C {lab_pin.sym} 15 -1540 0 0 {name=p_x2_ASIG5V sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} -105 -1095 0 0 {name=p_x3_DVSS sig_type=std_logic lab=GND}
+C {lab_pin.sym} -105 -1255 0 0 {name=p_x3_DVDD sig_type=std_logic lab=vddio}
+C {lab_pin.sym} -65 -1095 0 0 {name=p_x3_VSS sig_type=std_logic lab=GND}
+C {lab_pin.sym} -65 -1255 0 0 {name=p_x3_VDD sig_type=std_logic lab=vddio}
+C {lab_pin.sym} -185 -1175 0 0 {name=p_x3_PAD sig_type=std_logic lab=rf_out_padext}
+C {lab_pin.sym} 15 -1175 0 0 {name=p_x3_ASIG5V sig_type=std_logic lab=rf_out_pad}
