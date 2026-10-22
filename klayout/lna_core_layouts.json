@@ -1,23 +1,27 @@
 {
  "lna_core_input_match": {
-  "LEQ1": {
-   "dout_um": 132.09,
-   "turns": 3.25,
+  "LEQ": {
+   "coil": "LEQ_coil.gds",
    "centre": [
-    122.435,
-    122.435
-   ]
+    193.875,
+    38.0
+   ],
+   "ports": "west"
   },
-  "C1": {
+  "C15": {
    "W": 24.82,
    "L": 24.82,
    "pF": 1.25,
    "schematic_pF": 1.25
   },
+  "leq_vss_lead_y": [
+   11.0,
+   37.0
+  ],
   "pins": {
    "rf_in_pad": "Metal5 west edge y=295",
    "input_cg": "Metal5 east edge x=82.0 y=295",
-   "vss": "Metal5 south edge"
+   "vss": "Metal5 west edge (LEQ port 2)"
   }
  },
  "lna_core_cg": {
@@ -40,19 +44,21 @@
   ],
   "C3_pF": 20.003,
   "C2_pF": 6.801,
-  "L2": {
-   "dout_um": 161.32,
+  "L1": {
+   "coil": "LSHUNT_OUT_coil.gds",
    "centre": [
-    338.53,
-    117.66
-   ]
+    588.545,
+    -10.795
+   ],
+   "ports": "north"
   },
-  "LD1": {
-   "dout_um": 240.35,
+  "LD4": {
+   "coil": "LD4_coil.gds",
    "centre": [
-    589.37,
-    157.175
-   ]
+    990.84,
+    164.5
+   ],
+   "ports": "north"
   },
   "c9_vss_straps": [
    [
@@ -107,14 +113,14 @@
    ]
   ],
   "l1_vss_lead_x": [
-   357.19,
-   367.19
+   360.0,
+   370.0
   ],
   "ld4_vdd_lead": [
-   469.195,
-   267.35,
-   479.195,
-   765
+   1166.0,
+   333.0,
+   1176.0,
+   851
   ],
   "vm2_column_x": [
    202.0,
@@ -128,11 +134,11 @@
     274.0,
     405.5
    ],
-   "g_cg": "Metal4 strip",
-   "vbias_cg": "Metal3 north edge x=112.62",
-   "vbias_cs": "Metal3 north edge x=209.18",
+   "g_cg": "Metal3 west edge y=(430.0, 434.0)",
+   "vbias_cg": "Metal3 north edge x=60.00",
+   "vbias_cs": "Metal3 north edge x=75.00",
    "vdd": "Metal5 north edge",
-   "vss": "guard ring, C3 straps, L2 inner (south edge)"
+   "vss": "guard ring, C3 straps, L1 port 2 (south edge)"
   }
  },
  "lna_core_cs": {
@@ -157,18 +163,19 @@
    374.54,
    426.97
   ],
-  "LD1": {
-   "dout_um": 189.29,
+  "LD2": {
+   "coil": "LD2_coil.gds",
    "centre": [
-    614.9,
-    422.0
-   ]
+    232.0,
+    600.0
+   ],
+   "ports": "east"
   },
   "ld2_vdd_lead": [
-   520.255,
-   506.645,
-   530.255,
-   765
+   350.0,
+   601.0,
+   360.0,
+   851
   ],
   "vx_column_x": [
    377.0,
@@ -181,7 +188,7 @@
     274.0,
     405.5
    ],
-   "vbias_cas": "Metal3 north edge x=276.7",
+   "vbias_cas": "Metal3 north edge x=90.0",
    "vdd": "Metal5 north edge",
    "output_match": "Metal5 column x=(377.0, 387.0)",
    "vss": "guard ring"
@@ -205,25 +212,28 @@
    410.0,
    420.0
   ],
-  "LSHUNT_OUT1": {
-   "dout_um": 161.32,
+  "LSHUNT_OUT": {
+   "coil": "LSHUNT_OUT_coil.gds",
    "centre": [
-    640.0,
-    647.31
-   ]
+    665.795,
+    602.0
+   ],
+   "ports": "west"
   },
-  "lsh_vss_lead_y": [
-   618.65,
-   628.65
-  ],
   "macro": [
-   747,
-   765
+   1204,
+   1104
+  ],
+  "frame": [
+   0,
+   -253,
+   1204,
+   851
   ],
   "pins": {
    "output_cs": "Metal5 x=380.0 y=498.305",
    "rf_out_pad": "Metal5 north edge x=415.0",
-   "vss": "Metal5 east edge"
+   "vss": "Metal4 north edge x=440.0..450.0"
   }
  }
 }

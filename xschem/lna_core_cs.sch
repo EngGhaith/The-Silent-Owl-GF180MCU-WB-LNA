@@ -5,17 +5,17 @@ V {}
 S {}
 F {}
 E {}
-N 460 -430 460 -410 {lab=#net6}
-N 460 -350 460 -330 {lab=#net6}
+N 460 -430 460 -410 {lab=vm1}
+N 460 -350 460 -330 {lab=vm1}
 N 410 -380 420 -380 {lab=vss}
 N 210 -290 230 -290 {
 lab=vss}
 N 210 -260 210 -250 {
-lab=#net7}
+lab=#net1}
 N 150 -290 170 -290 {
 lab=input_cg}
 N 210 -250 210 -190 {
-lab=#net7}
+lab=#net1}
 N 210 -400 230 -400 {
 lab=vss}
 N 210 -370 210 -360 {
@@ -25,32 +25,30 @@ lab=vbias_cas}
 N 210 -360 210 -320 {
 lab=vm1}
 N 210 -190 210 -180 {
-lab=#net7}
+lab=#net1}
 N 210 -120 210 -110 {
 lab=vss}
 N 210 -110 210 -90 {
 lab=vss}
 N 210 -480 280 -480 {
 lab=output_match}
-N 210 -670 210 -650 {lab=vdd}
-N 210 -590 210 -570 {lab=#net8}
-N 210 -510 210 -490 {lab=output_match}
-N 210 -750 210 -690 {lab=vdd}
 N 210 -490 210 -430 {lab=output_match}
-N 210 -685 210 -670 {lab=vdd}
-N 210 -690 210 -685 {lab=vdd}
-N 210 -200 390 -200 {lab=#net7}
-N 390 -260 410 -260 {lab=#net7}
-N 410 -260 410 -200 {lab=#net7}
-N 390 -200 410 -200 {lab=#net7}
+N 210 -200 390 -200 {lab=#net1}
+N 390 -260 410 -260 {lab=#net1}
+N 410 -260 410 -200 {lab=#net1}
+N 390 -200 410 -200 {lab=#net1}
 N 330 -230 350 -230 {lab=vss}
-N 460 -330 530 -330 {lab=#net6}
-N 530 -430 530 -330 {lab=#net6}
-N 460 -430 530 -430 {lab=#net6}
+N 460 -330 530 -330 {lab=vm1}
+N 530 -430 530 -330 {lab=vm1}
+N 460 -430 530 -430 {lab=vm1}
 N 60 -560 100 -560 {lab=vss}
+N 210 -690 270 -690 {lab=output_match}
+N 60 -530 100 -530 {lab=vdd}
+N 210 -690 210 -490 {lab=output_match}
+N 470 -690 520 -690 {lab=vdd}
 C {ipin.sym} 150 -290 0 0 {name=p1 lab=input_cg}
 C {opin.sym} 280 -480 0 0 {name=p2 lab=output_match}
-C {iopin.sym} 210 -750 1 1 {name=p3 lab=vdd}
+C {iopin.sym} 60 -530 0 1 {name=p3 lab=vdd}
 C {symbols/nfet_05v0.sym} 440 -380 0 0 {name=M4D
 L=0.6u
 W=7u
@@ -102,18 +100,6 @@ model=nfet_03v3
 spiceprefix=X
 }
 C {lab_pin.sym} 210 -348.75 0 0 {name=p6 sig_type=std_logic lab=vm1}
-C {ind.sym} 210 -540 0 0 {name=LD1
-m=1
-value=4n
-footprint=1206
-device=inductor
-}
-C {res.sym} 210 -620 0 0 {name=RLD1
-value=50
-footprint=1206
-device=resistor
-m=1
-}
 C {iopin.sym} 150 -400 0 1 {name=p7 lab=vbias_cas}
 C {lab_pin.sym} 210 -90 3 0 {name=p8 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 230 -400 2 0 {name=p9 sig_type=std_logic lab=vss}
@@ -137,4 +123,8 @@ C {lab_pin.sym} 390 -230 2 0 {name=pM2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 460 -330 0 0 {name=p5 sig_type=std_logic lab=vm1}
 C {iopin.sym} 60 -560 2 0 {name=p11 lab=vss}
 C {lab_pin.sym} 100 -560 2 0 {name=p13 sig_type=std_logic lab=vss
+}
+C {LD2_model.sym} 370 -690 0 1 {name=XLD2}
+C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
+C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }
