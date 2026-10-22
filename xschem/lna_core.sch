@@ -202,7 +202,7 @@ C {iopin.sym} 280 -1230 3 0 {name=p13 lab=vbias_casc
 }
 C {capa.sym} 1490 -750 3 0 {name=C11
 m=1
-value=7p
+value=0.7p
 footprint=1206
 device="ceramic capacitor"
 }
@@ -216,7 +216,7 @@ C {lab_pin.sym} 900 -440 1 0 {name=pRL1_T2 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 760 -370 3 0 {name=p19 sig_type=std_logic lab=vss}
 C {capa.sym} 620 -580 3 0 {name=C15
 m=1
-value=1.25p
+value=1.4p
 footprint=1206
 device="ceramic capacitor"
 }
