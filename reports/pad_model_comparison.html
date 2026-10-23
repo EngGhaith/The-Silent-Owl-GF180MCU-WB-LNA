@@ -81,6 +81,12 @@ svg{display:block;width:100%;height:auto;overflow:visible;}
 .legend{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:4px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text-dim);}
 .legend span{display:inline-flex;align-items:center;}
 
+.dip-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:860px){.dip-grid{grid-template-columns:1fr;}}
+.dip-table h4{margin:0 0 10px;font-size:13.5px;font-weight:600;}
+.dip-table table{box-shadow:none;}
+.dip-table th,.dip-table td{padding:8px 11px;font-size:12.5px;}
+
 .findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
 .finding{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);}
 .finding .k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
@@ -140,8 +146,48 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--border);color
     </div>
   </section>
 
+  <section>
+    <h2><span class="num">05</span>Why the retune can't go further</h2>
+    <p class="section-sub">The committed values (C15=1.4&nbsp;pF, C11=0.7&nbsp;pF) aren't just the best point found in a grid &mdash; they're close to a real ceiling. Each cap was swept on its own to see where it pushes its port's own resonance dip, not just what value it leaves at 2.4&nbsp;GHz.</p>
+    <div class="dip-grid">
+      <div class="dip-table">
+        <h4>C15 (input) &mdash; S11 dip tracking <span class="tag tag-branch">cout fixed at 0.7&nbsp;pF</span></h4>
+        <table>
+          <thead><tr><th>C15</th><th>Dip freq.</th><th>Dip depth</th></tr></thead>
+          <tbody>
+            <tr><td>0.8 pF</td><td class="num">2.756 GHz</td><td class="num">&minus;18.2 dB</td></tr>
+            <tr><td>1.0 pF</td><td class="num">2.686 GHz</td><td class="num">&minus;37.6 dB</td></tr>
+            <tr><td>1.2 pF</td><td class="num">2.636 GHz</td><td class="num">&minus;21.2 dB</td></tr>
+            <tr style="background:var(--accent-soft)"><td><b>1.4 pF (committed)</b></td><td class="num">2.595 GHz</td><td class="num">&minus;15.3 dB</td></tr>
+            <tr><td>1.6 pF</td><td class="num">2.575 GHz</td><td class="num">&minus;12.3 dB</td></tr>
+            <tr><td>1.8 pF</td><td class="num">2.567 GHz</td><td class="num">&minus;10.4 dB</td></tr>
+            <tr><td>1.9 pF</td><td class="num">2.567 GHz</td><td class="num">&minus;9.7 dB</td></tr>
+          </tbody>
+        </table>
+        <p class="chart-sub" style="margin-top:8px;">Past ~1.8&nbsp;pF the dip frequency stops moving &mdash; it saturates around <b>2.56&ndash;2.57&nbsp;GHz</b> and just gets shallower. It never reaches 2.4&nbsp;GHz; a very deep but off-center notch (1.0&nbsp;pF, &minus;37.6&nbsp;dB at 2.69&nbsp;GHz) is too narrow to help at 2.4&nbsp;GHz either &mdash; it measures only &minus;8.7&nbsp;dB there.</p>
+      </div>
+      <div class="dip-table">
+        <h4>C11 (output) &mdash; S22 dip tracking <span class="tag tag-branch">cin fixed at 1.4&nbsp;pF</span></h4>
+        <table>
+          <thead><tr><th>C11</th><th>Dip freq.</th><th>Dip depth</th></tr></thead>
+          <tbody>
+            <tr><td>0.08 pF</td><td class="num">2.398 GHz</td><td class="num">&minus;4.1 dB</td></tr>
+            <tr><td>0.10 pF</td><td class="num">2.390 GHz</td><td class="num">&minus;4.2 dB</td></tr>
+            <tr><td>0.20 pF</td><td class="num">2.350 GHz</td><td class="num">&minus;5.3 dB</td></tr>
+            <tr><td>0.40 pF</td><td class="num">2.274 GHz</td><td class="num">&minus;10.2 dB</td></tr>
+            <tr><td>0.50 pF</td><td class="num">2.234 GHz</td><td class="num">&minus;14.8 dB</td></tr>
+            <tr style="background:var(--accent-soft)"><td><b>0.7 pF (committed)</b></td><td class="num">2.153 GHz</td><td class="num">&minus;30.6 dB</td></tr>
+            <tr><td>0.9 pF</td><td class="num">2.103 GHz</td><td class="num">&minus;15.1 dB</td></tr>
+          </tbody>
+        </table>
+        <p class="chart-sub" style="margin-top:8px;">C11 <i>can</i> pull the dip up to almost exactly 2.4&nbsp;GHz &mdash; but the depth collapses to &minus;4&ndash;5&nbsp;dB on the way there, far worse than the &minus;30.6&nbsp;dB available at its natural 2.15&nbsp;GHz resonance.</p>
+      </div>
+    </div>
+    <p class="section-sub" style="margin-top:14px;">With <span class="mono">L_BW</span> fixed at 3&nbsp;nH, the input and output matching networks have natural resonances at ~2.56&nbsp;GHz and ~2.15&nbsp;GHz respectively that don't relocate to 2.4&nbsp;GHz without losing most of their depth. C15=1.4&nbsp;pF / C11=0.7&nbsp;pF is the genuine compromise point between "deep but off-frequency" and "on-frequency but shallow" &mdash; not an artifact of an under-sized sweep.</p>
+  </section>
+
   <footer>
-    Generated from 4 broadband ngspice sweeps of <span class="mono">lna-core_tb.sch</span> (1 MHz&ndash;7 GHz, downsampled to 0.5&ndash;5 GHz here). Repo extracted model: <span class="mono">gf180mcu_fd_io__asig_5p0_extracted.spice</span>.
+    Generated from 5 broadband ngspice sweeps of <span class="mono">lna-core_tb.sch</span> (1 MHz&ndash;7 GHz, downsampled to 0.5&ndash;5 GHz here), plus a dedicated resonance-tracking sweep for the main_pex_corr retune. Repo extracted model: <span class="mono">gf180mcu_fd_io__asig_5p0_extracted.spice</span>.
   </footer>
 </div>
 
