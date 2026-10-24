@@ -7,8 +7,9 @@ Layouts of the four lna_core sub-blocks, drawn after layout/floorplan/lna_core_f
   lna_core_cs.gds            xschem/lna_core_cs.sch            M3 (+M5 dummies), M2 (+M4D dummies), XLD2 coil
   lna_core_output_match.gds  xschem/lna_core_output_match.sch  C1 (series), XLSHUNT_OUT coil
 
-Run:  klayout -b -r make_lna_core_layouts.py          (all cells)
+Run:  klayout -b -r make_lna_core_layouts.py          (all cells, main_pex variant: on-chip matching caps)
       klayout -b -r make_lna_core_layouts.py -rd cells=cg,cs
+      klayout -b -r make_lna_core_layouts.py -rd variant=main   (input/output matching with no on-chip cap)
 
 All four cells share one coordinate system: the core (devices, from layout/floorplan/lna_core_floorplan, rf_in west,
 rf_out north) keeps the coordinates of that floorplan, the macro spans x 0..MACRO_W, y Y_S..Y_N around it
@@ -134,11 +135,15 @@ INFO = {}  # per cell: notes for the json report
 
 
 # ================================================================ lna_core_input_match
-def build_input_match(ly):
+def build_input_match(ly, with_cap=True):
     """
     rf_in_pad (Metal5, west edge, y = 295) -> C15 bottom plate; C15 top plate -> input_cg (east edge, x = 82)
     LEQ (coil, south-west, mirrored: ports west): port 1 (upper) -> rf_in lead column (x = 20 .. 30) north to
     rf_in_pad, port 2 -> vss (Metal5 into the west ring band)
+
+    with_cap=False (main variant): C15 is off-chip (main_pex only adds it on-chip) -> no MIM is drawn, rf_in_pad
+    wires straight through to input_cg instead; the LEQ coil (needed by both variants) and every pin/frame
+    coordinate are unchanged, so lna_core_cg/cs/output_match need no changes either way.
     """
     P = "lna_core_input_match"
     sch = sch_params(P)
@@ -149,30 +154,37 @@ def build_input_match(ly):
     assert cy + geo["r"] + SP_KO <= YSL[0] and cy - geo["r"] - RING >= Y_S + RING, "LEQ does not fit"
     (q1, q2), _, _ = place_coil(ly, top, P, "LEQ", cx, cy, rot=180, mirror=True)
     lead_x = 25.0  # rf_in lead column (centre)
-    # --- series capacitor (ideal capa.sym, 1.25 pF -> square MIM)
-    cn = series_cap(sch)
-    c_pf = pf(sch[cn][1]["value"])
-    w1, l1 = cap_side(c_pf)
     rf_y = 295.0
-    px = 36.4
-    c1, t1 = lib.mim_tile(ly, f"{P}__C1", w1, l1)
-    tr1 = top.place(c1, px, g(rf_y - l1 / 2))
-    b1, p1 = tbox(tr1, t1["bot"]), tbox(tr1, t1["top"])
-    # --- rf_in_pad: west edge -> capacitor bottom-plate strap; LEQ lead column joins it
-    top.box("m5", 0, rf_y - 5, b1[2], rf_y + 5)
+    x_e = 82.0
+    cap_info = {}
+    if with_cap:
+        # --- series capacitor (ideal capa.sym, 1.25 pF -> square MIM)
+        cn = series_cap(sch)
+        c_pf = pf(sch[cn][1]["value"])
+        w1, l1 = cap_side(c_pf)
+        px = 36.4
+        c1, t1 = lib.mim_tile(ly, f"{P}__C1", w1, l1)
+        tr1 = top.place(c1, px, g(rf_y - l1 / 2))
+        b1, p1 = tbox(tr1, t1["bot"]), tbox(tr1, t1["top"])
+        # --- rf_in_pad: west edge -> capacitor bottom-plate strap; LEQ lead column joins it
+        top.box("m5", 0, rf_y - 5, b1[2], rf_y + 5)
+        rf_e = p1[2] - 1  # capacitor top plate -> east edge
+        cap_info = {cn: {"W": w1, "L": l1, "pF": round(lib.c_mim_pf(w1, l1), 3), "schematic_pF": c_pf}}
+    else:
+        # no cap: rf_in_pad wires straight through to input_cg
+        top.box("m5", 0, rf_y - 5, x_e, rf_y + 5)
+        rf_e = x_e
     top.box("m5", lead_x - 5, q1[1], q1[2], q1[3])  # LEQ port 1 -> lead column
     top.box("m5", lead_x - 5, q1[1], lead_x + 5, rf_y + 5)
     top.label(5, "rf_in_pad", 1, rf_y)
-    # --- input_cg: capacitor top plate -> east edge
-    x_e = 82.0
-    top.box("m5", p1[2] - 1, rf_y - 5, x_e, rf_y + 5)
+    # --- input_cg: east edge
+    top.box("m5", rf_e, rf_y - 5, x_e, rf_y + 5)
     top.label(5, "input_cg", x_e - 1, rf_y)
     # --- vss: LEQ port 2 -> west ring band (lna_core_parts stacks it onto the ring Metal4)
     top.box("m5", 2, q2[1], q2[2], q2[3])
     top.label(5, "vss", 3, (q2[1] + q2[3]) / 2)
-    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"},
-               cn: {"W": w1, "L": l1, "pF": round(lib.c_mim_pf(w1, l1), 3), "schematic_pF": c_pf},
-               "leq_vss_lead_y": [q2[1], q2[3]],
+    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"}, "with_cap": with_cap,
+               **cap_info, "leq_vss_lead_y": [q2[1], q2[3]],
                "pins": {"rf_in_pad": "Metal5 west edge y=295", "input_cg": f"Metal5 east edge x={x_e} y=295",
                         "vss": "Metal5 west edge (LEQ port 2)"}}
     return top
@@ -200,28 +212,42 @@ def om_lead_y():
 
 
 # ================================================================ lna_core_output_match
-def build_output_match(ly):
+def build_output_match(ly, with_cap=True):
     """
     C1 (series, ideal 7 pF -> MIM): top plate = output_cs (lead to the west, x = 380), bottom plate (tab rotated
     to the north) = rf_out_pad (Metal5 lead to the north edge, x = 415)
     LSHUNT_OUT: coil east of the rf_out lead, rotated 180 (ports west): port 1 (lower) -> rf_out lead, port 2 ->
     vss (Metal5 north between the rf_out lead and the coil, Metal4 into the north ring band)
+
+    with_cap=False (main variant): C1 is off-chip -> no MIM is drawn, output_cs wires straight through to the
+    rf_out lead column instead; om_lead_y() (also used by lna_core_cs) and every pin/frame coordinate are
+    unchanged, so lna_core_cs needs no changes either way.
     """
     P = "lna_core_output_match"
     sch = sch_params(P)
     top = Cell(ly, P)
-    w, l = c_out_wl()
-    c, t = lib.mim_tile(ly, f"{P}__C1", w, l)
-    x0, y0 = C_OUT_PLATE
-    tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
-    pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
-    yc = g((pt[1] + pt[3]) / 2)
-    assert abs(yc - om_lead_y()) < 1e-6
-    top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
-    top.label(5, "output_cs", OM_IN_X + 1, yc)
     xr = RFO_X
-    top.box("m5", bt[0], bt[1], bt[2], bt[3])
-    top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
+    yc = om_lead_y()  # fixed by the (always-present) schematic cap value, regardless of with_cap
+    cap_info = {}
+    if with_cap:
+        w, l = c_out_wl()
+        c, t = lib.mim_tile(ly, f"{P}__C1", w, l)
+        x0, y0 = C_OUT_PLATE
+        tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
+        pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
+        assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
+        top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
+        top.box("m5", bt[0], bt[1], bt[2], bt[3])
+        top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
+        q1_min_y = pt[3] + 20  # rf_out port must clear the cap
+        cap_info = {series_cap(sch): {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3),
+                                       "schematic_pF": pf(sch[series_cap(sch)][1]["value"])}, "top_plate": list(pt)}
+    else:
+        # no cap: output_cs wires straight through to the rf_out lead column
+        top.box("m5", OM_IN_X, yc - 5, xr + 5, yc + 5)
+        top.box("m5", xr - 5, yc - 5, xr + 5, Y_N)
+        q1_min_y = yc + 5 + 20  # rf_out port must clear the through-wire
+    top.label(5, "output_cs", OM_IN_X + 1, yc)
     top.label(5, "rf_out_pad", xr, Y_N - 1)
     # --- LSHUNT_OUT
     geo = coil_geom(P, "LSHUNT_OUT")
@@ -229,7 +255,7 @@ def build_output_match(ly):
     assert cy - geo["r"] - SP_KO >= VM2_Y[1] and cy + geo["r"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
     assert cx + geo["r"] + SP_KO / 2 <= VDD4_X[0] and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=180)
-    assert q1[3] < q2[1] and q1[1] > pt[3] + 20, "rf_out port must be the lower one, above C1"
+    assert q1[3] < q2[1] and q1[1] > q1_min_y, "rf_out port must be the lower one, clear of the cap / through-wire"
     top.box("m5", xr + 5 - 1, q1[1], q1[2], q1[3])  # port 1 -> rf_out lead
     vx0, vx1 = LSH_VSS_X
     top.box("m5", vx0, q2[1], q2[2], q2[3])  # port 2 -> vss lead
@@ -238,8 +264,7 @@ def build_output_match(ly):
     top.stack(vx0, yv, vx1, yv + 6, 4, 5)
     top.box("m4", vx0, yv, vx1, Y_N - 2)
     top.label(4, "vss", (vx0 + vx1) / 2, Y_N - 3)
-    INFO[P] = {series_cap(sch): {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3),
-                                 "schematic_pF": pf(sch[series_cap(sch)][1]["value"])}, "top_plate": list(pt), "output_cs_lead_y": yc,
+    INFO[P] = {"with_cap": with_cap, **cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
                "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "west"},
                "macro": [MACRO_W, Y_N - Y_S], "frame": [0, Y_S, MACRO_W, Y_N],
@@ -552,14 +577,20 @@ def build_cg(ly):
 
 
 BUILDERS = {"input_match": build_input_match, "cg": build_cg, "cs": build_cs, "output_match": build_output_match}
+WITH_CAP = {"main_pex": True, "main": False}  # variant -> whether input/output matching draws its on-chip MIM cap
 
 
 def main():
+    variant = globals().get("variant") or "main_pex"
+    with_cap = WITH_CAP[variant]
     want = [c for c in (globals().get("cells") or ",".join(BUILDERS)).split(",") if c]
     for key in want:
         ly = pya.Layout()
         ly.dbu = 0.001
-        top = BUILDERS[key](ly)
+        if key in ("input_match", "output_match"):
+            top = BUILDERS[key](ly, with_cap=with_cap)
+        else:
+            top = BUILDERS[key](ly)
         for c in list(ly.each_cell()):  # drop the PCell variant cells
             if c.parent_cells() == 0 and c.cell_index() != top.c.cell_index():
                 ly.delete_cell(c.cell_index())
