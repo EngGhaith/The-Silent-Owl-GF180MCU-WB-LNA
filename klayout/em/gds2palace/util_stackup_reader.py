@@ -1,0 +1,560 @@
+########################################################################
+#
+# Copyright 2025 Volker Muehlhaus and IHP PDK Authors
+#
+# Licensed under the GNU General Public License, Version 3.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.gnu.org/licenses/gpl-3.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+########################################################################
+
+
+# Read XML file with SG13G2 stackup
+
+# File history: 
+# Initial version 20 Nov 2024  Volker Muehlhaus 
+# Added support for sheet resistance 07 Oct 2025 Volker Muehlhaus 
+# Added docstrings 
+# 20 Nov 2025: added functionality to get relative positions between metals
+
+__version__ = "1.1.0"
+
+import os
+import xml.etree.ElementTree 
+
+
+# -------------------- material types ---------------------------
+
+class stackup_material:
+  """
+    stackup material object, can be dielectric or metal with conductivity or sheet with Ohm/square
+  """
+    
+  def __init__ (self, data):
+    """create stackup material object from XML data line
+
+    Args:
+        data (string): line from XML data, required parameters are "Name" and "Type" strings. Optional: "Permittivity","DielectricLossTangent","Conductivity","Rs","Color"
+    """
+
+    def safe_get (key, default):
+      val = data.get(key)
+      if val is not None:
+        return val
+      else:  
+        return default
+
+    self.name = data.get("Name")
+    self.type = data.get("Type").upper()
+    
+    self.eps   = float(safe_get("Permittivity", 1))
+    self.tand  = float(safe_get("DielectricLossTangent", 0))
+    self.sigma = float(safe_get("Conductivity", 0))
+    self.Rs    = float(safe_get("Rs", 0))
+    self.color = data.get("Color")  # no default here, will be handled later 
+
+
+  def __str__ (self):
+    """String representation of stackup_material, useful for debugging
+
+    Returns:
+        string: String representation of stackup_material
+    """
+    # string representation 
+    mystr = '      Material Name=' + self.name + ' Type=' + self.type +' Permittivity=' + str(self.eps) + ' DielectricLossTangent=' +  str(self.tand) + ' Conductivity=' +  str(self.sigma)  + ' Color = ' + self.color
+    return mystr
+
+
+
+class stackup_materials_list:
+  """
+    structure with list of stackup material objects (.materials) and value of maximum permittivy (.eps_max)
+  """
+
+  def __init__ (self):
+    """Create empty structure. 
+    """
+    self.materials = []      # list with material objects
+    self.eps_max   = 0
+    
+  def append (self, material):
+    """Append one material
+    Args:
+        material (stackup_material): material to add
+    """
+
+    # append material
+    self.materials.append (material)
+    # set maximum permittivity in model
+    self.eps_max = max(self.eps_max, material.eps)
+  
+
+  def get_by_name (self, materialname):
+    """find material object from materialname
+    Args:
+        materialname (string): Name as specified in XML data line
+    Returns:
+        stackup_material: the material with that name
+    """
+  
+    # find material object from materialname
+    found = None
+    for material in self.materials:
+      if material.name == materialname:
+        found = material
+    return found    
+
+
+# -------------------- dielectrics ---------------------------
+
+class dielectric_layer:
+  """
+    dielectric layer object. Holds information on stackup layers that are always there, without drawing them explicitely in GDSII
+  """
+    
+  def __init__ (self, data):
+    """create stackup layer object (usually dielectric or semiconductor) from XML data line
+
+    Args:
+        data (string): line from XML data, required parameters: "Name","Material","Thickness", optional parameter "Boundary" for bounding layer number
+    """
+    self.name = data.get("Name")
+    self.material = data.get("Material")
+    self.thickness  = float(data.get("Thickness"))
+    # z Position will be set later
+    self.zmin = 0
+    self.zmax = 0
+    self.is_top = False
+    self.is_bottom = False
+    self.gdsboundary = data.get("Boundary")  # optional entry in stackup file
+
+    self.metals_inside = [] # metals that are located inside this dielectric, set by function 
+
+  def get_planar_metals_inside (self):
+    """evaluates metals_inside list and returns only items that are conductor or sheet (no via, not dielectric via)
+    Returns:
+        list of metal_layer: metals that are conductor or sheet
+    """
+    planar_metals = []
+    for metal in self.metals_inside:
+      if metal.is_metal or metal.is_sheet:
+        planar_metals.append(metal)
+    return planar_metals
+
+
+  def __str__ (self):
+    """String representation of dielectric_layer, useful for debugging
+    Returns:
+        string: String representation of stackup_material
+    """
+    enclosed_metal_names = []
+    for metal in self.metals_inside:
+      enclosed_metal_names.append(metal.name)
+
+    mystr = '      Dielectric Name=' + self.name + ' Material=' + self.material +' Thickness=' \
+            + str(self.thickness) + ' Zmin=' +  str(self.zmin) + ' Zmax=' +  str(self.zmax) \
+            + ' Metals inside: ' + str(enclosed_metal_names)
+            
+    return mystr
+
+
+
+class dielectric_layers_list:
+  """
+    list that holds all dielectric layer objects
+  """
+
+  def __init__ (self):
+    """Initialize empty list
+    """
+    self.dielectrics = []      # list with dielectric objects
+    
+  def append (self, dielectric, materials_list ):
+    """Append one dielectric to the list
+
+    Args:
+        dielectric (dielectric_layer): the dielectric that is appended
+        materials_list (_type_): not used
+    """
+
+    self.dielectrics.append (dielectric)
+
+
+  def calculate_zpositions (self):
+    """dielectrics in XML are in reverse order, so we need to build position upside down
+    """
+
+    z = 0
+    for dielectric in reversed(self.dielectrics):
+      t = float(dielectric.thickness)
+      dielectric.zmin = z
+      dielectric.zmax = z + t
+      z = dielectric.zmax
+
+
+  def get_by_name (self, name_to_find):  
+    """find material object from materialname
+    Args:
+        name_to_find (string): name of material to find
+    Returns:
+        dielectric_layer: dielectric with that name, otherwise None
+    """
+
+    found = None
+    for dielectric in self.dielectrics:
+      if dielectric.name ==  name_to_find:
+        found = dielectric
+    return found    
+
+
+  def get_boundary_layers (self):
+    """For substrates where Boundary is specified in dielectric layers, return a list of those layers. This is required for the next step, GDSII reader, which needs to know the layers to read. 
+    Returns:
+        list of int: list of layer numbers specified as boundary
+    """
+    
+    boundary_layer_list = []
+    for dielectric in self.dielectrics:
+      if dielectric.gdsboundary is not None:
+        value = int(dielectric.gdsboundary)
+        if value not in boundary_layer_list:
+          boundary_layer_list.append(value) 
+    return boundary_layer_list
+  
+
+  def register_metals_inside (self, metals_list):
+    """iterates over dielectrics and metals, sets metals_inside property for each dielectric with list of metals within that z range
+    Args:
+        metals_list (metal_layers_list): metals read from stackup
+    """
+    for dielectric in self.dielectrics:
+      enclosed = []
+      for metal in metals_list.metals:
+        # check if metal is enclosed in dielectric, excluding zmax exactly
+        if (metal.zmin >= dielectric.zmin) and (metal.zmax < dielectric.zmax):
+          enclosed.append(metal)          
+      dielectric.metals_inside = enclosed    
+
+
+# -------------------- conductor layers (metal and via) ---------------------------
+
+class metal_layer:
+  """
+    drawing layer object ( name metal_layer is misleading, this drawn layer that uses material from the XML materials section)
+  """
+    
+  def __init__ (self, data):
+    """create metal layer object (planar metal, via, sheet or dielectric) from XML data line
+
+    Args:
+        data (string): line from XML data, required parameters: "Name","Layer","Type","Material","Zmin","Zmax"
+       """
+    self.name = data.get("Name")
+    self.layernum = data.get("Layer")
+    self.type = data.get("Type").upper()
+    self.material = data.get("Material")
+    self.zmin = float(data.get("Zmin"))
+    self.zmax = float(data.get("Zmax"))
+    
+    # force to sheet if zero thickness
+    if data.get("Zmin") == data.get("Zmax"):
+      self.type = "SHEET"
+
+    if self.type == "SHEET" and not self.zmin==self.zmax:
+      print('ERROR: Layer ', self.name, ' is defined as sheet layer, but zmax is different from zmin. This is not valid!')
+      exit(1)
+
+    self.thickness = self.zmax-self.zmin
+    self.is_via = (self.type=="VIA")
+    self.is_metal = (self.type=="CONDUCTOR")
+    self.is_dielectric = (self.type=="DIELECTRIC")
+    self.is_sheet = (self.type=="SHEET")
+    self.is_used = False
+
+    # Metals directly above and below, this is set by metal_layers_list.sort_and_evaluate()
+    self.above = []
+    self.below = []
+
+
+  def __str__ (self):
+    """String representation of dielectric_layer, useful for debugging
+    Returns:
+        string: String representation of stackup_material
+    """
+
+    # convert list of layers above and below to layer names
+    below_names = []
+    for layer in self.below:
+      below_names.append(layer.name)
+
+    above_names = []
+    for layer in self.above:
+      above_names.append(layer.name)
+
+
+    mystr = '      Metal Name=' + self.name + ' Layer=' + self.layernum  + \
+            ' Type=' + self.type + ' Material=' + self.material + \
+            ' Zmin=' +  str(self.zmin) + ' Zmax=' +  str(self.zmax) + \
+            ' below=' + str(below_names) + ' above=' + str(above_names)
+    
+    return mystr
+  
+
+
+
+class metal_layers_list:
+  """
+    list of drawn layer objects (metal, via, dielectric brick)
+  """
+
+
+  def __init__ (self):
+    """Initialize emptry list
+    """
+    self.metals = []      # list with conductor objects
+    self.lowest = None    # metal with smallest zmin value
+    self.orphan_layers = []  # list with layers that have no direct neighbor above or below
+    
+  def append (self, metal):
+    """Append one metal layer (drawn layer)
+    Args:
+        metal (metal_layer): metal layer to be added to list
+    """
+    self.metals.append (metal)
+
+  
+  def getbylayernumber (self, number_to_find):
+    """Find metal layer by layer number, returns first match
+    Args:
+        number_to_find (int): layer number to find
+    Returns:
+        metal_layer: metal layer with that layer number
+    """
+    
+    found = None
+    for metal in self.metals:
+      if metal.layernum == str(number_to_find):
+        found = metal
+        break 
+    return found  
+
+
+  def getallbylayernumber (self, number_to_find):
+    """returns all metals by layer number as list, finds multiple metals mapped to same number
+    Args:
+        number_to_find (int): layer number to find
+    Returns:
+        list: list of metal_layer with that layer number, None if not found
+    """
+         
+    found = []
+    for metal in self.metals:
+      if metal.layernum == str(number_to_find):
+          found.append(metal)
+    if found==[]:
+      found = None
+    return found  
+
+
+  def getallplanarmetals (self):
+    """returns all metals (conductor or sheet) as list, skip vias and dielectric vias
+    Returns:
+        list: list of metal_layer 
+    """
+         
+    found = []
+    for metal in self.metals:
+      if metal.is_metal or metal.is_sheet:
+          found.append(metal)
+    return found  
+
+
+  def getbylayername (self, name_to_find):
+    """Find metal layer by layer number, returns first match
+    Args:
+        name_to_find (string): layer name to find
+    Returns:
+        metal_layer: metal layer with that layer name
+    """
+
+    found = None
+    for metal in self.metals:
+      if metal.name == str(name_to_find):
+        found = metal
+        break 
+    return found  
+
+
+  def getlayernumbers (self):
+    """list of all metal and via layer numbers in technology
+    Returns:
+        list of int: all layer numbers in technology file
+    """
+
+    layernumbers = []
+    for metal in self.metals:
+      layernumbers.append(int(metal.layernum))
+    return layernumbers 
+
+
+  def add_offset (self, offset): 
+    """Add offset in z position to all metal layers, used to add stackup height for final z position
+    Args:
+        offset (float): z offset in project units
+    """
+    for metal in self.metals:
+      metal.zmin = metal.zmin + offset
+      metal.zmax = metal.zmax + offset
+
+
+  def sort_and_evaluate(self):
+    """After reading all metals, sort them by position and detect the neighbors above/below
+       This is set in each metal as .above and .below list
+    """
+    # sort the list by zmin of each metal
+    self.metals.sort(key=lambda metal: metal.zmin)
+    # metal with lowest zmin value
+    self.lowest = self.metals[0]
+
+    # delta for comparison, i.e. what is considered equal
+    delta = 1e-5
+
+    # Build above/below relationships efficiently
+    for i, layer in enumerate(self.metals):
+        # Layers above: all layers with zmin >= current zmax
+        for other in self.metals[i+1:]:
+            if abs(other.zmin - layer.zmax) < delta:
+                layer.above.append(other)
+        # Layers below: all layers with zmax <= current zmin
+        for other in self.metals[:i]:
+            if abs(other.zmax - layer.zmin) < delta:
+                layer.below.append(other)
+
+    # Identify orphan layers (no above or below)
+    self.orphan_layers = [layer for layer in self.metals if not layer.above and not layer.below]
+
+
+
+# ----------- parse substrate file, get materials from list created before -----------
+
+def read_substrate (XML_filename):
+  """
+  Read XML substrate and return materials_list, dielectrics_list, metals_list.
+  Args:
+      XML_filename (string): filename of XML technology file
+  """
+
+  if os.path.isfile(XML_filename):  
+    print('Reading XML stackup  file:', XML_filename)
+
+    # data source is *.subst XML file
+    substrate_tree = xml.etree.ElementTree.parse(XML_filename)
+    substrate_root = substrate_tree.getroot()
+
+    # get materials  from  XML
+    materials_list = stackup_materials_list() # initialize empty list
+    for data in  substrate_root.iter("Material"):
+        materials_list.append (stackup_material(data))
+
+    # get dielectric layers from  XML
+    dielectrics_list = dielectric_layers_list() # initialize empty list
+    for data in  substrate_root.iter("Dielectric"):
+        dielectrics_list.append (dielectric_layer(data), materials_list)
+
+    # mark top and bottom, order from XML is top material first
+    if len(dielectrics_list.dielectrics) > 0:
+      dielectrics_list.dielectrics[0].is_top = True
+      dielectrics_list.dielectrics[len(dielectrics_list.dielectrics)-1].is_bottom = True
+
+    # calculate z positions in dielectric layers, after reading all of them
+    dielectrics_list.calculate_zpositions()
+
+    # get metal layers (metals + vias) from XML
+    metals_list = metal_layers_list() # initialize empty list
+    for data in  substrate_root.iter("Layer"):
+        metals_list.append (metal_layer(data))
+
+    # sort metals by zmin and detect their neighbors above/below
+    metals_list.sort_and_evaluate()
+  
+    # get substrate offset, required for v2 stackup file version
+    offset = 0
+    for data in substrate_root.iter("Substrate"):
+        assert data!=None
+        offset = float(data.get("Offset"))      
+    if offset > 0:
+      metals_list.add_offset(offset)
+
+    # register metals with the enclosing dielectrics
+    dielectrics_list.register_metals_inside (metals_list)
+
+    return materials_list, dielectrics_list, metals_list
+  
+  else:
+    print('XML stackup file not found: ', XML_filename)
+    exit(1)
+  # =========================== utilities ===========================
+
+
+
+  # =======================================================================================
+  # Test code when running as standalone script
+  # =======================================================================================
+
+if __name__ == "__main__":
+
+  XML_filename = "SG13G2_200um.xml"
+  materials_list, dielectrics_list, metals_list = read_substrate (XML_filename)
+
+  for material in materials_list.materials:
+    print(material)
+
+  for dielectric in dielectrics_list.dielectrics:
+    print(dielectric)
+
+  for metal in metals_list.metals:
+    print(metal)
+
+  print('__________________________________________')
+
+  # test finding a layer by layer number
+  metal = metals_list.getbylayernumber (134)
+  print('Layer 134 name => ', metal.name)
+
+  print('Layer 134 thickness => ', metals_list.getbylayernumber (134).thickness)
+  print('Test if Layer 134 is a via layer => ', metals_list.getbylayernumber(134).is_via)
+
+  # test finding a layer by name
+  metal = metals_list.getbylayername ("TopMetal1")
+  print('TopMetal1 layer number => ', metal.layernum)
+
+  # find orphaned layers that have no neighbor above or below
+  orphan_names = []
+  for layer in metals_list.orphan_layers:
+    orphan_names.append(layer.name)
+  print('Orphaned layers: ', orphan_names)  
+
+  # get all planar metals in stackup (no via, no dielectric via)
+  planar_metal_names = []
+  for metal in metals_list.getallplanarmetals():
+    planar_metal_names.append(metal.name)
+  print('Planar metals: ', planar_metal_names)  
+
+  # get all planar metals inside a dielectric
+  SiO2 = dielectrics_list.get_by_name('SiO2')
+  if SiO2 is not None:
+    names = []
+    metals = SiO2.get_planar_metals_inside()
+    for metal in metals:
+      names.append(metal.name)
+    print('Planar metals inside SiO2: ', names)  
+ 
+
