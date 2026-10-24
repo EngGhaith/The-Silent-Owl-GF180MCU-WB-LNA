@@ -6,8 +6,9 @@ Usage:  python3 check_lna_core_layouts.py [cg cs input_match output_match parts]
 
 DRC: run_drc.py --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density off (block level).
 LVS: reference = xschem netlist of xschem/<cell>.sch (netlisted here, then PDK spice converter) with
-  - spirals and their ideal loss resistors removed (no inductor device in the PDK LVS deck); the spiral cells
-    (<cell>__L*) are removed from the layout copy as well, so both spiral terminals stay separate nets
+  - inductors and their ideal loss resistors removed (no inductor device in the PDK LVS deck); the spiral / coil
+    cells (<cell>__L*, coils with their sub cells) are removed from the layout copy as well, so both inductor
+    terminals stay separate nets
   - RS_EQ1 (0.05 ohm M3 source model) shorted: net1 -> vss
   - MIM W/L rounded to 10 nm like the layout, cap_mim_2f0_m4m5_noshield -> cap_mim_2f0fF
   - ideal capa.sym capacitors (C1 of the input / output match) -> cap_mim_2f0fF with the drawn W/L
@@ -72,16 +73,17 @@ def ref_netlist(cell, out_dir):
 
 def map_subckt(cell, pins, body):
     """schematic -> drawn devices (see module doc); returns (pins, element lines)"""
-    # inductors + the ideal resistors in series with them (loss models): drop
+    # inductors (ideal L or EM coil models *_model) + ideal resistors in series with them (loss models): drop
+    is_ind = lambda tok: tok[0][0] in "Ll" or tok[-1].lower().endswith("_model")
     ind_nets = set()
     for ln in body:
-        if ln[0] in "Ll":
+        if is_ind(ln.split()):
             ind_nets.update(ln.split()[1:3])
     out = []
     short = SHORTS.get(cell, {})
     for ln in body:
         tok = ln.split()
-        if tok[0][0] in "Ll":
+        if is_ind(tok):
             continue
         if tok[0][0] in "Rr" and len(tok) == 4:  # ideal R: name n1 n2 value
             if set(tok[1:3]) & (ind_nets | set(short)):
@@ -125,9 +127,9 @@ def lvs_layout(cell, out_dir):
     scr = os.path.join(out_dir, "strip.py")
     open(scr, "w").write(
         "import pya\nly = pya.Layout()\nly.read(src)\n"
-        "for c in list(ly.each_cell()):\n"
-        "    if c.name.split('__')[-1][:1] == 'L' and '__' in c.name:\n"
-        "        ly.delete_cell_rec(c.cell_index())\n"
+        "ind = [c.cell_index() for c in ly.each_cell() if '__' in c.name and c.name.split('__')[-1][:1] == 'L']\n"
+        "for ci in ind:\n"
+        "    ly.prune_cell(ci, -1)  # with the coil sub cells\n"
         "if flat == '1':\n"
         "    ly.top_cell().flatten(True)\n"
         "ly.write(dst)\n")
