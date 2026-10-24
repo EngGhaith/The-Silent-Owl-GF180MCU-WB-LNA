@@ -4,16 +4,16 @@ klayout/lna_top.gds: lna_core_parts + the I/O pads of its padframe tile (Chipath
 
   klayout -b -r make_lna_top.py
 
-PRELIMINARY: tile, corner and pad assignment are assumptions until the organisers confirm them (edit TILE / PADS).
-Coordinates are those of the Chipathon padring (openfasoc-tapeouts gf180mcu_padframe/RING_PAD.gds: ring 20.3 ..
-2955.3 um, project area 370.3 .. 2605.3 um = 2235 um). Tile A (1110 x 1110 um) is taken in the north-west corner as
-drawn in the proposal: 11 pads on the west side, 11 on the north side, same pitch / fillers / corner as RING_PAD:
+Tile A (1110 x 1110 um) in the north-west corner of the padring (confirmed by the organisers 2026-10-22); pin 1
+(ground) is taken as the southmost west slot. Coordinates are those of the Chipathon padring
+(openfasoc-tapeouts gf180mcu_padframe/RING_PAD.gds: ring 20.3 .. 2955.3 um, project area 370.3 .. 2605.3 um = 2235 um):
+11 pads on the west side, 11 on the north side, same pitch / fillers / corner as RING_PAD:
   pads   gf180mcu_fd_io__asig_5p0 (signals), __dvdd (vdd), __dvss (vss); 75 um wide, 100 um pitch, the 25 um gaps
          filled with fill5 + 2 x fill10, unused slots with 7 x fill10 + fill5; corner cell __cor
-  macro  lna_core_parts.gds, CH um from the west and north tile edge (routing channel to the pads); a macro larger
-         than the tile is reported, not hidden
-  routes pad core-side pin fingers (Metal2) -> Metal2 bar on the tile edge -> stack to the route layer:
-           signal : one jog inside the channel to the macro pin (label of lna_core_parts), layer / width per net
+  macro  lna_core_parts.gds (1104 x 1104), CH um from the west and north tile edge; its edge pins face the
+         core-side pad fingers (make_lna_core_layouts.py), so every route is straight
+  routes pad core-side pin fingers (Metal2) -> Metal2 bar in the CH channel -> stack to the route layer:
+           signal : straight into the macro pin (label of lna_core_parts), layer / width per net
            vss    : Metal2 straight into the macro vss ring band (Metal2), one strap per pad finger
            vdd    : Metal5 straight onto the macro vdd rail (north band, Metal5)
 """
@@ -39,25 +39,25 @@ PITCH, PAD_W = 100.0, 75.0
 TILE = (370.3, 1495.3, 1480.3, 2605.3)  # tile A, north-west corner
 WEST0, NORTH0 = 1500.3, 400.3  # first pad slot (k = 0): west from the south end, north from the west end
 NSLOT = 11
-CH = 40.0  # routing channel between the tile edge (pads) and the macro
+CH = 3.0  # macro inset from the west / north tile edge (pad fingers): Metal2 bars + stacks of the routes
 
 # pad assignment: (side, slot k) -> (pad cell, net); every other slot gets fillers
 PADS = {
-    ("N", 0): ("asig_5p0", "vbias_cg"),  # same west -> east order as the macro pins (x = 60 / 75 / 90)
-    ("N", 1): ("asig_5p0", "vbias_cs"),
-    ("N", 2): ("asig_5p0", "vbias_cas"),
-    ("N", 3): ("dvss", "vss"),
-    ("N", 4): ("asig_5p0", "rf_out_pad"),
-    ("N", 5): ("dvss", "vss"),
-    ("N", 6): ("dvdd", "vdd"),
+    ("W", 0): ("dvss", "vss"),  # pin 1 = ground
     ("W", 4): ("dvss", "vss"),
     ("W", 5): ("asig_5p0", "rf_in_pad"),
-    ("W", 6): ("dvss", "vss"),
-    ("W", 7): ("asig_5p0", "g_cg"),
+    ("W", 6): ("asig_5p0", "g_cg"),
+    ("W", 7): ("asig_5p0", "vbias_cg"),
+    ("W", 8): ("asig_5p0", "vbias_cs"),
+    ("W", 9): ("asig_5p0", "vbias_cas"),
+    ("N", 3): ("dvdd", "vdd"),
+    ("N", 4): ("dvss", "vss"),
+    ("N", 5): ("asig_5p0", "rf_out_pad"),
+    ("N", 6): ("dvss", "vss"),
 }
-# route layer, width and jog position (fraction of the channel, from the tile edge) per signal net
-ROUTE = {"rf_in_pad": ("m5", 10.0, 0.5), "rf_out_pad": ("m5", 10.0, 0.5), "g_cg": ("m3", 4.0, 0.5),
-         "vbias_cg": ("m3", 3.0, 0.5), "vbias_cs": ("m3", 3.0, 0.3), "vbias_cas": ("m3", 3.0, 0.7)}  # no crossing
+# route layer and width per signal net (= layer / width of the macro pin stub)
+ROUTE = {"rf_in_pad": ("m5", 10.0), "rf_out_pad": ("m5", 10.0), "g_cg": ("m3", 4.0),
+         "vbias_cg": ("m3", 2.0), "vbias_cs": ("m3", 2.0), "vbias_cas": ("m3", 2.0)}
 # core-side pin fingers (Metal2, pad cell coordinates: x range, the core edge is y = 350)
 FINGERS = {"asig_5p0": (15.34, 59.66), "dvdd": (1.36, 73.64), "dvss": (1.36, 73.64)}
 # DVSS fingers of the dvss pad: the vss straps follow them one by one (a single 72 um bar breaks MSLOT.1, 30 um)
@@ -145,6 +145,7 @@ def main():
     over = (max(0.0, mx + b.width() - TILE[2]), max(0.0, TILE[1] - my))
     mp = {n: [(l, g(mx + x), g(my + y)) for l, x, y in v] for n, v in macro_pins(core).items()}
     top_n, west_x = g(my + b.height()), mx  # macro north / west edge
+    bar = CH - 0.5  # Metal2 bar / stack depth: 0.5 um clear of the macro ring band (Metal2 = vss)
     for (side, k), (cell, net, a0, a1, fingers) in sorted(pins.items()):
         fc = g((a0 + a1) / 2)
         if net == "vss":  # Metal2 straps (one per pad finger) straight into the vss ring band of the macro
@@ -152,26 +153,17 @@ def main():
                 top.box("m2", *(edge_box(side, f0, f1, CH + 6)))
         elif net == "vdd":  # Metal5 onto the north vdd rail, Metal2 bar + stack at the pad
             assert side == "N"
-            top.box("m2", *edge_box(side, a0, a1, 6))
-            top.stack(*edge_box(side, fc - 10, fc + 10, 6), 2, 5)
-            top.box("m5", fc - 10, top_n - 8, fc + 10, TILE[3] - 3)
-        else:
-            lay, w, frac = ROUTE[net]
+            top.box("m2", *edge_box(side, a0, a1, bar))
+            top.stack(*edge_box(side, fc - 10, fc + 10, bar), 2, 5)
+            top.box("m5", fc - 10, top_n - 8, fc + 10, TILE[3])
+        else:  # straight: the macro pin faces the pad finger
+            lay, w = ROUTE[net]
             lvl = LEVEL[lay]
             (pl, px, py), = [p for p in mp[net] if p[0] == lvl and (abs(p[2] - top_n) < 2 if side == "N" else abs(p[1] - west_x) < 2)]
-            top.box("m2", *edge_box(side, a0, a1, 6))
-            top.stack(*edge_box(side, fc - w / 2, fc + w / 2, 6), 2, lvl)
-            h = w / 2
-            if side == "N":
-                yj = g(TILE[3] - CH * frac)
-                top.box(lay, px - h, top_n - 1, px + h, yj + h)
-                top.box(lay, min(px, fc) - h, yj - h, max(px, fc) + h, yj + h)
-                top.box(lay, fc - h, yj - h, fc + h, TILE[3] - 3)
-            else:
-                xj = g(TILE[0] + CH * frac)
-                top.box(lay, xj - h, py - h, west_x + 1, py + h)
-                top.box(lay, xj - h, min(py, fc) - h, xj + h, max(py, fc) + h)
-                top.box(lay, TILE[0] + 3, fc - h, xj + h, fc + h)
+            assert abs((px if side == "N" else py) - fc) < 0.01, f"{net}: macro pin {px, py} not facing the pad finger {fc}"
+            top.box("m2", *edge_box(side, a0, a1, bar))
+            top.stack(*edge_box(side, fc - w / 2, fc + w / 2, bar), 2, lvl)
+            top.box(lay, *edge_box(side, fc - w / 2, fc + w / 2, CH + 1))
         # pin label at the pad (top level), on metal: centre of the first strap for vss
         lc = g((fingers[0][0] + fingers[0][1]) / 2) if fingers else fc
         lx, lyy = ((lc, TILE[3] - 1) if side == "N" else (TILE[0] + 1, lc))

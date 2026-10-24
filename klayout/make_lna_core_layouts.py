@@ -87,25 +87,34 @@ SP_KO = 25.0  # keep-out around every inductor
 COILS = {("lna_core_input_match", "LEQ"): "LEQ_coil.gds", ("lna_core_cg", "L1"): "LSHUNT_OUT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_coil.gds"}
-MACRO_W, RING = 1204, 12
+MACRO_W, RING = 1104, 12
 Y_S, Y_N = -253, 851  # south / north macro edge; inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) = n x 20 um tiles
-RFO_X = 415.0  # rf_out_pad lead column (centre)
+# The macro fills padframe tile A (1110 x 1110, north-west corner) up to 3 um from the west / north tile edge, where
+# the pads sit: the edge pins face the core-side pad fingers (100 um pitch) and connect straight (make_lna_top.py).
+#   west pins (pad slot k): y = -213.5 + 100 k     north pins (pad slot k): x = 64.5 + 100 k
+COIL_EDGE = 2 * RING  # coil to macro edge (12 um clear of the ring band)
 YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
-VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
+RF_IN_Y = 286.5  # rf_in_pad pin (west slot 5)
 # coil placement: port edge position (the ports face the core) and centre on the other axis
 LEQ_PORT_X, LEQ_CY = 36.0, 38.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
 L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (L1_VSS_X)
 L1_VSS_X = (360.0, 370.0)  # vss lead of L1: between LEQ and L1 down to the south ring
-LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
-LD2_PORT_X, LD2_CY = 340.0, 600.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
-LSH_PORT_X, LSH_CY = 455.0, 602.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
-VDD4_X = (1166.0, 1176.0)  # vdd lead of LD4 along the east edge to the north edge
-LD4_VDD_Y = (333.0, 343.0)  # LD4 port 1 -> VDD4_X, above the coil
-LD2_VDD_X = (350.0, 360.0)  # vdd lead of LD2 to the north edge
-LSH_VSS_X = (440.0, 450.0)  # vss lead of LSHUNT_OUT between the rf_out lead and the coil (Metal4 into the north ring)
-GCG_Y, GCG_X = (430.0, 434.0), 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x = GCG_X)
-# bias pins (Metal3, north edge): jog west below LD2 at y = jog, then north at x
-VBIAS = {"vbias_cg": (445.0, 60.0), "vbias_cs": (452.0, 75.0), "vbias_cas": (459.0, 90.0)}
+LD4_CX, LD4_BOT = 190.0, 495.0  # LD4 north-west, right above the CG drains, ports south: port 2 (west) -> vm2
+# (as high as COIL_EDGE allows: the vdd lead LD4_VDD_Y runs along the outer winding, 15 um below it)
+VM2_Y = (462.0, 470.0)  # vm2 jog (drain column -> LD4 port 2), below the LD4 vdd lead
+LD4_VDD_Y = (474.0, 480.0)  # LD4 port 1 -> east to the vdd column
+VDD_COL_X = (362.0, 370.0)  # vdd column between LD4 and LD2 up to the north edge (north slot 3), LD2 port 1 joins
+LD2_PORT_X, LD2_CY = 389.5, 683.5  # LD2 north, east of LD4, above the CS stack / C1, ports west: port 2 -> vx
+LSH_PORT_X, LSH_CY = 653.5, 615.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lane, port 2 -> vss lane
+RFO_LANE_X = (620.0, 630.0)  # rf_out: C1 tab -> east, lane north between LD2 and LSHUNT_OUT, ...
+RFO_JOG_Y, RFO_X = (815.0, 825.0), 564.5  # ... west above LD2, north to the pin (north slot 5)
+LSH_VSS_X = (635.0, 645.0)  # vss lane of LSHUNT_OUT between the rf_out lane and the coil (Metal4 into the north ring)
+GCG_Y, GCG_X = (384.5, 388.5), 41.0  # g_cg lead to the west edge (west slot 6; Metal4 from the gate join, Metal3 from x = GCG_X)
+# bias pins (west slots 7..9): jog west at y = jog to a Metal3 lane inside the west ring band (x = lane .. lane +
+# LANE_W, between its Metal2 / Metal4 vss planes, clear of LD4), north to the pin, Metal3 stub to the edge. The lowest
+# jog takes the westmost lane and the lowest pin, so neither the jogs nor the stubs cross another lane.
+VBIAS = {"vbias_cg": (445.0, 1.0, 486.5), "vbias_cs": (452.0, 4.0, 586.5), "vbias_cas": (459.0, 7.0, 686.5)}
+LANE_W = 1.5
 
 
 def coil_geom(sch, name):
@@ -120,14 +129,16 @@ def place_coil(ly, top, sch, name, cx, cy, rot=0, mirror=False):
 
 
 def vbias_column(top, pin, x, y0):
-    """bias pin lead (Metal3, 2 um) from (x, y0) north to the jog, west, then north to the macro edge"""
-    yj, xn = VBIAS[pin]
+    """bias pin lead (Metal3, 2 um) from (x, y0) north to the jog, west into the ring-band lane, north to the pin,
+    stub to the west edge"""
+    yj, xl, yp = VBIAS[pin]
     assert y0 < yj - 3, (pin, y0, yj)
     top.box("m3", x - 1, y0, x + 1, yj + 1)
-    top.box("m3", xn - 1, yj - 1, x + 1, yj + 1)
-    top.box("m3", xn - 1, yj - 1, xn + 1, Y_N)
-    top.label(3, pin, xn, Y_N - 1)
-    return xn
+    top.box("m3", xl, yj - 1, x + 1, yj + 1)
+    top.box("m3", xl, yj - 1, xl + LANE_W, yp + 1)
+    top.box("m3", 0, yp - 1, xl + LANE_W, yp + 1)
+    top.label(3, pin, 0.5, yp)
+    return yp
 
 
 INFO = {}  # per cell: notes for the json report
@@ -153,16 +164,18 @@ def build_input_match(ly):
     cn = series_cap(sch)
     c_pf = pf(sch[cn][1]["value"])
     w1, l1 = cap_side(c_pf)
-    rf_y = 295.0
+    rf_y = 291.5  # C15 centre: plate covers both the rf_in pin (RF_IN_Y) and the input_cg lead (y = 295)
     px = 36.4
     c1, t1 = lib.mim_tile(ly, f"{P}__C1", w1, l1)
     tr1 = top.place(c1, px, g(rf_y - l1 / 2))
     b1, p1 = tbox(tr1, t1["bot"]), tbox(tr1, t1["top"])
-    # --- rf_in_pad: west edge -> capacitor bottom-plate strap; LEQ lead column joins it
-    top.box("m5", 0, rf_y - 5, b1[2], rf_y + 5)
+    # --- rf_in_pad: west edge (pin RF_IN_Y) -> capacitor bottom-plate strap; LEQ lead column joins it
+    yi = RF_IN_Y
+    assert b1[1] <= yi - 5 and yi + 5 <= b1[3], "rf_in lead must stay on the C15 bottom-plate strap"
+    top.box("m5", 0, yi - 5, b1[2], yi + 5)
     top.box("m5", lead_x - 5, q1[1], q1[2], q1[3])  # LEQ port 1 -> lead column
-    top.box("m5", lead_x - 5, q1[1], lead_x + 5, rf_y + 5)
-    top.label(5, "rf_in_pad", 1, rf_y)
+    top.box("m5", lead_x - 5, q1[1], lead_x + 5, yi + 5)
+    top.label(5, "rf_in_pad", 1, yi)
     # --- input_cg: capacitor top plate -> east edge
     x_e = 82.0
     top.box("m5", p1[2] - 1, rf_y - 5, x_e, rf_y + 5)
@@ -173,14 +186,14 @@ def build_input_match(ly):
     INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"},
                cn: {"W": w1, "L": l1, "pF": round(lib.c_mim_pf(w1, l1), 3), "schematic_pF": c_pf},
                "leq_vss_lead_y": [q2[1], q2[3]],
-               "pins": {"rf_in_pad": "Metal5 west edge y=295", "input_cg": f"Metal5 east edge x={x_e} y=295",
+               "pins": {"rf_in_pad": f"Metal5 west edge y={yi}", "input_cg": f"Metal5 east edge x={x_e} y=295",
                         "vss": "Metal5 west edge (LEQ port 2)"}}
     return top
 
 
 # ---------------------------------------------------------------- interfaces between the cells (floorplan coords)
 CS_GATE_PAD = (268.0, 399.5, 274.0, 405.5)  # input_cg of lna_core_cs = output_cs of lna_core_cg (Metal3..5 stack)
-VX_X = (377.0, 387.0)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode
+VX_X = (380.0, 384.0)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode, north to LD2 port 2
 C_OUT_PLATE = (391.0, 466.0)  # lower-left of the output C1 top plate (rotated: x extent = L, y extent = W)
 C_OUT_L = 54.0  # x extent of the output C1 plate (between the vx column and the LSHUNT_OUT vss lead)
 OM_IN_X = 380.0  # west end of the output_cs lead of lna_core_output_match
@@ -203,9 +216,10 @@ def om_lead_y():
 def build_output_match(ly):
     """
     C1 (series, ideal 7 pF -> MIM): top plate = output_cs (lead to the west, x = 380), bottom plate (tab rotated
-    to the north) = rf_out_pad (Metal5 lead to the north edge, x = 415)
-    LSHUNT_OUT: coil east of the rf_out lead, rotated 180 (ports west): port 1 (lower) -> rf_out lead, port 2 ->
-    vss (Metal5 north between the rf_out lead and the coil, Metal4 into the north ring band)
+    to the north) = rf_out_pad: Metal5 east along the tab, lane RFO_LANE_X north between LD2 and LSHUNT_OUT, west
+    above LD2 (RFO_JOG_Y), north to the pin at RFO_X (north pad slot 5)
+    LSHUNT_OUT: coil north-east, rotated 180 (ports west): port 1 (lower) -> rf_out lane, port 2 -> vss (lane
+    LSH_VSS_X between the rf_out lane and the coil, Metal4 into the north ring band)
     """
     P = "lna_core_output_match"
     sch = sch_params(P)
@@ -219,18 +233,22 @@ def build_output_match(ly):
     assert abs(yc - om_lead_y()) < 1e-6
     top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
     top.label(5, "output_cs", OM_IN_X + 1, yc)
-    xr = RFO_X
-    top.box("m5", bt[0], bt[1], bt[2], bt[3])
-    top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
+    la, (ja, jb), xr = RFO_LANE_X, RFO_JOG_Y, RFO_X
+    ld2_bot = LD2_CY - coil_geom("lna_core_cs", "LD2")["r"]
+    assert bt[3] + SP_KO <= ld2_bot and jb + SP_KO / 2 <= Y_N - RING, "rf_out lead too close to LD2 / the ring"
+    top.box("m5", bt[0], bt[1], la[1], bt[3])  # tab -> east
+    top.box("m5", la[0], bt[1], la[1], jb)  # lane north
+    top.box("m5", xr - 5, ja, la[1], jb)  # west above LD2
+    top.box("m5", xr - 5, ja, xr + 5, Y_N)
     top.label(5, "rf_out_pad", xr, Y_N - 1)
     # --- LSHUNT_OUT
     geo = coil_geom(P, "LSHUNT_OUT")
     cx, cy = g(LSH_PORT_X + geo["pe"]), LSH_CY
-    assert cy - geo["r"] - SP_KO >= VM2_Y[1] and cy + geo["r"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
-    assert cx + geo["r"] + SP_KO / 2 <= VDD4_X[0] and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5
+    assert cy + geo["r"] + COIL_EDGE <= Y_N and cx + geo["r"] + COIL_EDGE <= MACRO_W, "LSHUNT_OUT does not fit"
+    assert la[1] + 5 <= LSH_VSS_X[0] and LSH_VSS_X[1] + 7 <= LSH_PORT_X - 0.5
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=180)
-    assert q1[3] < q2[1] and q1[1] > pt[3] + 20, "rf_out port must be the lower one, above C1"
-    top.box("m5", xr + 5 - 1, q1[1], q1[2], q1[3])  # port 1 -> rf_out lead
+    assert q1[3] < q2[1] and bt[3] < q1[1] and q2[3] < ja, "rf_out port must be the lower one, on the lane"
+    top.box("m5", la[0], q1[1], q1[2], q1[3])  # port 1 -> rf_out lane
     vx0, vx1 = LSH_VSS_X
     top.box("m5", vx0, q2[1], q2[2], q2[3])  # port 2 -> vss lead
     yv = g(Y_N - RING - 14)
@@ -240,7 +258,7 @@ def build_output_match(ly):
     top.label(4, "vss", (vx0 + vx1) / 2, Y_N - 3)
     INFO[P] = {series_cap(sch): {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3),
                                  "schematic_pF": pf(sch[series_cap(sch)][1]["value"])}, "top_plate": list(pt), "output_cs_lead_y": yc,
-               "rf_out_x": [xr - 5, xr + 5],
+               "rf_out_x": [xr - 5, xr + 5], "rf_out_lane_x": list(la),
                "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "west"},
                "macro": [MACRO_W, Y_N - Y_S], "frame": [0, Y_S, MACRO_W, Y_N],
                "pins": {"output_cs": f"Metal5 x={OM_IN_X} y={yc}", "rf_out_pad": f"Metal5 north edge x={xr}",
@@ -269,8 +287,8 @@ def build_cs(ly):
       vbias_cas : M2 gate strap (Metal3) -> west, Metal3 column north, west below LD2, on to the north edge
       output_match (vx): M2 drain bus -> east, Metal5 column VX_X -> C1 lead (lna_core_output_match) and on north
                   to LD2 port 2
-      LD2       : coil LD2_coil.gds north-west of the core, ports east: port 2 -> vx, port 1 -> vdd (Metal5 lead
-                  LD2_VDD_X to the north edge)
+      LD2       : coil LD2_coil.gds north of the core (east of LD4), ports west: port 2 (lower) -> top of the vx
+                  column, port 1 (upper) -> vdd column VDD_COL_X (shared with LD4) to the north edge
     """
     P = "lna_core_cs"
     sch = sch_params(P)
@@ -312,28 +330,27 @@ def build_cs(ly):
     top.box("m3", T4["D"][2], yd0, VX_X[1], yd1)
     top.box("m2", T4["D"][2], yd0, ri[2] - 0.6, yd1)
     top.stack(VX_X[0], yd0, VX_X[1], yd1, 3, 5)
-    # LD2: coil north-west of the core, ports east
+    # LD2: coil north of the core, ports west (mirrored: port 1 upper)
     geo = coil_geom(P, "LD2")
-    cx, cy = g(LD2_PORT_X - geo["pe"]), LD2_CY
-    assert cx - geo["r"] - SP_KO >= max(v[1] for v in VBIAS.values()) + 1, "LD2 over the bias leads"
-    assert cy - geo["r"] - SP_KO >= max(v[0] for v in VBIAS.values()) + 1, "LD2 over the bias jogs"
-    assert cy + geo["r"] + SP_KO + RING <= Y_N, "LD2 does not fit"
-    (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy)
-    assert q2[3] < q1[1] and q2[1] - 10 > om_lead_y() + 5, "vx port must be the lower one, above the C1 lead"
+    cx, cy = g(LD2_PORT_X + geo["pe"]), LD2_CY
+    assert cx - geo["r"] >= VX_X[1] + 4 and cy + geo["r"] + COIL_EDGE <= Y_N, "LD2 does not fit"
+    assert LD4_CX + coil_geom("lna_core_cg", "LD4")["r"] + 4 <= VDD_COL_X[0] and VDD_COL_X[1] + 10 <= VX_X[0]
+    (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy, rot=180, mirror=True)
+    assert q2[3] < q1[1] and q2[1] - 6 > om_lead_y() + 5, "vx port must be the lower one, above the C1 lead"
+    # wide leads start 3 um past the port edge (lna_lib.coil_ports): 0.5 um into the stub
     top.box("m5", *q2)
-    top.box("m5", q2[2] - 0.5, q2[3] - 10, VX_X[1], q2[3])  # port 2 -> vx column
+    top.box("m5", VX_X[0], q2[3] - 6, q2[0] + 0.5, q2[3])  # port 2 -> vx column
     top.box("m5", VX_X[0], yd0, VX_X[1], q2[3])  # vx column: C1 lead of lna_core_output_match, LD2 port 2
     top.label(5, "output_match", (VX_X[0] + VX_X[1]) / 2, om_lead_y())
     top.box("m5", *q1)
-    top.box("m5", q1[2] - 0.5, q1[1], LD2_VDD_X[1], q1[1] + 10)  # port 1 -> vdd lead
-    top.box("m5", LD2_VDD_X[0], q1[1], LD2_VDD_X[1], Y_N)
-    assert LD2_VDD_X[1] + 5 <= VX_X[0]
-    top.label(5, "vdd", (LD2_VDD_X[0] + LD2_VDD_X[1]) / 2, Y_N - 1)
+    top.box("m5", VDD_COL_X[0], q1[1], q1[0] + 0.5, q1[1] + 6)  # port 1 -> vdd column (above the vx column top)
+    top.box("m5", VDD_COL_X[0], q1[1], VDD_COL_X[1], Y_N)
+    top.label(5, "vdd", (VDD_COL_X[0] + VDD_COL_X[1]) / 2, Y_N - 1)
     INFO[P] = {"M3": {"rows": 1, "fingers": m1["nf"], "wf": wf1, "L": l1, "sym": s1},
                "M2": {"rows": 1, "fingers": m4["nf"], "wf": wf4, "L": l4, "sym": s4},
                "bus_w_um": wb, "guard_ring": R, "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "east"},
-               "ld2_vdd_lead": [LD2_VDD_X[0], q1[1], LD2_VDD_X[1], Y_N], "vx_column_x": list(VX_X),
-               "pins": {"input_cg": list(gp), "vbias_cas": f"Metal3 north edge x={xvn}", "vdd": "Metal5 north edge",
+               "ld2_vdd_lead": [VDD_COL_X[0], q1[1], VDD_COL_X[1], Y_N], "vx_column_x": list(VX_X),
+               "pins": {"input_cg": list(gp), "vbias_cas": f"Metal3 west edge y={xvn}", "vdd": "Metal5 north edge",
                         "output_match": f"Metal5 column x={VX_X}", "vss": "guard ring"}}
     return top
 
@@ -365,8 +382,8 @@ def build_cg(ly):
       source s : Metal5 west -> x = 82 (input_cg of the input match) and on south / east (YSL) to L1
     L1: coil LSHUNT_OUT_coil.gds south (east of LEQ), ports north: port 1 -> source, port 2 -> vss (lead L1_VSS_X
         down to the south edge)
-    LD4: coil LD4_coil.gds south-east, ports north: port 2 -> vm2 (trace VM2_Y), port 1 -> vdd (Metal5 east above
-         the coil, north to the edge at VDD4_X).
+    LD4: coil LD4_coil.gds north-west, right above the drains, ports south: port 2 -> vm2 (drain column + jog
+         VM2_Y, ~70 um), port 1 -> vdd (LD4_VDD_Y east to the vdd column VDD_COL_X, north to the edge).
     C2 top plate = output_cs -> CS_GATE_PAD; R4: vbias_cs -> output_cs. Bias pins: see vbias_column.
     """
     P = "lna_core_cg"
@@ -502,7 +519,7 @@ def build_cg(ly):
     trc = top.place(c1, c1x, c1y)
     p1, b1 = tbox(trc, t1["top"]), tbox(trc, t1["bot"])
     assert dc[0] <= b1[0] and b1[2] <= dc[1]
-    top.box("m5", dc[0], A["D"][1], dc[1], p1[3])  # vm2 column (drains -> C2 strap)
+    top.box("m5", dc[0], A["D"][1], dc[1], VM2_Y[1])  # vm2 column (drains -> C2 strap -> LD4 jog)
     gp = CS_GATE_PAD
     top.box("m5", p1[2] - 1, gp[1], gp[2], gp[3])  # output_cs -> lna_core_cs input_cg pad
     top.label(5, "output_cs", (gp[0] + gp[2]) / 2, (gp[1] + gp[3]) / 2)
@@ -518,24 +535,24 @@ def build_cg(ly):
     top.box("m1", rw2[0], rw2[1], rw2[2], rw2[3] + 2.5)
     top.stack(rw2[0] - 0.4, rw2[3] + 1.0, rw2[2] + 0.4, rw2[3] + 2.5, 1, 3)
     xvc = vbias_column(top, "vbias_cs", (rw2[0] + rw2[2]) / 2, rw2[3] + 1.0)
-    # --- LD4: coil south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 (east) -> vdd lead along
-    # the top of the coil to VDD4_X, north along the east edge
+    # --- LD4: coil north-west, right above the CG drains, ports south: port 2 (west) <- vm2 (drain column up to the
+    # jog VM2_Y, west, north into the port), port 1 (east) -> vdd lead LD4_VDD_Y east to the vdd column VDD_COL_X
     geo = coil_geom(P, "LD4")
-    cx4, cy4 = g(cx1 + g1["r"] + SP_KO + geo["r"]), g(LD4_PORT_Y - geo["pe"])
-    assert cy4 - geo["r"] - RING >= Y_S + RING and cx4 + geo["r"] + 5 <= VDD4_X[0]
-    assert VDD4_X[1] + 5 <= MACRO_W - RING
-    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90, mirror=True)
-    assert q2[2] < q1[0], "vm2 port must be the western one"
-    yv = VM2_Y
-    assert yv[0] - 4 >= plates[1][3] and q2[3] + 10 <= yv[1]
+    cx4, cy4 = LD4_CX, g(LD4_BOT + geo["r"])
+    assert cx4 - geo["r"] >= COIL_EDGE and cy4 + geo["r"] + COIL_EDGE <= Y_N, "LD4 does not fit"
+    assert LD4_BOT - SP_KO >= max(v[0] for v in VBIAS.values()) + 1, "LD4 over the bias jogs"
+    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=270)
+    assert q2[2] < q1[0] and q1[2] < dc[0], "vm2 port must be the western one, both west of the drain column"
+    (ya, yb), (va, vb) = VM2_Y, LD4_VDD_Y
+    assert p1[3] + 4 <= ya and yb + 4 <= va and vb + 2 <= q1[1]
     top.box("m5", *q2)
-    top.box("m5", q2[2] - 10, q2[3] - 0.5, q2[2], yv[1])
-    top.box("m5", dc[0], yv[0], q2[2], yv[1])
+    top.box("m5", q2[0] - 2, ya, q2[2], q2[3])  # vm2 up into port 2
+    top.box("m5", q2[0] - 2, ya, dc[1], yb)  # jog from the drain column
     top.box("m5", *q1)
-    assert abs(q1[3] - 0.5 - LD4_VDD_Y[0]) < 1e-6
-    top.box("m5", q1[0], LD4_VDD_Y[0], VDD4_X[1], LD4_VDD_Y[1])
-    top.box("m5", VDD4_X[0], LD4_VDD_Y[0], VDD4_X[1], Y_N)
-    top.label(5, "vdd", (VDD4_X[0] + VDD4_X[1]) / 2, Y_N - 1)
+    top.box("m5", q1[0], va, q1[2], q1[3])  # port 1 down to the vdd lead (above the vm2 jog)
+    top.box("m5", q1[0], va, VDD_COL_X[1], vb)
+    top.box("m5", VDD_COL_X[0], va, VDD_COL_X[1], Y_N)
+    top.label(5, "vdd", (VDD_COL_X[0] + VDD_COL_X[1]) / 2, Y_N - 1)
     INFO[P] = {"M1": {"rows": rows, "fingers_per_row": ma["nf"], "wf": wf, "L": l2,
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
@@ -543,10 +560,10 @@ def build_cg(ly):
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north"},
                "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
-               "ld4_vdd_lead": [VDD4_X[0], LD4_VDD_Y[0], VDD4_X[1], Y_N],
+               "ld4_vdd_lead": [VDD_COL_X[0], LD4_VDD_Y[0], VDD_COL_X[1], Y_N],
                "vm2_column_x": list(dc),
                "pins": {"input_match": "Metal5 x=82 y=290..300", "output_cs": list(gp), "g_cg": f"Metal3 west edge y={GCG_Y}",
-                        "vbias_cg": f"Metal3 north edge x={xvb:.2f}", "vbias_cs": f"Metal3 north edge x={xvc:.2f}",
+                        "vbias_cg": f"Metal3 west edge y={xvb:.2f}", "vbias_cs": f"Metal3 west edge y={xvc:.2f}",
                         "vdd": "Metal5 north edge", "vss": "guard ring, C3 straps, L1 port 2 (south edge)"}}
     return top
 
