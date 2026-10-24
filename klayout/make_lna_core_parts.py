@@ -18,7 +18,10 @@ Supply (cell lna_core_supply), layer plan of the team: M5 / M3 = vdd, M4 / M2 / 
          joins the CG guard ring inside lna_core_cg), LEQ port 2 -> west ring (Via4); L1 / LSHUNT_OUT port 2
          enter the south / north band on Metal4 (blocks)
   MIM decap tiles: PG_MIM (fixed tile, MIMTM.1 clean) on at most N_MIM_MAX sites so that the shared vss Metal4
-         plane carries <= 10000 um^2 of MIM (MIMTM.11), PG_PLAIN elsewhere.
+         plane carries <= 10000 um^2 of MIM (MIMTM.11), PG_PLAIN elsewhere. Priority order (user-specified):
+         (1) sites within RING_BAND of LD2 / LD4's own keep-out (the two low-Q, vdd-tied coils -- decoupling
+         them costs nothing electrically), (2) the rest of the N_MIM_MAX budget spread evenly over every other
+         free site instead of left bunched in the lowest-x columns (the old flat `sorted(sites)[:N_MIM_MAX]`).
 Re-running replaces blocks and supply (idempotent); dbu 1 nm.
 """
 import json
@@ -212,13 +215,32 @@ def build_supply(ly, top):
         S.cuts("v3", *b)
         n_isl += 1
 
-    # ---------------- tiles
+    # ---------------- tiles: priority (1) near LD2/LD4 (2) evenly spread over the rest, capped at N_MIM_MAX
     cells = {k: import_tile(ly, k, f) for k, f in TILES.items()}
-    n_mim = 0
+    ld4_c, ld4_r = cg["LD4"]["centre"], lib.coil_geom(os.path.join(HERE, "LD4_coil.gds"))["r"]
+    ld2_c, ld2_r = cs["LD2"]["centre"], lib.coil_geom(os.path.join(HERE, "LD2_coil.gds"))["r"]
+
+    def prox(site):
+        """distance from a tile centre to the nearer of LD2 / LD4's own coil edge (negative = inside the coil)"""
+        sx, sy = site[0] + PITCH / 2, site[1] + PITCH / 2
+        d4 = ((sx - ld4_c[0]) ** 2 + (sy - ld4_c[1]) ** 2) ** 0.5 - ld4_r
+        d2 = ((sx - ld2_c[0]) ** 2 + (sy - ld2_c[1]) ** 2) ** 0.5 - ld2_r
+        return min(d4, d2)
+
+    RING_BAND = 2 * PITCH  # tier 1: tiles within ~2 pitches of LD2 / LD4's keep-out edge
+    near = sorted((s for s in sites if prox(s) <= RING_BAND), key=prox)[:N_MIM_MAX]
+    near_set = set(near)
+    far = [s for s in sites if s not in near_set]
+    budget = N_MIM_MAX - len(near)
+    spread = set()
+    if budget > 0 and far:
+        step = len(far) / budget
+        spread = {far[int(i * step)] for i in range(budget)}
+    mim_sites = near_set | spread
     for x0, y0 in sites:
-        kind = "PG_MIM" if n_mim < N_MIM_MAX else "PG_PLAIN"
-        n_mim += kind == "PG_MIM"
+        kind = "PG_MIM" if (x0, y0) in mim_sites else "PG_PLAIN"
         S.place(cells[kind], x0 + PITCH / 2, y0 + PITCH / 2)
+    n_mim = len(mim_sites)
 
     # group B: vss from the CS guard-ring strap (Metal2), vdd from the LD4 vdd lead (Metal3 under the vm2 lead,
     # stack onto the Metal5 lead east of the LD4 ports)
