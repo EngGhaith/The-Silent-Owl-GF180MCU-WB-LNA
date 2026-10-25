@@ -109,20 +109,30 @@ COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_
 # project investigation, reports/ld4_ld2_rectangular_reshape_investigation.html on main_pex, found reshaping LD4
 # is a legitimate but separate area-reduction lever for a DIFFERENT question -- not pursued here).
 MACRO_W, RING = 1186, 12
-Y_S, Y_N = -345, 851  # south / north macro edge. Y_N: still set by LSHUNT_OUT (output_match, unchanged/fixed coil)
+Y_S, Y_N = -353, 851  # south / north macro edge. Y_N: still set by LSHUNT_OUT (output_match, unchanged/fixed coil)
 # sitting almost exactly as tight against the north ring as it can (0.7 um margin on each side of its own Y-band)
 # -- this is the pre-existing (independent of the LEQ/L1 work) Y overflow's root cause: LSHUNT_OUT cannot be
 # reshaped (lna_core_output_match keeps the original square coil, per the task), so Y_N cannot be reduced below
 # ~850 without restructuring lna_core_cg's internal C3/vm2 trace layout (out of scope here). Y_S: moved from -253
-# to -335 (82 um more negative) to give L1 (and, to a lesser extent, LEQ) the extra world-Y room their X-shrinking
-# reshape needs (see MACRO_W comment above), then a further -10 (to -345) after L1's own one-iteration EM
-# correction (outer_half_x 239.5 -> 244.5, to hit 2.5041nH within 0.07% instead of the first guess's 2.2% miss --
-# see L1_RECT_coil.gds's generation notes) grew L1's world-Y extent (local rx) by 5 um, which, like every other
-# change on this axis, costs 2x in south-ward room (RING keep-out counted on both the coil's own edge and Y_S's).
-# This is the direct cost of the X-fix, and the reason (Y_N - Y_S) does not also land at <=1070: fixing X this way
-# inherently costs Y headroom. inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) need not be an exact multiple of the
-# 20 um tile pitch -- make_lna_core_parts.py's GY0 just floors to the nearest pitch from the north band, leaving
-# any remainder unused at the south edge.
+# to -345 (92 um more negative) to give L1 (and, to a lesser extent, LEQ) the extra world-Y room their X-shrinking
+# reshape needs (see MACRO_W comment above), including L1's own one-iteration EM correction (outer_half_x 239.5 ->
+# 244.5, to hit 2.5041nH within 0.07% instead of the first guess's 2.2% miss -- see L1_RECT_coil.gds's generation
+# notes). This is the direct cost of the X-fix, and the reason (Y_N - Y_S) does not also land at <=1070: fixing X
+# this way inherently costs Y headroom.
+#
+# -353 (not -345) specifically: make_lna_core_parts.py's tile grid is built top-down from Y_N (GY0 floors to the
+# nearest 20 um pitch from the north band), so (Y_N - Y_S - 2*RING) landing on an exact multiple of the 20 um
+# pitch is what makes the grid's southernmost row coincide with the south ring's own inner edge (Y_S + RING) --
+# at -345 it does not (12 um remainder), which silently broke every tile group's "touches the south rail" check
+# (groups() / touches_rail() in make_lna_core_parts.py) for the ENTIRE south portion of the macro -- confirmed by
+# directly inspecting the built lna_core_parts.gds: only 500 of 1130 free sites got tiles, with real tiles
+# starting no further south than y=249 (i.e. nothing at all below that, where L1 and LEQ now live, losing both
+# decoupling coverage and the supply-tile fabric the grid-connection work depends on). -353 is the nearest
+# pitch-aligned value that is still negative enough for L1's own fit assert to hold (-333 is the nearest aligned
+# value overall, but L1 does not fit there) -- confirmed via the same "regenerate, let the assert catch it"
+# empirical loop used throughout this file: regenerating at -353 restores tiles down to y=-331, 755 of the same
+# 1130 free sites kept (vs. 500), and the "groups_dropped" list returns to its normal small entries (~20/12/4/4/4
+# sites) instead of the ~630-site south-wide dropout -353 fixes. No DRC/LVS regression (re-verified clean).
 RFO_X = 415.0  # rf_out_pad lead column (centre)
 YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
