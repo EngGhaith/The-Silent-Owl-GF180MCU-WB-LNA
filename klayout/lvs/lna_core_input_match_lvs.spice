@@ -1,3 +1,0 @@
-.SUBCKT lna_core_input_match vss input_cg rf_in_pad
-C15 rf_in_pad input_cg cap_mim_2f0fF W=24.82u L=24.82u
-.ENDS
