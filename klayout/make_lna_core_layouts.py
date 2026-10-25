@@ -442,13 +442,19 @@ def build_cs(ly):
     top.label(5, "output_match", (VX_X[0] + VX_X[1]) / 2, om_lead_y())
     top.box("m5", *q1)
     top.box("m5", q1[2] - 0.5, q1[1], LD2_VDD_X[1], q1[1] + 10)  # port 1 -> vdd lead
-    top.box("m5", LD2_VDD_X[0], q1[1], LD2_VDD_X[1], Y_N)
+    # vdd: short run just past LD2's own keep-out into the generic tile fabric (which is continuous/abutting
+    # there, same convention as the macro's main vdd rail), instead of all the way to Y_N -- LD2's keep-out
+    # boundary is at cy + ry + SP_KO; tiles start right after it, so a short margin past that reliably lands
+    # inside a kept tile regardless of the grid's exact phase.
+    ld2_vdd_y1 = g(cy + geo["ry"] + SP_KO + 12)
+    assert ld2_vdd_y1 < Y_N, "LD2 vdd lead shortening computed past the macro edge"
+    top.box("m5", LD2_VDD_X[0], q1[1], LD2_VDD_X[1], ld2_vdd_y1)
     assert LD2_VDD_X[1] + 5 <= VX_X[0]
-    top.label(5, "vdd", (LD2_VDD_X[0] + LD2_VDD_X[1]) / 2, Y_N - 1)
+    top.label(5, "vdd", (LD2_VDD_X[0] + LD2_VDD_X[1]) / 2, (q1[1] + ld2_vdd_y1) / 2)
     INFO[P] = {"M3": {"rows": 1, "fingers": m1["nf"], "wf": wf1, "L": l1, "sym": s1},
                "M2": {"rows": 1, "fingers": m4["nf"], "wf": wf4, "L": l4, "sym": s4},
                "bus_w_um": wb, "guard_ring": R, "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "east"},
-               "ld2_vdd_lead": [LD2_VDD_X[0], q1[1], LD2_VDD_X[1], Y_N], "vx_column_x": list(VX_X),
+               "ld2_vdd_lead": [LD2_VDD_X[0], q1[1], LD2_VDD_X[1], ld2_vdd_y1], "vx_column_x": list(VX_X),
                "pins": {"input_cg": list(gp), "vbias_cas": f"Metal3 north edge x={xvn}", "vdd": "Metal5 north edge",
                         "output_match": f"Metal5 column x={VX_X}", "vss": "guard ring"}}
     return top
@@ -655,8 +661,16 @@ def build_cg(ly):
     top.box("m5", *q1)
     assert abs(q1[3] - 0.5 - LD4_VDD_Y[0]) < 1e-6
     top.box("m5", q1[0], LD4_VDD_Y[0], VDD4_X[1], LD4_VDD_Y[1])
-    top.box("m5", VDD4_X[0], LD4_VDD_Y[0], VDD4_X[1], Y_N)
-    top.label(5, "vdd", (VDD4_X[0] + VDD4_X[1]) / 2, Y_N - 1)
+    # vdd: short east run straight into the macro's own east vdd rail band (make_lna_core_parts.py's build_supply()
+    # already runs a full-height vdd rail along the east edge, not just near the north corner) instead of a long
+    # column all the way to Y_N -- VDD4_X already sits only ~6-16um short of the band's inner edge (MACRO_W-RING),
+    # so this trades a ~500um run for a ~20um one. ld4_vdd_x1 must land inside the rail band with margin; the
+    # resulting box is reported as ld4_vdd_lead below so build_supply()'s foreign-metal check recognises it as a
+    # known vdd lead rather than flagging it as non-vdd metal crossing the rail.
+    ld4_vdd_x1 = g(MACRO_W - RING + 2)
+    assert VDD4_X[1] < ld4_vdd_x1 < MACRO_W - 2, "LD4 vdd lead must land inside the east rail band"
+    top.box("m5", VDD4_X[0], LD4_VDD_Y[0], ld4_vdd_x1, LD4_VDD_Y[1])
+    top.label(5, "vdd", (VDD4_X[0] + ld4_vdd_x1) / 2, (LD4_VDD_Y[0] + LD4_VDD_Y[1]) / 2)
     INFO[P] = {"M1": {"rows": rows, "fingers_per_row": ma["nf"], "wf": wf, "L": l2,
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
@@ -664,7 +678,7 @@ def build_cg(ly):
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north"},
                "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
-               "ld4_vdd_lead": [VDD4_X[0], LD4_VDD_Y[0], VDD4_X[1], Y_N],
+               "ld4_vdd_lead": [VDD4_X[0], LD4_VDD_Y[0], ld4_vdd_x1, LD4_VDD_Y[1]],
                "vm2_column_x": list(dc),
                "pins": {"input_match": "Metal5 x=82 y=290..300", "output_cs": list(gp), "g_cg": f"Metal3 west edge y={GCG_Y}",
                         "vbias_cg": f"Metal3 north edge x={xvb:.2f}", "vbias_cs": f"Metal3 north edge x={xvc:.2f}",
