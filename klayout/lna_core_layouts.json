@@ -8,7 +8,6 @@
    ],
    "ports": "west"
   },
-  "with_cap": true,
   "C15": {
    "W": 24.82,
    "L": 24.82,
