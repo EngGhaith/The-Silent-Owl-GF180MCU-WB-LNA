@@ -1,0 +1,205 @@
+<title>LD4 / LD2 Rectangular Reshape Investigation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#eef0f3;
+  --text:#1b222c; --text-dim:#5b6472; --border:#dde1e7;
+  --accent:#0e7c7b; --accent-soft:#0e7c7b1a; --band:#0e7c7b14;
+  --good:#1a8f5a; --warn:#c0501f; --bad:#c0392b;
+  --c-ld4:#3b63c7; --c-ld2:#c17a0e; --c-l1:#9db3ea; --c-leq:#6fb98f;
+  --shadow:0 1px 2px rgba(20,24,33,.04), 0 8px 24px -12px rgba(20,24,33,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161d; --surface:#171d26; --surface-2:#1e2530;
+    --text:#e7eaef; --text-dim:#8d97a6; --border:#2a3240;
+    --accent:#2bb3af; --accent-soft:#2bb3af22; --band:#2bb3af16;
+    --good:#3fc17f; --warn:#e0893f; --bad:#e2574a;
+    --c-ld4:#6f8fe0; --c-ld2:#e0a23a; --c-l1:#374a7d; --c-leq:#3f8f63;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#171d26; --surface-2:#1e2530;
+  --text:#e7eaef; --text-dim:#8d97a6; --border:#2a3240;
+  --accent:#2bb3af; --accent-soft:#2bb3af22; --band:#2bb3af16;
+  --good:#3fc17f; --warn:#e0893f; --bad:#e2574a;
+  --c-ld4:#6f8fe0; --c-ld2:#e0a23a; --c-l1:#374a7d; --c-leq:#3f8f63;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.55;}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 28px 80px;}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+header h1{font-size:27px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;}
+header .sub{color:var(--text-dim);font-size:14.5px;max-width:760px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);color:var(--text-dim);background:var(--surface);}
+.verdict-row{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap;}
+.verdict{flex:1 1 300px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);}
+.verdict .coil{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;}
+.verdict .call{font-size:19px;font-weight:700;margin:4px 0 6px;}
+.verdict.no .call{color:var(--bad);}
+.verdict p{margin:0;color:var(--text-dim);font-size:13.5px;}
+.callout{margin:28px 0;padding:16px 18px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;font-size:14px;color:var(--text-dim);box-shadow:var(--shadow);}
+.callout b{color:var(--text);}
+.callout.warn{border-left-color:var(--warn);}
+section{margin-top:44px;}
+h2{font-size:18px;font-weight:600;margin:0 0 4px;}
+h2 .num{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-weight:600;margin-right:8px;}
+.section-sub{color:var(--text-dim);font-size:13px;margin:0 0 18px;}
+h3{font-size:14.5px;font-weight:600;margin:26px 0 8px;}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
+th,td{padding:10px 13px;text-align:right;font-size:13px;border-bottom:1px solid var(--border);}
+th:first-child,td:first-child{text-align:left;}
+th{background:var(--surface-2);color:var(--text-dim);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+tr:last-child td{border-bottom:none;}
+td.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
+.formula{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin:12px 0;overflow-x:auto;white-space:pre;}
+.fig{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--shadow);margin:16px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-dim);margin-top:10px;justify-content:center;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.tag{font-size:10.5px;padding:1px 7px;border-radius:999px;font-family:'IBM Plex Mono',monospace;margin-left:6px;background:var(--surface-2);color:var(--text-dim);}
+code{font-family:'IBM Plex Mono',monospace;background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:12.5px;}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-dim);font-size:12px;}
+a{color:var(--accent);}
+ul{padding-left:20px;}
+li{margin:4px 0;font-size:13.5px;}
+</style>
+
+<div class="wrap">
+<header>
+<h1>LD4 / LD2 rectangular reshape investigation</h1>
+<div class="sub">Does reshaping the two low-Q drain-load coils (LD4, Q&#8776;4.4, 8.44&nbsp;nH; LD2, Q&#8776;1.2, 4.30&nbsp;nH) from square to rectangular let them sit closer to the transistors they load, the way it does for LEQ? Answer, derived directly from <code>klayout/make_lna_core_layouts.py</code> and <code>lna_core_layouts.json</code> on <code>main_pex</code>: no &mdash; for both coils the limiting constraint is a fixed piece of <em>other</em> infrastructure, not the coil's own footprint, so no amount of reshaping moves the needle. No EM re-characterization was run; here is the algebra that makes the case, and what would actually have to change to get a real win.</div>
+<div class="badge-row">
+<span class="badge">branch: main_pex</span>
+<span class="badge">lna_core_cg / lna_core_cs</span>
+<span class="badge">klayout/make_lna_core_layouts.py</span>
+<span class="badge">no coil geometry changed</span>
+</div>
+<div class="verdict-row">
+<div class="verdict no"><div class="coil">LD4 &rarr; cg</div><div class="call">Not worth reshaping</div><p>617&nbsp;&micro;m gap is 100% set by LEQ+L1 bulk. LD4's own radius cancels out of the formula &mdash; a 0&nbsp;&micro;m-wide LD4 would sit at exactly the same place.</p></div>
+<div class="verdict no"><div class="coil">LD2 &rarr; cs</div><div class="call">Not worth reshaping</div><p>64.5&nbsp;&micro;m gap floors at 58.0&nbsp;&micro;m regardless of LD2's shape (vbias-jog keepout). Max possible gain from reshaping: 6.5&nbsp;&micro;m.</p></div>
+</div>
+</header>
+
+<section>
+<h2><span class="num">01</span>LD4: the 617&nbsp;&micro;m gap to cg</h2>
+<p class="section-sub">Chain: <code>lna_core_input_match</code> LEQ &rarr; keepout &rarr; <code>lna_core_cg</code> L1 &rarr; keepout &rarr; <code>lna_core_cg</code> LD4, all three on one X axis (<code>make_lna_core_layouts.py</code>, <code>build_cg</code>).</p>
+
+<div class="fig">
+<svg viewBox="0 0 960 230" width="100%" style="max-width:920px">
+  <line x1="40" y1="170" x2="920" y2="170" stroke="var(--border)" stroke-width="1.5"/>
+  <!-- cg guard ring -->
+  <rect x="40" y="150" width="34" height="40" fill="var(--surface-2)" stroke="var(--border)"/>
+  <text x="57" y="205" text-anchor="middle" font-size="11" fill="var(--text-dim)" font-family="IBM Plex Mono">cg GR</text>
+  <text x="57" y="145" text-anchor="middle" font-size="10" fill="var(--text-dim)">x=208.3</text>
+  <!-- LEQ (different cell, input_match, shown faint for context) -->
+  <rect x="100" y="120" width="70" height="100" fill="var(--c-leq)" fill-opacity="0.35" stroke="var(--c-leq)"/>
+  <text x="135" y="235" text-anchor="middle" font-size="11" fill="var(--text-dim)" font-family="IBM Plex Mono">LEQ (input_match)</text>
+  <!-- keepout -->
+  <rect x="170" y="150" width="14" height="40" fill="none" stroke="var(--border)" stroke-dasharray="3,2"/>
+  <!-- L1 -->
+  <rect x="184" y="70" width="330" height="200" fill="var(--c-l1)" fill-opacity="0.45" stroke="var(--c-l1)"/>
+  <text x="349" y="285" text-anchor="middle" font-size="12" fill="var(--text)" font-family="IBM Plex Mono" font-weight="600">L1  (r=211.3&micro;m, D&#8776;423&micro;m)</text>
+  <!-- keepout -->
+  <rect x="514" y="150" width="14" height="40" fill="none" stroke="var(--border)" stroke-dasharray="3,2"/>
+  <!-- LD4 -->
+  <rect x="528" y="104" width="260" height="132" fill="var(--c-ld4)" fill-opacity="0.45" stroke="var(--c-ld4)"/>
+  <text x="658" y="252" text-anchor="middle" font-size="12" fill="var(--text)" font-family="IBM Plex Mono" font-weight="600">LD4 (r=166.0&micro;m, D=332&micro;m)</text>
+  <!-- gap bracket cg->LD4 west edge -->
+  <line x1="57" y1="40" x2="528" y2="40" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="57" y1="34" x2="57" y2="46" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="528" y1="34" x2="528" y2="46" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="292" y="28" text-anchor="middle" font-size="13" fill="var(--accent)" font-family="IBM Plex Mono" font-weight="600">616.5 &micro;m gap &mdash; fixed by LEQ+L1, independent of LD4's own size</text>
+  <!-- arrow showing LD4 radius has no effect on west edge -->
+  <line x1="528" y1="60" x2="658" y2="60" stroke="var(--c-ld4)" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="593" y="56" text-anchor="middle" font-size="10" fill="var(--c-ld4)">LD4 west edge fixed here &mdash; shrinking r only moves THIS way &rarr;</text>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--c-ld4)"/></marker></defs>
+</svg>
+<div class="legend">
+  <span><i class="sw" style="background:var(--c-leq)"></i>LEQ (input_match, Q&#8776;12.4)</span>
+  <span><i class="sw" style="background:var(--c-l1)"></i>L1 (= LSHUNT_OUT geometry reused, Q&#8776;12.3)</span>
+  <span><i class="sw" style="background:var(--c-ld4)"></i>LD4 (Q&#8776;4.4, the coil in question)</span>
+</div>
+</div>
+
+<h3>The formula (from <code>build_cg</code>, verified against <code>lna_core_layouts.json</code>)</h3>
+<div class="formula">leq_east   = LEQ_PORT_X + LEQ.pe + LEQ.r            = 36.0 + 157.875 + 158.375  =  352.25
+cx1 (L1)   = leq_east + SP_KO + L1.r                = 352.25 + 25 + 211.295    =  588.545   &larr; matches JSON exactly
+cx4 (LD4)  = cx1 + L1.r + SP_KO + LD4.r             = 588.545 + 211.295 + 25 + 166.0 = 990.84  &larr; matches JSON exactly
+
+LD4 west edge = cx4 - LD4.r
+             = cx1 + L1.r + SP_KO + LD4.r - LD4.r
+             = cx1 + L1.r + SP_KO                    &larr; LD4.r cancels out completely
+             = 588.545 + 211.295 + 25 = 824.84
+
+gap (cg guard-ring edge x=208.3 &rarr; LD4 west edge) = 824.84 - 208.3 = 616.54 &micro;m  &asymp; "~617 &micro;m"</div>
+<p>LD4's own half-size (<code>geo["r"]</code>) appears in the formula for <code>cx4</code> (its centre) but cancels exactly when you compute its <em>west edge</em> &mdash; the only coordinate that matters for distance-to-cg. A rectangular LD4 with an arbitrarily small X half-extent would still have its west edge at x&#8201;=&#8201;824.84, because that edge is defined as "L1's east edge + one keep-out", not "LD4's west edge". <b>Every micron of reshape benefit the earlier LEQ work demonstrated came from LEQ's own footprint shrinking in the binding direction; LD4 is not in that situation &mdash; it is chained after a different, much bigger coil (L1, D&#8776;423&nbsp;&micro;m vs LD4's own 332&nbsp;&micro;m), and that coil's bulk is what's actually 617&nbsp;&micro;m away from cg.</b></p>
+
+<h3>Checked and ruled out: is there a Y-direction win instead?</h3>
+<table>
+<tr><th>Constraint (build_cg)</th><th>Bound</th><th>Actual</th><th>Slack</th></tr>
+<tr><td>South: <code>cy4 - LD4.r - RING &ge; Y_S + RING</code></td><td class="num">&ge; -241.0</td><td class="num">-13.5</td><td class="num" style="color:var(--good)">227.5 &micro;m</td></tr>
+<tr><td>North: macro top <code>Y_N</code></td><td class="num">&le; 851</td><td class="num">&#8776;330.5 (current top)</td><td class="num" style="color:var(--good)">&#8776;520 &micro;m</td></tr>
+<tr><td>East: <code>cx4 + LD4.r + 5 &le; VDD4_X[0]</code></td><td class="num">&le; 1166</td><td class="num">1161.84</td><td class="num" style="color:var(--bad)">4.16 &micro;m</td></tr>
+</table>
+<p>There is no Y headroom problem for LD4 at all &mdash; unlike the LEQ case, nothing north or south of LD4 blocks a taller coil. The only tight constraint is on the <em>east</em> side (4.16&nbsp;&micro;m to the VDD lead), which is irrelevant to cg-proximity.</p>
+
+<h3>Secondary possibility: shrink the macro, not the gap</h3>
+<div class="callout">Because <code>LD4 east edge = LD4 west edge + 2&times;LD4.r</code>, trading LD4's X half-extent for Y half-extent (same winding technique, same target L=8.44&nbsp;nH, elongated vertically) <em>would</em> shrink <code>MACRO_W</code> by roughly <b>twice</b> whatever is shaved off LD4.r &mdash; e.g. shrinking LD4 from 332&nbsp;&micro;m to 232&nbsp;&micro;m across (-100&nbsp;&micro;m in X, using the 227+&nbsp;&micro;m of free Y headroom already confirmed above) could shrink the 1204&nbsp;&micro;m macro width by up to &#8776;100&nbsp;&micro;m once <code>VDD4_X</code> and the east ring are shifted in. That is a real die-area lever &mdash; just not the one asked about (it doesn't reduce the cg&rarr;LD4 trace length/parasitic at all), and the other three blocks (cs, output_match) don't need that width independently (checked: their own east edges have 100&#8211;280&nbsp;&micro;m of slack against <code>MACRO_W</code>), so the saving would actually be realized rather than immediately eaten by another block. Not pursued here since it doesn't address the stated concern, but flagged below as a possible separate follow-up.</div>
+
+<h3>Checked and ruled out: decoupling LD4 from the L1 chain</h3>
+<p>The task description raised the option of placing LD4 independently of L1 rather than chaining east of it &mdash; e.g. north of L1, directly east of cg's own C3 caps (which end at x=321.98, y&#8201;&le;&#8201;352.98), since L1 itself only reaches y=200.5 at its north edge, leaving the band y&gt;200.5 geometrically "free" of L1. Checked against the <em>other</em> two blocks that share this same coordinate system (<code>lna_core_cs</code> and <code>lna_core_output_match</code>, confirmed via <code>make_lna_core_parts.py</code>: <code>BLOCKS</code> all four cells are drawn in one shared frame): that band is <b>not actually free</b> &mdash; <code>lna_core_cs</code>'s own guard ring sits at x=279.7&#8211;374.54, y=389.7&#8211;426.97, and <code>lna_core_output_match</code>'s LSHUNT_OUT coil spans x=454.5&#8211;877.1, y=390.7&#8211;813.3 &mdash; both squarely inside the candidate region. Decoupling LD4 from L1 is therefore not a cheap win sitting next to the reshape question; it would require re-floorplanning at least three of the four sub-blocks together, which is out of scope for a coil-reshape task. Flagged as a separate investigation below.</p>
+</section>
+
+<section>
+<h2><span class="num">02</span>LD2: the 64.5&nbsp;&micro;m gap to cs</h2>
+<p class="section-sub">LD2 sits north of <code>lna_core_cs</code>, ports facing east to the <code>vx</code> column (<code>build_cs</code>). The gap in question is purely in Y (their X ranges already overlap).</p>
+
+<h3>The constraints (from <code>build_cs</code>)</h3>
+<div class="formula">cx = LD2_PORT_X - LD2.pe = 340.0 - 108.0 = 232.0        cy = LD2_CY = 600.0 (fixed)
+
+assert cx - LD2.r - SP_KO &ge; max(vbias xn) + 1      &rarr;  232 - 108.5 - 25 = 98.5  &ge;  91     (slack  7.5 &micro;m, X, vs vbias_cas column)
+assert cy - LD2.r - SP_KO &ge; max(vbias yj) + 1      &rarr;  600 - 108.5 - 25 = 466.5 &ge; 460     (slack  6.5 &micro;m, Y, vs vbias jog line y=459)
+
+LD2 bottom edge = cy - LD2.r = 600 - 108.5 = 491.5
+cs guard-ring top = 426.97
+gap = 491.5 - 426.97 = 64.53 &micro;m  &asymp; "~64.5 &micro;m"</div>
+
+<h3>Why reshaping can't close this gap</h3>
+<p>The binding constraint on LD2's south edge is <em>not</em> the cs guard ring (426.97) &mdash; it's the vbias_cas jog routing at y=459, which needs a 25&nbsp;&micro;m keep-out from any coil. For a coil of half-size <code>r</code>, the smallest legal centre is <code>cy_min(r) = 485 + r</code>, which makes the achievable gap:</p>
+<div class="formula">gap_min(r) = (cy_min(r) - r) - 426.97 = (485 + r - r) - 426.97 = 485 - 426.97 = 58.03 &micro;m   &larr; independent of r !</div>
+<p>The floor is <b>58.03&nbsp;&micro;m no matter what shape or size LD2 is</b> &mdash; reshaping, resizing, even shrinking LD2 to a point, cannot get it closer than that, because the limit is the vbias routing corridor, not LD2's footprint. Today's actual gap (64.53&nbsp;&micro;m) is only 6.5&nbsp;&micro;m above that floor, and <b>that 6.5&nbsp;&micro;m is recoverable today by simply recentring the existing square coil</b> (moving <code>LD2_CY</code> from 600 to 593.5) &mdash; no reshape, no EM re-run, no new GDS needed to capture the entire available gain.</p>
+
+<h3>X-direction / general floorplan-efficiency angle</h3>
+<table>
+<tr><th>Side</th><th>Slack today</th><th>Notes</th></tr>
+<tr><td>West (vs vbias_cas column, x=90)</td><td class="num">7.5 &micro;m</td><td>tight &mdash; limits how far a rectangular reshape could grow LD2 westward</td></tr>
+<tr><td>East (vs vx column, x=377)</td><td class="num">&#8776;36.5 &micro;m</td><td>some room, partly used by port leads already</td></tr>
+<tr><td>North (vs macro edge, Y_N=851)</td><td class="num">105.5 &micro;m</td><td>loose</td></tr>
+</table>
+<p>Even ignoring the proximity question, the room to trade X for Y on LD2 is modest (tens of &micro;m on one side only) and the only thing it would free up is more of the already-loose north margin &mdash; not new usable area, since nothing else is currently blocked by LD2's shape. Combined with the 6.5&nbsp;&micro;m proximity ceiling above, a rectangular LD2 was judged not to carry a benefit worth a new EM characterization campaign (methodology below would need &#8776;40+ minutes of openEMS per candidate geometry, likely several iterations to hit 4.30&nbsp;nH with a new aspect ratio).</p>
+</section>
+
+<section>
+<h2><span class="num">03</span>Methodology note &mdash; why no EM run was launched</h2>
+<p>Per the task, the existing coil-characterization flow was reviewed before considering any new simulation: <code>/foss/designs/rapidpassives/try4/newflow/</code> (<code>build_real_coil.py</code>, <code>real_multilayer.py</code>, <code>scale_dout.py</code> &mdash; the 5-metal-shunt, via-stitched spiral generator that produced <code>LD4_coil.gds</code>/<code>LD2_coil.gds</code>, driven through openEMS via <code>run_*.py</code> scripts against <code>OPENEMS-GF180MCUD-1P5M-TM11KA-MIMB-STACKED4.xml</code>). The most recent addition there, <code>Ind2_LEQ_MAIN_D418.0_*.gds</code> / <code>run_leq_main.py</code> (committed to <code>main</code> as <code>LEQ_MAIN_coil.gds</code>, commit <code>5e88190</code>), was checked directly: its raw GDS bounding box is 450&times;450&nbsp;&micro;m &mdash; <b>still square</b>, just a bigger diameter for main's differently-sized input match. No rectangular-coil generator or rectangular coil GDS was found anywhere in the repo (any branch), the two other currently-locked agent worktrees (presumably the "related effort" mentioned in the task), or <code>rapidpassives/</code>. The claimed rectangular-LEQ precedent does not appear to have landed yet, so this investigation worked from the floorplan code directly rather than mirroring an existing rectangular pipeline. A single openEMS run in this flow takes &#8776;40&nbsp;minutes wall-clock (see <code>run_leq_main.log</code>: 2461&nbsp;s FDTD + setup); building a new independent-X/Y-scaling variant of <code>build_real_coil.py</code> and iterating it to a target L is a multi-hour effort that the quantified, near-zero proximity benefit above does not justify for either coil.</p>
+</section>
+
+<section>
+<h2><span class="num">04</span>Bottom line</h2>
+<ul>
+<li><b>LD4:</b> do not reshape. The 616.5&nbsp;&micro;m gap to cg is set entirely by LEQ+L1's own bulk under the current east-of-L1 chaining; LD4's X half-extent cancels out of the governing formula. Y headroom is abundant (227+&nbsp;&micro;m south, 520+&nbsp;&micro;m north) so there's no "doesn't fit" problem to solve by reshaping either &mdash; LD4 already fits fine, it's just far away for reasons that have nothing to do with its own shape.</li>
+<li><b>LD2:</b> do not reshape. The 64.5&nbsp;&micro;m gap to cs floors at 58.0&nbsp;&micro;m regardless of shape (vbias-jog keepout dominates); only 6.5&nbsp;&micro;m is reshape/resize-recoverable, and that much is already recoverable today by recentring the existing square coil, with no new coil needed.</li>
+<li><b>If floorplan area reduction (not proximity) is ever wanted:</b> trading LD4's X for Y (same L=8.44&nbsp;nH) could shrink the macro width by roughly 2&times; the X reduction &mdash; a legitimate, separate optimization, not evaluated further here since it doesn't address the stated cg-distance concern.</li>
+<li><b>If cg&rarr;LD4 proximity is still wanted:</b> the lever is decoupling LD4 from the L1 chain (placing it elsewhere), not reshaping it &mdash; and that was checked to not be a free win either (the obvious nearby space is occupied by <code>lna_core_cs</code>'s guard ring and <code>lna_core_output_match</code>'s LSHUNT_OUT coil), so it would need a dedicated multi-block floorplan study.</li>
+</ul>
+</section>
+
+<footer>
+Generated on <code>main_pex</code> (worktree <code>agent-ad782ce7cfdf81441</code>) from <code>klayout/make_lna_core_layouts.py</code> and <code>klayout/lna_core_layouts.json</code> as of commit <code>2790166</code>. No coil GDS, floorplan code, or JSON was modified by this investigation.
+</footer>
+</div>
