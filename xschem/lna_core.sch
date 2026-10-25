@@ -89,11 +89,8 @@ N 650 -580 760 -580 {lab=#net1}
 N 510 -580 590 -580 {lab=rf_in_pad}
 N 430 -580 490 -580 {lab=rf_in_pad}
 N 330 -580 390 -580 {lab=rf_in_pad}
-N 510 -580 510 -540 {lab=rf_in_pad}
-N 510 -410 510 -380 {lab=vss}
 N 220 -580 270 -580 {lab=rf_in_pad}
 N 170 -580 220 -580 {lab=rf_in_pad}
-N 510 -480 510 -470 {lab=#net6}
 N 270 -580 330 -580 {lab=rf_in_pad}
 N 1580 -750 1580 -675 {lab=rf_out_pad}
 N 1300 -1175 1300 -1160 {lab=vdd}
@@ -138,12 +135,9 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
-C {ind.sym} 510 -440 0 0 {name=LEQ
-m=1
-value=2.8491n
-footprint=1206
-device=inductor
-}
+C {LEQ_MAIN_model.sym} 550 -440 0 0 {name=XLEQ}
+C {lab_pin.sym} 450 -440 1 0 {name=pRLEQ_T1 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 650 -440 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
 C {symbols/nfet_05v0.sym} 1280 -670 0 0 {name=M4
 L=0.6u
 W=35u
@@ -258,12 +252,6 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
 C {lab_pin.sym} 700 -520 3 0 {name=pCPI_vss sig_type=std_logic lab=vss}
-C {res.sym} 510 -510 0 0 {name=RLEQ
-value=3.5803
-footprint=1206
-device=resistor
-m=1
-}
 C {ind.sym} 1580 -645 0 0 {name=LSHUNT_OUT
 spice_ignore=true
 m=1
