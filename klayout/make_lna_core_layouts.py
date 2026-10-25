@@ -175,7 +175,7 @@ def build_input_match(ly):
     # --- LEQ
     geo = coil_geom(P, "LEQ")
     cx, cy = g(LEQ_PORT_X + geo["pe"]), LEQ_CY
-    assert cy + geo["r"] + SP_KO <= YSL[0] and cy - geo["r"] - RING >= Y_S + RING, "LEQ does not fit"
+    assert cy + geo["ry"] + SP_KO <= YSL[0] and cy - geo["ry"] - RING >= Y_S + RING, "LEQ does not fit"
     (q1, q2), _, _ = place_coil(ly, top, P, "LEQ", cx, cy, rot=180, mirror=True)
     lead_x = 25.0  # rf_in lead column (centre)
     rf_y = 295.0
@@ -207,7 +207,7 @@ def build_input_match(ly):
         c2, t2 = lib.mim_tile(ly, f"{P}__CPI", w2, l2)
         tr2 = top.place(c2, cpx, cpy)
         top2, bot2 = tbox(tr2, t2["top"]), tbox(tr2, t2["bot"])
-        assert top2[3] + lib.MIM_HALO <= rf_y - 5 and bot2[1] - lib.MIM_HALO >= cy + geo["r"], "CPI does not fit"
+        assert top2[3] + lib.MIM_HALO <= rf_y - 5 and bot2[1] - lib.MIM_HALO >= cy + geo["ry"], "CPI does not fit"
         assert top2[0] <= rf_e and top2[2] >= x_e, "CPI top plate must span the input_cg bus (x = rf_e..x_e)"
         top.box("m5", top2[0], top2[3] - 0.5, top2[2], rf_y - 5)  # top plate -> input_cg bus
         # bottom-plate strap -> vss: cross under the rf_in lead_x column (x = 20..36, y >= q1[1]) on Metal4 (not
@@ -292,8 +292,8 @@ def build_output_match(ly):
     # --- LSHUNT_OUT
     geo = coil_geom(P, "LSHUNT_OUT")
     cx, cy = g(LSH_PORT_X + geo["pe"]), LSH_CY
-    assert cy - geo["r"] - SP_KO >= VM2_Y[1] and cy + geo["r"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
-    assert cx + geo["r"] + SP_KO / 2 <= VDD4_X[0] and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5
+    assert cy - geo["ry"] - SP_KO >= VM2_Y[1] and cy + geo["ry"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
+    assert cx + geo["rx"] + SP_KO / 2 <= VDD4_X[0] and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=180)
     assert q1[3] < q2[1] and q1[1] > q1_min_y, "rf_out port must be the lower one, clear of the cap / through-wire"
     top.box("m5", xr + 5 - 1, q1[1], q1[2], q1[3])  # port 1 -> rf_out lead
@@ -380,9 +380,9 @@ def build_cs(ly):
     # LD2: coil north-west of the core, ports east
     geo = coil_geom(P, "LD2")
     cx, cy = g(LD2_PORT_X - geo["pe"]), LD2_CY
-    assert cx - geo["r"] - SP_KO >= max(v[1] for v in VBIAS.values()) + 1, "LD2 over the bias leads"
-    assert cy - geo["r"] - SP_KO >= max(v[0] for v in VBIAS.values()) + 1, "LD2 over the bias jogs"
-    assert cy + geo["r"] + SP_KO + RING <= Y_N, "LD2 does not fit"
+    assert cx - geo["rx"] - SP_KO >= max(v[1] for v in VBIAS.values()) + 1, "LD2 over the bias leads"
+    assert cy - geo["ry"] - SP_KO >= max(v[0] for v in VBIAS.values()) + 1, "LD2 over the bias jogs"
+    assert cy + geo["ry"] + SP_KO + RING <= Y_N, "LD2 does not fit"
     (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy)
     assert q2[3] < q1[1] and q2[1] - 10 > om_lead_y() + 5, "vx port must be the lower one, above the C1 lead"
     top.box("m5", *q2)
@@ -539,10 +539,11 @@ def build_cg(ly):
     # port 2 (west) -> vss lead between LEQ and L1 down to the south ring band (Metal4 into the band)
     g1 = coil_geom(P, "L1")
     leq = coil_geom("lna_core_input_match", "LEQ")
-    leq_east = LEQ_PORT_X + leq["pe"] + leq["r"]
-    cx1, cy1 = g(leq_east + SP_KO + g1["r"]), g(L1_PORT_Y - g1["pe"])
-    assert leq_east + 7 <= L1_VSS_X[0] and L1_VSS_X[1] + 7 <= cx1 - g1["r"]
-    assert cy1 - g1["r"] - RING >= Y_S + RING, "L1 does not fit"
+    leq_east = LEQ_PORT_X + leq["pe"] + leq["rx"]  # LEQ: rot=180, no axis swap
+    # L1: rot=90 swaps axes -- its world-space X-extent is its local ry, world-space Y-extent is its local rx
+    cx1, cy1 = g(leq_east + SP_KO + g1["ry"]), g(L1_PORT_Y - g1["pe"])
+    assert leq_east + 7 <= L1_VSS_X[0] and L1_VSS_X[1] + 7 <= cx1 - g1["ry"]
+    assert cy1 - g1["rx"] - RING >= Y_S + RING, "L1 does not fit"
     (l1p, l1v), _, _ = place_coil(ly, top, P, "L1", cx1, cy1, rot=90, mirror=True)
     assert l1v[2] < l1p[0], "vss port must be the western one"
     ysl = YSL
@@ -586,8 +587,9 @@ def build_cg(ly):
     # --- LD4: coil south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 (east) -> vdd lead along
     # the top of the coil to VDD4_X, north along the east edge
     geo = coil_geom(P, "LD4")
-    cx4, cy4 = g(cx1 + g1["r"] + SP_KO + geo["r"]), g(LD4_PORT_Y - geo["pe"])
-    assert cy4 - geo["r"] - RING >= Y_S + RING and cx4 + geo["r"] + 5 <= VDD4_X[0]
+    # LD4: rot=90 swaps axes too, same convention as L1 above
+    cx4, cy4 = g(cx1 + g1["ry"] + SP_KO + geo["ry"]), g(LD4_PORT_Y - geo["pe"])
+    assert cy4 - geo["rx"] - RING >= Y_S + RING and cx4 + geo["ry"] + 5 <= VDD4_X[0]
     assert VDD4_X[1] + 5 <= MACRO_W - RING
     (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90, mirror=True)
     assert q2[2] < q1[0], "vm2 port must be the western one"
