@@ -1,0 +1,8 @@
+.SUBCKT lna_core_cg vbias_cs vdd vss vbias_cg output_cs g_cg input_match
+MM1 vm2 g_cg input_match vss nfet_05v0 L=0.6u W=40u nf=10 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=14
+RR3 vbias_cg g_cg vss ppolyf_u_1k W=1u L=48.35u
+C2 output_cs vm2 cap_mim_2f0fF W=58.22u L=58.22u
+C3 vss g_cg cap_mim_2f0fF W=49.89u L=49.89u m=4
+MM3 input_match vss input_match vss nfet_05v0 L=0.6u W=8u nf=2 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=4
+RR4 vbias_cs output_cs vss ppolyf_u_1k W=1u L=48.35u
+.ENDS

@@ -1,0 +1,3 @@
+.SUBCKT lna_core_output_match output_cs rf_out_pad vss
+C11 output_cs rf_out_pad cap_mim_2f0fF W=33.12u L=33.12u
+.ENDS

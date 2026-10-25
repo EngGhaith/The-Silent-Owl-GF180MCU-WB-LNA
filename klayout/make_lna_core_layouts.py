@@ -198,55 +198,59 @@ C_OUT_L = 54.0  # x extent of the output C1 plate (between the vx column and the
 OM_IN_X = 380.0  # west end of the output_cs lead of lna_core_output_match
 
 
-def c_out_wl():
-    """(W, L) of the output C1 (ideal capa) as a MIM with fixed L"""
-    sch = sch_params("lna_core_output_match")
-    l_, w_ = cap_side(pf(sch[series_cap(sch)][1]["value"]), C_OUT_L)
-    return w_, l_
+OM_LEAD_Y = 498.305  # output_cs lead y, fixed across variants (= main_pex's own C_OUT_PLATE[1] + W/2) so
+# lna_core_cs (which also calls om_lead_y()) never needs to change based on which cap this block draws
+
+
+def c_out_wl(sch):
+    """(W, L) of the output series cap, from whichever symbol this schematic uses: main_pex's idealized capa.sym
+    (retuned freely -- sized to fit the fixed-L C_OUT_L slot, as today) or main's fixed cap_mim_2f0fF (C11, W/L
+    already chosen in the schematic -- LVS needs those exact dimensions, not a re-derived shape of equal pF)"""
+    capas = [n for n, (sym, _) in sch.items() if sym == "capa"]
+    if capas:
+        cn = capas[0]
+        l_, w_ = cap_side(pf(sch[cn][1]["value"]), C_OUT_L)
+        return w_, l_, pf(sch[cn][1]["value"]), cn
+    (cn,) = [n for n, (sym, _) in sch.items() if sym == "cap_mim_2f0fF"]
+    p = sch[cn][1]
+    w_, l_ = um_grid(p["W"]), um_grid(p["L"])
+    return w_, l_, lib.c_mim_pf(w_, l_), cn
 
 
 def om_lead_y():
-    """centre of the output_cs lead (= vx column top of lna_core_cs)"""
-    w_, _ = c_out_wl()
-    return g(C_OUT_PLATE[1] + w_ / 2)
+    """centre of the output_cs lead (= vx column top of lna_core_cs) -- fixed, see OM_LEAD_Y"""
+    return g(OM_LEAD_Y)
 
 
 # ================================================================ lna_core_output_match
-def build_output_match(ly, with_cap=True):
+def build_output_match(ly):
     """
-    C1 (series, ideal 7 pF -> MIM): top plate = output_cs (lead to the west, x = 380), bottom plate (tab rotated
-    to the north) = rf_out_pad (Metal5 lead to the north edge, x = 415)
+    C1 (series, sized to whichever cap this schematic specifies -- see c_out_wl): top plate = output_cs (lead to
+    the west, x = 380), bottom plate (tab rotated to the north) = rf_out_pad (Metal5 lead to the north edge, x =
+    415). Same single-series-cap structure for both main and main_pex (only the target size/source symbol
+    differs) -- om_lead_y() and every pin/frame coordinate stay identical either way (the cap is re-centred on
+    the fixed OM_LEAD_Y regardless of its own size), so lna_core_cs needs no changes between variants.
     LSHUNT_OUT: coil east of the rf_out lead, rotated 180 (ports west): port 1 (lower) -> rf_out lead, port 2 ->
     vss (Metal5 north between the rf_out lead and the coil, Metal4 into the north ring band)
-
-    with_cap=False (main variant): C1 is off-chip -> no MIM is drawn, output_cs wires straight through to the
-    rf_out lead column instead; om_lead_y() (also used by lna_core_cs) and every pin/frame coordinate are
-    unchanged, so lna_core_cs needs no changes either way.
     """
     P = "lna_core_output_match"
     sch = sch_params(P)
     top = Cell(ly, P)
     xr = RFO_X
-    yc = om_lead_y()  # fixed by the (always-present) schematic cap value, regardless of with_cap
-    cap_info = {}
-    if with_cap:
-        w, l = c_out_wl()
-        c, t = lib.mim_tile(ly, f"{P}__C1", w, l)
-        x0, y0 = C_OUT_PLATE
-        tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
-        pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
-        assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
-        top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
-        top.box("m5", bt[0], bt[1], bt[2], bt[3])
-        top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
-        q1_min_y = pt[3] + 20  # rf_out port must clear the cap
-        cap_info = {series_cap(sch): {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3),
-                                       "schematic_pF": pf(sch[series_cap(sch)][1]["value"])}, "top_plate": list(pt)}
-    else:
-        # no cap: output_cs wires straight through to the rf_out lead column
-        top.box("m5", OM_IN_X, yc - 5, xr + 5, yc + 5)
-        top.box("m5", xr - 5, yc - 5, xr + 5, Y_N)
-        q1_min_y = yc + 5 + 20  # rf_out port must clear the through-wire
+    yc = om_lead_y()
+    w, l, c_pf, cn = c_out_wl(sch)
+    c, t = lib.mim_tile(ly, f"{P}__C1", w, l)
+    x0 = C_OUT_PLATE[0]
+    y0 = g(yc - w / 2)  # re-centre the cap (whatever its own W) on the fixed interface y
+    tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
+    pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
+    assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
+    top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
+    top.box("m5", bt[0], bt[1], bt[2], bt[3])
+    top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
+    q1_min_y = pt[3] + 20  # rf_out port must clear the cap
+    cap_info = {cn: {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3), "schematic_pF": round(c_pf, 3)},
+                "top_plate": list(pt)}
     top.label(5, "output_cs", OM_IN_X + 1, yc)
     top.label(5, "rf_out_pad", xr, Y_N - 1)
     # --- LSHUNT_OUT
@@ -264,7 +268,7 @@ def build_output_match(ly, with_cap=True):
     top.stack(vx0, yv, vx1, yv + 6, 4, 5)
     top.box("m4", vx0, yv, vx1, Y_N - 2)
     top.label(4, "vss", (vx0 + vx1) / 2, Y_N - 3)
-    INFO[P] = {"with_cap": with_cap, **cap_info, "output_cs_lead_y": yc,
+    INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
                "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "west"},
                "macro": [MACRO_W, Y_N - Y_S], "frame": [0, Y_S, MACRO_W, Y_N],
@@ -577,7 +581,10 @@ def build_cg(ly):
 
 
 BUILDERS = {"input_match": build_input_match, "cg": build_cg, "cs": build_cs, "output_match": build_output_match}
-WITH_CAP = {"main_pex": True, "main": False}  # variant -> whether input/output matching draws its on-chip MIM cap
+# input_match's with_cap is the only remaining variant switch (pending: main's real input network is LEQ + a
+# series/shunt cap pair, not "no cap" -- see xschem/lna_core_input_match.sch on main); output_match needs no
+# switch any more, it reads whichever cap symbol (capa.sym or cap_mim_2f0fF) the checked-out schematic uses.
+WITH_CAP = {"main_pex": True, "main": False}
 
 
 def main():
@@ -587,7 +594,7 @@ def main():
     for key in want:
         ly = pya.Layout()
         ly.dbu = 0.001
-        if key in ("input_match", "output_match"):
+        if key == "input_match":
             top = BUILDERS[key](ly, with_cap=with_cap)
         else:
             top = BUILDERS[key](ly)
