@@ -129,5 +129,5 @@ C {iopin.sym} 340 -590 2 0 {name=p13 lab=g_cg}
 C {LD4_model.sym} 650 -960 0 0 {name=XLD4}
 C {lab_pin.sym} 520 -960 1 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 800 -960 1 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
-C {LSHUNT_OUT_model.sym} 920 -180 0 0 {name=XL1}
+C {L1_RECT_model.sym} 920 -180 0 0 {name=XL1}
 C {lab_pin.sym} 1050 -180 1 0 {name=pRL1_T2 sig_type=std_logic lab=vss}

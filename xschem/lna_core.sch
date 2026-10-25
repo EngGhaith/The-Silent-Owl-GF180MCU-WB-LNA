@@ -135,7 +135,7 @@ C {lab_pin.sym} 1300 -1240 0 0 {name=p39 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 510 -380 3 0 {name=p46 sig_type=std_logic lab=vss
 }
-C {LEQ_MAIN_RECT_model.sym} 550 -440 0 0 {name=XLEQ}
+C {LEQ_MAIN_RECT2_model.sym} 550 -440 0 0 {name=XLEQ}
 C {lab_pin.sym} 450 -440 1 0 {name=pRLEQ_T1 sig_type=std_logic lab=rf_in_pad}
 C {lab_pin.sym} 650 -440 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
 C {symbols/nfet_05v0.sym} 1280 -670 0 0 {name=M4
@@ -233,7 +233,7 @@ m=1}
 C {LD4_model.sym} 760 -1055 0 0 {name=XLD4}
 C {lab_pin.sym} 660 -1055 1 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 860 -1055 1 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
-C {LSHUNT_OUT_model.sym} 800 -440 0 0 {name=XL1}
+C {L1_RECT_model.sym} 800 -440 0 0 {name=XL1}
 N 700 -440 680 -500 {lab=#net1}
 N 680 -500 680 -580 {lab=#net1}
 

@@ -14,7 +14,7 @@ N 450 -270 450 -120 {lab=rf_in_pad}
 N 320 -270 370 -270 {lab=rf_in_pad}
 N 700 -270 820 -270 {lab=#net1}
 N 270 -340 310 -340 {lab=vss}
-C {LEQ_MAIN_RECT_model.sym} 550 -120 0 0 {name=XLEQ}
+C {LEQ_MAIN_RECT2_model.sym} 550 -120 0 0 {name=XLEQ}
 C {lab_pin.sym} 650 -120 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
 C {iopin.sym} 320 -270 0 1 {name=p56 lab=rf_in_pad}
 C {symbols/cap_mim_2f0fF.sym} 560 -270 3 0 {name=C15

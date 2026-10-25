@@ -86,27 +86,63 @@ def pf(v):
 
 # floorplan: coils, macro edges (core coordinates, see module doc)
 SP_KO = 25.0  # keep-out around every inductor
-COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT_coil.gds", ("lna_core_cg", "L1"): "LSHUNT_OUT_coil.gds",
+COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_coil.gds"}
-MACRO_W, RING = 1434, 12  # +230 vs the original 1204: LEQ_MAIN_RECT's bigger X-extent (rx=263 vs 158.375 for the
-# old square LEQ, needed to shrink its Y-extent to fit) shifts the whole LEQ-L1-LD4 chain east by ~207 um; the
-# macro grows to keep LD4's vdd lead within bounds (see VDD4_X below), reported as overflow vs the padframe tile
-# by make_lna_top.py (already designed to tolerate/report a macro larger than its nominal tile), not a hard fail
-Y_S, Y_N = -253, 851  # south / north macro edge; inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) = n x 20 um tiles
+# MACRO_W history: 1204 (original, pre-existing overflow vs the 1070 padframe-tile budget: L1 reused LSHUNT_OUT's
+# own square coil, r=211.295, world-X -- this appears TWICE in the LEQ->L1->LD4 chain's east-west budget, once to
+# clear L1 from LEQ and once again for L1's own half-width before LD4) -> 1434 (commit cc900b6: LEQ_MAIN_RECT's
+# reshape, needed to fit the Y-band under the then-current Y_S, grew LEQ's own world-X extent, pushing the chain
+# further east -- the state the 1070x1070 fit task started from). NOW: L1 itself is reshaped (L1_RECT_coil.gds, its
+# own file -- LSHUNT_OUT_coil.gds is untouched, lna_core_output_match keeps the original square coil) to shrink its
+# world-X half-extent (local ry, 211.295 -> 167.0, since rot=90 placement swaps axes -- see build_cg), and
+# LEQ_MAIN_RECT is re-split (LEQ_MAIN_RECT2_coil.gds, same ~2.8491nH target, same ohx+ohy=421 "effective diameter"
+# so L stays close to the already-EM-verified 2.8476nH) to shrink its own world-X half-extent too (rx: 263 -> 201).
+# Both trades cost world-Y room (the coils grow taller: local rx for L1 since rot=90 swaps axes, ry for LEQ which
+# is not rotated) -- that is why Y_S also moved more negative below. The two reshapes were solved as ONE joint
+# (MACRO_W, Y_S) minimax optimization, not independently, landing both MACRO_W and (Y_N - Y_S) at ~1183-1186 um
+# (roughly balanced) -- see the floorplan-fit report for the full derivation and the fundamental conservation-law
+# tension (shrinking a coil's world-X extent at a fixed target L requires growing its world-Y extent by roughly the
+# same amount) that keeps this short of the 1070 budget. LD4 was deliberately NOT reshaped: it is a different coil
+# family/generator (rapidpassives/try4/newflow/drains/, N=3/W=2 vs the N=2/W=26 spiral family LEQ/L1/LSHUNT_OUT
+# share) with no existing rectangular-stretch tooling, and reshaping it is out of this task's scope (a prior
+# project investigation, reports/ld4_ld2_rectangular_reshape_investigation.html on main_pex, found reshaping LD4
+# is a legitimate but separate area-reduction lever for a DIFFERENT question -- not pursued here).
+MACRO_W, RING = 1186, 12
+Y_S, Y_N = -345, 851  # south / north macro edge. Y_N: still set by LSHUNT_OUT (output_match, unchanged/fixed coil)
+# sitting almost exactly as tight against the north ring as it can (0.7 um margin on each side of its own Y-band)
+# -- this is the pre-existing (independent of the LEQ/L1 work) Y overflow's root cause: LSHUNT_OUT cannot be
+# reshaped (lna_core_output_match keeps the original square coil, per the task), so Y_N cannot be reduced below
+# ~850 without restructuring lna_core_cg's internal C3/vm2 trace layout (out of scope here). Y_S: moved from -253
+# to -335 (82 um more negative) to give L1 (and, to a lesser extent, LEQ) the extra world-Y room their X-shrinking
+# reshape needs (see MACRO_W comment above), then a further -10 (to -345) after L1's own one-iteration EM
+# correction (outer_half_x 239.5 -> 244.5, to hit 2.5041nH within 0.07% instead of the first guess's 2.2% miss --
+# see L1_RECT_coil.gds's generation notes) grew L1's world-Y extent (local rx) by 5 um, which, like every other
+# change on this axis, costs 2x in south-ward room (RING keep-out counted on both the coil's own edge and Y_S's).
+# This is the direct cost of the X-fix, and the reason (Y_N - Y_S) does not also land at <=1070: fixing X this way
+# inherently costs Y headroom. inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) need not be an exact multiple of the
+# 20 um tile pitch -- make_lna_core_parts.py's GY0 just floors to the nearest pitch from the north band, leaving
+# any remainder unused at the south edge.
 RFO_X = 415.0  # rf_out_pad lead column (centre)
 YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
 # coil placement: port edge position (the ports face the core) and centre on the other axis
-LEQ_PORT_X, LEQ_CY = 36.0, -16.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
-# LEQ_CY re-centred for LEQ_MAIN_RECT's ry=190 (feasible range [-39, 7] -- see "LEQ does not fit" assert below)
+LEQ_PORT_X, LEQ_CY = 36.0, -57.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
+# LEQ_CY re-centred for LEQ_MAIN_RECT2's ry=252 (feasible range [-59, -55] -- see "LEQ does not fit" assert below;
+# narrow because LEQ's own Y-band is itself now tightly re-optimized for the X fit, not because of newly-added slop)
 L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (L1_VSS_X)
+# L1_PORT_Y is UNCHANGED even though L1's own coil is reshaped: the port edge sits at L1_PORT_Y regardless of the
+# coil's rx/ry (ports are always `pe` in from the coil's own edge, and pe tracks rx under the rot=90 axis swap --
+# see build_cg's cy1 formula), so every lead/wire north of L1 (into YSL, the cg source bus, etc.) needed no changes
+# at all -- only the coil's own south-ward bulk (down to Y_S) grew, which is exactly the Y-budget cost above.
 # L1_VSS_X: vss lead of L1, in the SP_KO gap between LEQ and L1 -- computed from leq_east in build_cg (not a fixed
 # constant), since it depends on LEQ's own east edge, which varies with whichever coil GDS is in use
 LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
 LD2_PORT_X, LD2_CY = 340.0, 600.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
 LSH_PORT_X, LSH_CY = 455.0, 602.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
-VDD4_X = (1396.0, 1406.0)  # vdd lead of LD4 along the east edge to the north edge (+230 vs original, see MACRO_W)
+VDD4_X = (1158.0, 1168.0)  # vdd lead of LD4 along the east edge to the north edge -- shrunk back down from the
+# cc900b6 1396/1406, now even below the pre-cc900b6 1166/1176, since L1's own world-X shrink moves the whole
+# LEQ->L1->LD4 chain (and therefore LD4's own east edge) west; LD4 itself is untouched
 LD4_VDD_Y = (333.0, 343.0)  # LD4 port 1 -> VDD4_X, above the coil
 LD2_VDD_X = (350.0, 360.0)  # vdd lead of LD2 to the north edge
 LSH_VSS_X = (440.0, 450.0)  # vss lead of LSHUNT_OUT between the rf_out lead and the coil (Metal4 into the north ring)
@@ -433,8 +469,10 @@ def build_cg(ly):
       drains   : outer buses, joined east on a Metal5 column = vm2 -> C2 (bottom plate) and LD4
       gates    : inner straps (Metal3), joined east on Metal4 = g_cg -> C3 (4 MIM, 2x2, top plates) and R3
       source s : Metal5 west -> x = 82 (input_cg of the input match) and on south / east (YSL) to L1
-    L1: coil LSHUNT_OUT_coil.gds south (east of LEQ), ports north: port 1 -> source, port 2 -> vss (lead L1_VSS_X
-        down to the south edge)
+    L1: coil L1_RECT_coil.gds south (east of LEQ), ports north: port 1 -> source, port 2 -> vss (lead L1_VSS_X
+        down to the south edge). Rectangular reshape of LSHUNT_OUT's own square coil (same 2.5041nH target,
+        deliberately reused value -- see the floorplan-fit report), shrunk in world-X / grown in world-Y to fit
+        the 1070x1070 macro budget.
     LD4: coil LD4_coil.gds south-east, ports north: port 2 -> vm2 (trace VM2_Y), port 1 -> vdd (Metal5 east above
          the coil, north to the edge at VDD4_X).
     C2 top plate = output_cs -> CS_GATE_PAD; R4: vbias_cs -> output_cs. Bias pins: see vbias_column.

@@ -257,7 +257,8 @@ value="
 *            DC-pinned, thermal-noise-synthesized), same EM data as rl
 * ============================================================
 .lib $::env(PWD)/LSHUNT_OUT_model.lib rl
-.lib $::env(PWD)/LEQ_MAIN_RECT_model.lib rl
+.lib $::env(PWD)/LEQ_MAIN_RECT2_model.lib rl
+.lib $::env(PWD)/L1_RECT_model.lib rl
 .lib $::env(PWD)/LD2_model.lib rl
 .lib $::env(PWD)/LD4_model.lib rl
 "}
