@@ -2,3 +2,4 @@
 # Large simulation result files
 techsweep/simulations/*.mat
 techsweep/simulation
+klayout/lvs/
