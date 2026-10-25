@@ -7,9 +7,10 @@ Layouts of the four lna_core sub-blocks, drawn after layout/floorplan/lna_core_f
   lna_core_cs.gds            xschem/lna_core_cs.sch            M3 (+M5 dummies), M2 (+M4D dummies), XLD2 coil
   lna_core_output_match.gds  xschem/lna_core_output_match.sch  C1 (series), XLSHUNT_OUT coil
 
-Run:  klayout -b -r make_lna_core_layouts.py          (all cells, main_pex variant: on-chip matching caps)
+Run:  klayout -b -r make_lna_core_layouts.py          (all cells; main vs main_pex is which xschem files are
+                                                        checked out -- see the main_layout / main_pex_layout
+                                                        branches -- not a runtime flag)
       klayout -b -r make_lna_core_layouts.py -rd cells=cg,cs
-      klayout -b -r make_lna_core_layouts.py -rd variant=main   (input/output matching with no on-chip cap)
 
 All four cells share one coordinate system: the core (devices, from layout/floorplan/lna_core_floorplan, rf_in west,
 rf_out north) keeps the coordinates of that floorplan, the macro spans x 0..MACRO_W, y Y_S..Y_N around it
@@ -134,16 +135,39 @@ def vbias_column(top, pin, x, y0):
 INFO = {}  # per cell: notes for the json report
 
 
+def c_in_wl(sch):
+    """(W, L, pF, name) of the input series cap -- capa.sym (main_pex, squares itself to its ideal pF) or main's
+    fixed cap_mim_2f0fF named C15 (exact schematic W/L, like c_out_wl's cap_mim_2f0fF path)"""
+    capas = [n for n, (sym, _) in sch.items() if sym == "capa"]
+    if capas:
+        cn = capas[0]
+        c_pf = pf(sch[cn][1]["value"])
+        w_, l_ = cap_side(c_pf)
+        return w_, l_, c_pf, cn
+    cn = "C15"
+    p = sch[cn][1]
+    w_, l_ = um_grid(p["W"]), um_grid(p["L"])
+    return w_, l_, lib.c_mim_pf(w_, l_), cn
+
+
+def cpi_wl(sch):
+    """(W, L, pF) of CPI, main's extra input shunt cap (input_cg -> vss) with no main_pex equivalent, or None"""
+    if "CPI" not in sch:
+        return None
+    p = sch["CPI"][1]
+    w_, l_ = um_grid(p["W"]), um_grid(p["L"])
+    return w_, l_, lib.c_mim_pf(w_, l_)
+
+
 # ================================================================ lna_core_input_match
-def build_input_match(ly, with_cap=True):
+def build_input_match(ly):
     """
-    rf_in_pad (Metal5, west edge, y = 295) -> C15 bottom plate; C15 top plate -> input_cg (east edge, x = 82)
+    rf_in_pad (Metal5, west edge, y = 295) -> series cap bottom plate; top plate -> input_cg (east edge, x = 82)
+    (see c_in_wl: main_pex's single idealized cap, or main's fixed-size C15)
     LEQ (coil, south-west, mirrored: ports west): port 1 (upper) -> rf_in lead column (x = 20 .. 30) north to
     rf_in_pad, port 2 -> vss (Metal5 into the west ring band)
-
-    with_cap=False (main variant): C15 is off-chip (main_pex only adds it on-chip) -> no MIM is drawn, rf_in_pad
-    wires straight through to input_cg instead; the LEQ coil (needed by both variants) and every pin/frame
-    coordinate are unchanged, so lna_core_cg/cs/output_match need no changes either way.
+    CPI (main only, see cpi_wl): extra shunt cap input_cg -> vss, placed in the free band above LEQ (y 196..290,
+    unused by main_pex's simpler network) -- not present in main_pex at all.
     """
     P = "lna_core_input_match"
     sch = sch_params(P)
@@ -156,24 +180,16 @@ def build_input_match(ly, with_cap=True):
     lead_x = 25.0  # rf_in lead column (centre)
     rf_y = 295.0
     x_e = 82.0
-    cap_info = {}
-    if with_cap:
-        # --- series capacitor (ideal capa.sym, 1.25 pF -> square MIM)
-        cn = series_cap(sch)
-        c_pf = pf(sch[cn][1]["value"])
-        w1, l1 = cap_side(c_pf)
-        px = 36.4
-        c1, t1 = lib.mim_tile(ly, f"{P}__C1", w1, l1)
-        tr1 = top.place(c1, px, g(rf_y - l1 / 2))
-        b1, p1 = tbox(tr1, t1["bot"]), tbox(tr1, t1["top"])
-        # --- rf_in_pad: west edge -> capacitor bottom-plate strap; LEQ lead column joins it
-        top.box("m5", 0, rf_y - 5, b1[2], rf_y + 5)
-        rf_e = p1[2] - 1  # capacitor top plate -> east edge
-        cap_info = {cn: {"W": w1, "L": l1, "pF": round(lib.c_mim_pf(w1, l1), 3), "schematic_pF": c_pf}}
-    else:
-        # no cap: rf_in_pad wires straight through to input_cg
-        top.box("m5", 0, rf_y - 5, x_e, rf_y + 5)
-        rf_e = x_e
+    # --- series cap
+    w1, l1, c_pf, cn = c_in_wl(sch)
+    px = 36.4
+    c1, t1 = lib.mim_tile(ly, f"{P}__C1", w1, l1)
+    tr1 = top.place(c1, px, g(rf_y - l1 / 2))
+    b1, p1 = tbox(tr1, t1["bot"]), tbox(tr1, t1["top"])
+    # --- rf_in_pad: west edge -> capacitor bottom-plate strap; LEQ lead column joins it
+    top.box("m5", 0, rf_y - 5, b1[2], rf_y + 5)
+    rf_e = p1[2] - 1  # capacitor top plate -> east edge
+    cap_info = {cn: {"W": w1, "L": l1, "pF": round(lib.c_mim_pf(w1, l1), 3), "schematic_pF": round(c_pf, 3)}}
     top.box("m5", lead_x - 5, q1[1], q1[2], q1[3])  # LEQ port 1 -> lead column
     top.box("m5", lead_x - 5, q1[1], lead_x + 5, rf_y + 5)
     top.label(5, "rf_in_pad", 1, rf_y)
@@ -183,7 +199,27 @@ def build_input_match(ly, with_cap=True):
     # --- vss: LEQ port 2 -> west ring band (lna_core_parts stacks it onto the ring Metal4)
     top.box("m5", 2, q2[1], q2[2], q2[3])
     top.label(5, "vss", 3, (q2[1] + q2[3]) / 2)
-    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"}, "with_cap": with_cap,
+    # --- CPI (main only): free band above LEQ (y ~196..290), strapped up to input_cg and down to vss
+    cpi = cpi_wl(sch)
+    if cpi:
+        w2, l2, cpi_pf = cpi
+        cpx, cpy = 60.0, 220.0  # x spans the input_cg bus (rf_e..82); y clear of LEQ (top ~196.4) and the bus (290)
+        c2, t2 = lib.mim_tile(ly, f"{P}__CPI", w2, l2)
+        tr2 = top.place(c2, cpx, cpy)
+        top2, bot2 = tbox(tr2, t2["top"]), tbox(tr2, t2["bot"])
+        assert top2[3] + lib.MIM_HALO <= rf_y - 5 and bot2[1] - lib.MIM_HALO >= cy + geo["r"], "CPI does not fit"
+        assert top2[0] <= rf_e and top2[2] >= x_e, "CPI top plate must span the input_cg bus (x = rf_e..x_e)"
+        top.box("m5", top2[0], top2[3] - 0.5, top2[2], rf_y - 5)  # top plate -> input_cg bus
+        # bottom-plate strap -> vss: cross under the rf_in lead_x column (x = 20..36, y >= q1[1]) on Metal4 (not
+        # Metal5, which would short the LEQ port-1 riser there), then tie into a west-edge Metal5 column that
+        # overlaps LEQ's own port-2 vss box -- one continuous vss net within the block, same as q2 alone today
+        yb0, yb1 = bot2[1] - 5, bot2[1]
+        top.stack(bot2[0], yb0, bot2[2], yb1, 4, 5)
+        top.box("m4", 10, yb0, bot2[2], yb1)
+        top.stack(10, yb0, 14, yb1, 4, 5)
+        top.box("m5", 2, q2[1], 14, yb1)  # west column: overlaps q2's own vss box (x 2..36, y q2[1]..q2[3])
+        cap_info["CPI"] = {"W": w2, "L": l2, "pF": round(cpi_pf, 3)}
+    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"},
                **cap_info, "leq_vss_lead_y": [q2[1], q2[3]],
                "pins": {"rf_in_pad": "Metal5 west edge y=295", "input_cg": f"Metal5 east edge x={x_e} y=295",
                         "vss": "Metal5 west edge (LEQ port 2)"}}
@@ -581,23 +617,18 @@ def build_cg(ly):
 
 
 BUILDERS = {"input_match": build_input_match, "cg": build_cg, "cs": build_cs, "output_match": build_output_match}
-# input_match's with_cap is the only remaining variant switch (pending: main's real input network is LEQ + a
-# series/shunt cap pair, not "no cap" -- see xschem/lna_core_input_match.sch on main); output_match needs no
-# switch any more, it reads whichever cap symbol (capa.sym or cap_mim_2f0fF) the checked-out schematic uses.
-WITH_CAP = {"main_pex": True, "main": False}
+# No more variant switch needed: input_match and output_match each read whichever cap symbol (capa.sym or
+# cap_mim_2f0fF) the checked-out xschem/lna_core_{input,output}_match.sch uses and size/draw accordingly -- the
+# main vs main_pex choice lives entirely in which xschem files are checked out (see the main_layout /
+# main_pex_layout branches), not in a runtime flag here.
 
 
 def main():
-    variant = globals().get("variant") or "main_pex"
-    with_cap = WITH_CAP[variant]
     want = [c for c in (globals().get("cells") or ",".join(BUILDERS)).split(",") if c]
     for key in want:
         ly = pya.Layout()
         ly.dbu = 0.001
-        if key == "input_match":
-            top = BUILDERS[key](ly, with_cap=with_cap)
-        else:
-            top = BUILDERS[key](ly)
+        top = BUILDERS[key](ly)
         for c in list(ly.each_cell()):  # drop the PCell variant cells
             if c.parent_cells() == 0 and c.cell_index() != top.c.cell_index():
                 ly.delete_cell(c.cell_index())
