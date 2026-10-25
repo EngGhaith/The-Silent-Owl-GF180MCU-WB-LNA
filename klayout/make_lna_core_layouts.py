@@ -86,22 +86,27 @@ def pf(v):
 
 # floorplan: coils, macro edges (core coordinates, see module doc)
 SP_KO = 25.0  # keep-out around every inductor
-COILS = {("lna_core_input_match", "LEQ"): "LEQ_coil.gds", ("lna_core_cg", "L1"): "LSHUNT_OUT_coil.gds",
+COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT_coil.gds", ("lna_core_cg", "L1"): "LSHUNT_OUT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_coil.gds"}
-MACRO_W, RING = 1204, 12
+MACRO_W, RING = 1434, 12  # +230 vs the original 1204: LEQ_MAIN_RECT's bigger X-extent (rx=263 vs 158.375 for the
+# old square LEQ, needed to shrink its Y-extent to fit) shifts the whole LEQ-L1-LD4 chain east by ~207 um; the
+# macro grows to keep LD4's vdd lead within bounds (see VDD4_X below), reported as overflow vs the padframe tile
+# by make_lna_top.py (already designed to tolerate/report a macro larger than its nominal tile), not a hard fail
 Y_S, Y_N = -253, 851  # south / north macro edge; inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) = n x 20 um tiles
 RFO_X = 415.0  # rf_out_pad lead column (centre)
 YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
 # coil placement: port edge position (the ports face the core) and centre on the other axis
-LEQ_PORT_X, LEQ_CY = 36.0, 38.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
+LEQ_PORT_X, LEQ_CY = 36.0, -16.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
+# LEQ_CY re-centred for LEQ_MAIN_RECT's ry=190 (feasible range [-39, 7] -- see "LEQ does not fit" assert below)
 L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (L1_VSS_X)
-L1_VSS_X = (360.0, 370.0)  # vss lead of L1: between LEQ and L1 down to the south ring
+# L1_VSS_X: vss lead of L1, in the SP_KO gap between LEQ and L1 -- computed from leq_east in build_cg (not a fixed
+# constant), since it depends on LEQ's own east edge, which varies with whichever coil GDS is in use
 LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
 LD2_PORT_X, LD2_CY = 340.0, 600.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
 LSH_PORT_X, LSH_CY = 455.0, 602.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
-VDD4_X = (1166.0, 1176.0)  # vdd lead of LD4 along the east edge to the north edge
+VDD4_X = (1396.0, 1406.0)  # vdd lead of LD4 along the east edge to the north edge (+230 vs original, see MACRO_W)
 LD4_VDD_Y = (333.0, 343.0)  # LD4 port 1 -> VDD4_X, above the coil
 LD2_VDD_X = (350.0, 360.0)  # vdd lead of LD2 to the north edge
 LSH_VSS_X = (440.0, 450.0)  # vss lead of LSHUNT_OUT between the rf_out lead and the coil (Metal4 into the north ring)
@@ -540,6 +545,7 @@ def build_cg(ly):
     g1 = coil_geom(P, "L1")
     leq = coil_geom("lna_core_input_match", "LEQ")
     leq_east = LEQ_PORT_X + leq["pe"] + leq["rx"]  # LEQ: rot=180, no axis swap
+    L1_VSS_X = (g(leq_east + 7.5), g(leq_east + 17.5))  # centred in the SP_KO=25 gap between LEQ and L1
     # L1: rot=90 swaps axes -- its world-space X-extent is its local ry, world-space Y-extent is its local rx
     cx1, cy1 = g(leq_east + SP_KO + g1["ry"]), g(L1_PORT_Y - g1["pe"])
     assert leq_east + 7 <= L1_VSS_X[0] and L1_VSS_X[1] + 7 <= cx1 - g1["ry"]

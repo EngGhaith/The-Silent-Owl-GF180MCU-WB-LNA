@@ -1,10 +1,10 @@
 {
  "lna_core_input_match": {
   "LEQ": {
-   "coil": "LEQ_coil.gds",
+   "coil": "LEQ_MAIN_RECT_coil.gds",
    "centre": [
-    193.875,
-    38.0
+    296.0,
+    -16.0
    ],
    "ports": "west"
   },
@@ -20,8 +20,8 @@
    "pF": 1.445
   },
   "leq_vss_lead_y": [
-   11.0,
-   37.0
+   -43.0,
+   -17.0
   ],
   "pins": {
    "rf_in_pad": "Metal5 west edge y=295",
@@ -52,7 +52,7 @@
   "L1": {
    "coil": "LSHUNT_OUT_coil.gds",
    "centre": [
-    588.545,
+    795.295,
     -10.795
    ],
    "ports": "north"
@@ -60,7 +60,7 @@
   "LD4": {
    "coil": "LD4_coil.gds",
    "centre": [
-    990.84,
+    1197.59,
     164.5
    ],
    "ports": "north"
@@ -118,13 +118,13 @@
    ]
   ],
   "l1_vss_lead_x": [
-   360.0,
-   370.0
+   566.5,
+   576.5
   ],
   "ld4_vdd_lead": [
-   1166.0,
+   1396.0,
    333.0,
-   1176.0,
+   1406.0,
    851
   ],
   "vm2_column_x": [
@@ -226,13 +226,13 @@
    "ports": "west"
   },
   "macro": [
-   1204,
+   1434,
    1104
   ],
   "frame": [
    0,
    -253,
-   1204,
+   1434,
    851
   ],
   "pins": {

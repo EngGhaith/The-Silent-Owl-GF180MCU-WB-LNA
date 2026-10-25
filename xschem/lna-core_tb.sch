@@ -5,25 +5,25 @@ V {}
 S {}
 F {}
 E {}
-N 980 -1340 980 -1300 {lab=vdd
+N 960 -1470 960 -1430 {lab=vdd
 spice_ignore=true}
-N 800 -1250 830 -1250 {lab=rf_in_pad
+N 780 -1380 810 -1380 {lab=rf_in_pad
 spice_ignore=true}
-N 800 -1170 830 -1170 {lab=vbias_icg
+N 780 -1300 810 -1300 {lab=vbias_csc
 spice_ignore=true}
-N 800 -1150 830 -1150 {lab=vbias_cg
+N 780 -1280 810 -1280 {lab=vbias_cg
 spice_ignore=true}
-N 800 -1130 830 -1130 {lab=vbias_cs
+N 780 -1260 810 -1260 {lab=vbias_cs
 spice_ignore=true}
-N 800 -1110 830 -1110 {lab=vbias_cas
+N 780 -1240 810 -1240 {lab=vbias_cas
 spice_ignore=true}
-N 800 -1090 830 -1090 {lab=vbias_casc
+N 780 -1220 810 -1220 {lab=vbias_casc
 spice_ignore=true}
-N 800 -1070 830 -1070 {lab=vbias_buf
+N 780 -1200 810 -1200 {lab=vbias_buf
 spice_ignore=true}
-N 980 -1040 980 -1000 {lab=vss
+N 960 -1170 960 -1130 {lab=vss
 spice_ignore=true}
-N 1130 -1170 1160 -1170 {lab=rf_out_pad
+N 1110 -1300 1140 -1300 {lab=rf_out_pad
 spice_ignore=true}
 N -200 -480 -200 -450 {
 lab=GND}
@@ -71,17 +71,17 @@ N -108.75 -450 -78.75 -450 {
 lab=vss}
 N -200 -450 -168.75 -450 {
 lab=GND}
-N 490 -1220 530 -1220 {
+N 280 -1210 320 -1210 {
 lab=rf_in_pad}
-N 390 -1220 430 -1220 {
+N 180 -1210 220 -1210 {
 lab=#net1}
-N 290 -1220 330 -1220 {
+N 80 -1210 120 -1210 {
 lab=rf_in_ext}
 N 280 -1370 320 -1370 {
 lab=rf_out_pad}
 N 180 -1370 220 -1370 {
 lab=#net2
-spice_ignore=short}
+}
 N 80 -1370 120 -1370 {
 lab=rf_out_ext}
 N -200 -450 -200 -390 {lab=GND}
@@ -107,45 +107,51 @@ N -590 -1120 -560 -1120 {
 lab=vbias_cas}
 N -680 -1120 -650 -1120 {
 lab=GND}
-N -830 -1000 -800 -1000 {
-lab=vbias_buf}
+N -1040 -920 -1010 -920 {
+lab=vbias_buf
+spice_ignore=true}
 N -740 -1000 -680 -1000 {
 lab=GND}
-N -840 -1110 -810 -1110 {
-lab=vbias_icg}
+N -870 -1220 -840 -1220 {
+lab=vbias_icg
+spice_ignore=true}
 N -750 -1110 -680 -1110 {
 lab=GND}
 N -590 -1230 -560 -1230 {lab=vbias_cs}
-N -710 -1000 -710 -970 {
-lab=GND}
-N -710 -910 -710 -880 {
-lab=vbias_csc}
-N -590 -1020 -560 -1020 {
-lab=vbias_casc}
+N -830 -920 -830 -890 {
+lab=#net3
+spice_ignore=true}
+N -830 -830 -830 -800 {
+lab=vbias_csc
+spice_ignore=true}
+N -660 -720 -630 -720 {
+lab=vbias_casc
+spice_ignore=true}
 N -680 -1020 -650 -1020 {
 lab=GND}
 N 230 -1440 280 -1440 {lab=rf_out_pad}
 N 280 -1440 280 -1370 {lab=rf_out_pad}
 N 120 -1440 170 -1440 {lab=rf_out_ext}
 N 120 -1440 120 -1370 {lab=rf_out_ext}
-N 260 -910 290 -910 {lab=rf_in_pad
+N 220 -950 250 -950 {lab=rf_in_pad
 }
-N 590 -910 620 -910 {lab=rf_out_pad
+N 220 -890 250 -890 {lab=vbias_cg
 }
-N 440 -1000 440 -960 {lab=vdd
+N 220 -870 250 -870 {lab=vbias_cs
 }
-N 260 -830 290 -830 {lab=vbias_cs
+N 220 -850 250 -850 {lab=vbias_cas
 }
-N 260 -850 290 -850 {lab=vbias_cg
+N 400 -820 400 -780 {lab=vss
 }
-N 260 -810 290 -810 {lab=vbias_cas
+N 400 -1040 400 -1000 {lab=vdd
 }
-N 260 -870 290 -870 {lab=g_cg
+N 550 -950 580 -950 {lab=rf_out_pad
 }
-N 50 -890 50 -860 {lab=g_cg}
-N 440 -780 440 -740 {lab=vss
+N 220 -910 250 -910 {lab=g_cg
 }
-C {lna_core.sym} 980 -1170 0 0 {name=x1
+N -60 -730 -60 -700 {lab=#net3}
+N -60 -830 -60 -790 {lab=g_cg}
+C {lna_core.sym} 960 -1300 0 0 {name=x1
 spice_ignore=true}
 C {vsource.sym} -200 -510 0 0 {name=VDD value=\{VDD\} savecurrent=false}
 C {lab_pin.sym} -340 -840 2 0 {name=p5 sig_type=std_logic lab=rf_in_ext}
@@ -179,38 +185,38 @@ C {lab_pin.sym} 15 -1095 2 0 {name=p65 sig_type=std_logic lab=rf_out_pad
 }
 C {vsource.sym} -138.75 -450 1 0 {name=VSS value=0 savecurrent=false}
 C {lab_pin.sym} -78.75 -450 2 0 {name=p73 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 800 -1250 0 0 {name=p1 sig_type=std_logic lab=rf_in_pad
+C {lab_pin.sym} 780 -1380 0 0 {name=p1 sig_type=std_logic lab=rf_in_pad
 spice_ignore=true}
-C {lab_pin.sym} 800 -1170 0 0 {name=p3 sig_type=std_logic lab=vbias_icg
+C {lab_pin.sym} 780 -1300 0 0 {name=p2 sig_type=std_logic lab=vbias_csc
 spice_ignore=true}
-C {lab_pin.sym} 800 -1150 0 0 {name=p4 sig_type=std_logic lab=vbias_cg
+C {lab_pin.sym} 780 -1280 0 0 {name=p4 sig_type=std_logic lab=vbias_cg
 spice_ignore=true}
-C {lab_pin.sym} 800 -1130 0 0 {name=p11 sig_type=std_logic lab=vbias_cs
+C {lab_pin.sym} 780 -1260 0 0 {name=p11 sig_type=std_logic lab=vbias_cs
 spice_ignore=true}
-C {lab_pin.sym} 800 -1110 0 0 {name=p13 sig_type=std_logic lab=vbias_cas
+C {lab_pin.sym} 780 -1240 0 0 {name=p13 sig_type=std_logic lab=vbias_cas
 spice_ignore=true}
-C {lab_pin.sym} 800 -1090 0 0 {name=p14 sig_type=std_logic lab=vbias_casc
+C {lab_pin.sym} 780 -1220 0 0 {name=p14 sig_type=std_logic lab=vbias_casc
 spice_ignore=true}
-C {lab_pin.sym} 800 -1070 0 0 {name=p15 sig_type=std_logic lab=vbias_buf
+C {lab_pin.sym} 780 -1200 0 0 {name=p15 sig_type=std_logic lab=vbias_buf
 spice_ignore=true}
-C {lab_pin.sym} 980 -1340 1 0 {name=p16 sig_type=std_logic lab=vdd
+C {lab_pin.sym} 960 -1470 1 0 {name=p16 sig_type=std_logic lab=vdd
 spice_ignore=true}
-C {lab_pin.sym} 980 -1000 3 0 {name=p17 sig_type=std_logic lab=vss
+C {lab_pin.sym} 960 -1130 3 0 {name=p17 sig_type=std_logic lab=vss
 spice_ignore=true}
-C {lab_pin.sym} 1160 -1170 2 0 {name=p18 sig_type=std_logic lab=rf_out_pad
+C {lab_pin.sym} 1140 -1300 2 0 {name=p18 sig_type=std_logic lab=rf_out_pad
 spice_ignore=true}
-C {ind.sym} 460 -1220 1 0 {name=LBW_IN
+C {ind.sym} 250 -1210 1 0 {name=LBW_IN
 m=1
 value=\{L_BW\}
 footprint=1206
 device=inductor}
-C {res.sym} 360 -1220 1 0 {name=RBW_IN
+C {res.sym} 150 -1210 1 0 {name=RBW_IN
 value=\{R_BW\}
 footprint=1206
 device=resistor
 m=1}
-C {lab_pin.sym} 290 -1220 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext}
-C {lab_pin.sym} 530 -1220 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
+C {lab_pin.sym} 80 -1210 0 0 {name=p22 sig_type=std_logic lab=rf_in_ext}
+C {lab_pin.sym} 320 -1210 2 0 {name=p25 sig_type=std_logic lab=rf_in_pad}
 C {ind.sym} 250 -1370 1 0 {name=LBW_IN1
 m=1
 value=\{L_BW\}
@@ -236,12 +242,13 @@ value="
 .lib $::180MCU_MODELS/sm141064.ngspice mimcap_typical
 .lib $::180MCU_MODELS/sm141064.ngspice diode_typical
 
-.include $::env(PWD)/gf180mcu_fd_io__asig_5p0_pex__pdk_gf180mcuD__rcx__flat__cthresh_0__extresist_0mohm.spice
+.include $::env(PWD)/gf180mcu_fd_io__asig_5p0_generic_pinfixed.spice
 
 * ============================================================
 * INDUCTOR MODEL SWEEP CONFIG -- change the shared section name
 * (ideal / rl / snp2le) in all 4 lines below to switch every
-* swept inductor's model at once, or run:
+* swept inductor's model at once (LD2, LD4, L1 -- LEQ/LSHUNT_OUT
+* are not swept on this branch, see component value notes), or run:
 *   ./set_inductor_model.sh ideal_or_rl_or_snp2le
 * from the xschem/ directory.
 *   ideal  : single ideal inductor (L only)
@@ -249,8 +256,8 @@ value="
 *   snp2le : snp2le broadband vector-fitted macromodel (passive,
 *            DC-pinned, thermal-noise-synthesized), same EM data as rl
 * ============================================================
-.lib $::env(PWD)/LEQ_model.lib rl
 .lib $::env(PWD)/LSHUNT_OUT_model.lib rl
+.lib $::env(PWD)/LEQ_MAIN_RECT_model.lib rl
 .lib $::env(PWD)/LD2_model.lib rl
 .lib $::env(PWD)/LD4_model.lib rl
 "}
@@ -293,64 +300,27 @@ echo ============================================================ >> lna_core_06
 
 op
 
-* Top-level supply and bias-generator values.
+* Top-level supply and bias values (real pins of this circuit only:
+* vbias_cg, vbias_cs, vbias_cas -- vbias_casc/buf/icg/csc are unused
+* dangling ports left over on the lna_core symbol).
 let pdcop=1e3*abs(i(VDD))*v(vdd)
 let icoreop=abs(i(VDD))
-let iioop=0
 
 let v_vddop=v(vdd)
-let v_vpop=v(vp)
-let v_vrefop=v(vref)
-let v_vsenseop=v(vsense)
-let v_vbias_casop=v(vbias_cas)
-let v_vbias_3v3op=v(vbias_3v3)
-let v_vbias_cascop=v(vbias_casc)
 let v_vbias_cgop=v(vbias_cg)
-let v_vbias_icgop=v(vbias_icg)
-let v_vbias_bufop=v(vbias_buf)
 let v_vbias_csop=v(vbias_cs)
-let v_vbias_cscop=v(vbias_csc)
-
-let i_r1=(v(vbias_cas)-v(vbias_3v3))/20k
-let i_r2=(v(vbias_3v3)-v(vbias_casc))/5k
-let i_r3=(v(vbias_casc)-v(vbias_cg))/50k
-let i_r4=(v(vbias_cg)-v(vbias_icg))/15k
-let i_r5=(v(vbias_icg)-v(vbias_buf))/30k
-let i_r6=(v(vbias_buf)-v(vbias_cs))/5k
-let i_r7=(v(vbias_cs)-v(vsense))/3.066k
-let i_r8=(v(vsense)-v(vbias_csc))/11.934k
-let i_r9=v(vbias_csc)/45k
-let i_ladder_avg=(i_r1+i_r2+i_r3+i_r4+i_r5+i_r6+i_r7+i_r8+i_r9)/9
+let v_vbias_casop=v(vbias_cas)
 
 * LNA internal nodes are inside instance x1.
-let vsop=v(x1.s)
-let vdop=v(x1.vm2)
-let vnet3op=v(x1.net3)
-let vnet8op=v(x1.net8)
-let vbufop=v(x1.vbuf)
+let vnet1op=v(x1.net1)
+let vm2op=v(x1.vm2)
+let vnet2op=v(x1.net2)
+let vm1op=v(x1.vm1)
+let vxop=v(x1.vx)
 let vgcsop=v(x1.g_cs)
 let vgcgop=v(x1.g_cg)
-let vgcsccop=v(x1.g_csc)
-let vxop=v(x1.vx)
-let vm1op=v(x1.vm1)
-let vm2op=v(x1.vm2)
 
-* XM1: main CS device.
-let id1op=abs(@m.x1.xm1.m0[id])
-let gm1op=@m.x1.xm1.m0[gm]
-let gmb1op=@m.x1.xm1.m0[gmbs]
-let gds1op=@m.x1.xm1.m0[gds]
-let vgs1op=@m.x1.xm1.m0[vgs]
-let vds1op=@m.x1.xm1.m0[vds]
-let vbs1op=@m.x1.xm1.m0[vbs]
-let vth1op=@m.x1.xm1.m0[vth]
-let vov1op=vgs1op-vth1op
-let vdsat1op=abs(@m.x1.xm1.m0[vdsat])
-let sat1op=vds1op-vdsat1op
-let gmid1op=gm1op/(id1op+1e-30)
-let ro1op=1/(gds1op+1e-30)
-
-* XM2: CG input device.
+* XM2: CG input device, source-degenerated by L1/Rs + Leq/RLeq (fed-back common-gate, no tail source).
 let id2op=abs(@m.x1.xm2.m0[id])
 let gm2op=@m.x1.xm2.m0[gm]
 let gmb2op=@m.x1.xm2.m0[gmbs]
@@ -365,22 +335,22 @@ let sat2op=vds2op-vdsat2op
 let gmid2op=gm2op/(id2op+1e-30)
 let ro2op=1/(gds2op+1e-30)
 
-* XM3: source follower.
-let id3op=abs(@m.x1.xm3.m0[id])
-let gm3op=@m.x1.xm3.m0[gm]
-let gmb3op=@m.x1.xm3.m0[gmbs]
-let gds3op=@m.x1.xm3.m0[gds]
-let vgs3op=@m.x1.xm3.m0[vgs]
-let vds3op=@m.x1.xm3.m0[vds]
-let vbs3op=@m.x1.xm3.m0[vbs]
-let vth3op=@m.x1.xm3.m0[vth]
-let vov3op=vgs3op-vth3op
-let vdsat3op=abs(@m.x1.xm3.m0[vdsat])
-let sat3op=vds3op-vdsat3op
-let gmid3op=gm3op/(id3op+1e-30)
-let ro3op=1/(gds3op+1e-30)
+* XM1: CS gain device.
+let id1op=abs(@m.x1.xm1.m0[id])
+let gm1op=@m.x1.xm1.m0[gm]
+let gmb1op=@m.x1.xm1.m0[gmbs]
+let gds1op=@m.x1.xm1.m0[gds]
+let vgs1op=@m.x1.xm1.m0[vgs]
+let vds1op=@m.x1.xm1.m0[vds]
+let vbs1op=@m.x1.xm1.m0[vbs]
+let vth1op=@m.x1.xm1.m0[vth]
+let vov1op=vgs1op-vth1op
+let vdsat1op=abs(@m.x1.xm1.m0[vdsat])
+let sat1op=vds1op-vdsat1op
+let gmid1op=gm1op/(id1op+1e-30)
+let ro1op=1/(gds1op+1e-30)
 
-* XM4: CS cascode.
+* XM4: cascode on top of XM1, gate fixed at vbias_cas.
 let id4op=abs(@m.x1.xm4.m0[id])
 let gm4op=@m.x1.xm4.m0[gm]
 let gmb4op=@m.x1.xm4.m0[gmbs]
@@ -395,107 +365,20 @@ let sat4op=vds4op-vdsat4op
 let gmid4op=gm4op/(id4op+1e-30)
 let ro4op=1/(gds4op+1e-30)
 
-* XM5: CG current sink.
-let id5op=abs(@m.x1.xm5.m0[id])
-let gm5op=@m.x1.xm5.m0[gm]
-let gmb5op=@m.x1.xm5.m0[gmbs]
-let gds5op=@m.x1.xm5.m0[gds]
-let vgs5op=@m.x1.xm5.m0[vgs]
-let vds5op=@m.x1.xm5.m0[vds]
-let vbs5op=@m.x1.xm5.m0[vbs]
-let vth5op=@m.x1.xm5.m0[vth]
-let vov5op=vgs5op-vth5op
-let vdsat5op=abs(@m.x1.xm5.m0[vdsat])
-let sat5op=vds5op-vdsat5op
-let gmid5op=gm5op/(id5op+1e-30)
-let ro5op=1/(gds5op+1e-30)
-
-* XM6: buffer current sink.
-let id6op=abs(@m.x1.xm6.m0[id])
-let gm6op=@m.x1.xm6.m0[gm]
-let gmb6op=@m.x1.xm6.m0[gmbs]
-let gds6op=@m.x1.xm6.m0[gds]
-let vgs6op=@m.x1.xm6.m0[vgs]
-let vds6op=@m.x1.xm6.m0[vds]
-let vbs6op=@m.x1.xm6.m0[vbs]
-let vth6op=@m.x1.xm6.m0[vth]
-let vov6op=vgs6op-vth6op
-let vdsat6op=abs(@m.x1.xm6.m0[vdsat])
-let sat6op=vds6op-vdsat6op
-let gmid6op=gm6op/(id6op+1e-30)
-let ro6op=1/(gds6op+1e-30)
-
-* XM7: CG cascode.
-let id7op=abs(@m.x1.xm7.m0[id])
-let gm7op=@m.x1.xm7.m0[gm]
-let gmb7op=@m.x1.xm7.m0[gmbs]
-let gds7op=@m.x1.xm7.m0[gds]
-let vgs7op=@m.x1.xm7.m0[vgs]
-let vds7op=@m.x1.xm7.m0[vds]
-let vbs7op=@m.x1.xm7.m0[vbs]
-let vth7op=@m.x1.xm7.m0[vth]
-let vov7op=vgs7op-vth7op
-let vdsat7op=abs(@m.x1.xm7.m0[vdsat])
-let sat7op=vds7op-vdsat7op
-let gmid7op=gm7op/(id7op+1e-30)
-let ro7op=1/(gds7op+1e-30)
-
-* XM9: cancellation CS.
-let id9op=abs(@m.x1.xm9.m0[id])
-let gm9op=@m.x1.xm9.m0[gm]
-let gmb9op=@m.x1.xm9.m0[gmbs]
-let gds9op=@m.x1.xm9.m0[gds]
-let vgs9op=@m.x1.xm9.m0[vgs]
-let vds9op=@m.x1.xm9.m0[vds]
-let vbs9op=@m.x1.xm9.m0[vbs]
-let vth9op=@m.x1.xm9.m0[vth]
-let vov9op=vgs9op-vth9op
-let vdsat9op=abs(@m.x1.xm9.m0[vdsat])
-let sat9op=vds9op-vdsat9op
-let gmid9op=gm9op/(id9op+1e-30)
-let ro9op=1/(gds9op+1e-30)
-
-let vnet9op=vnet3op+vds1op
-let vnet9check=vnet8op-vds4op
-let vnet9diff=vnet9op-vnet9check
-let vnet10op=vsop+vds2op
-let vnet10check=vdop-vds7op
-let vnet10diff=vnet10op-vnet10check
-
 set op_pdc=$&pdcop
 set op_icore=$&icoreop
-set op_iio=$&iioop
-set op_vs=$&vsop
-set op_vnet10=$&vnet10op
-set op_vnet10check=$&vnet10check
-set op_vnet10diff=$&vnet10diff
-set op_vd=$&vdop
-set op_vnet3=$&vnet3op
-set op_vnet9=$&vnet9op
-set op_vnet9check=$&vnet9check
-set op_vnet9diff=$&vnet9diff
-set op_vnet8=$&vnet8op
-set op_vbuf=$&vbufop
+set op_vdd=$&v_vddop
+set op_vbias_cg=$&v_vbias_cgop
+set op_vbias_cs=$&v_vbias_csop
+set op_vbias_cas=$&v_vbias_casop
+
+set op_vnet1=$&vnet1op
+set op_vm2=$&vm2op
+set op_vnet2=$&vnet2op
+set op_vm1=$&vm1op
+set op_vx=$&vxop
 set op_vgcs=$&vgcsop
 set op_vgcg=$&vgcgop
-set op_vgcsc=$&vgcsccop
-set op_vx=$&vxop
-set op_vm1=$&vm1op
-set op_vm2=$&vm2op
-
-set op_vdd=$&v_vddop
-set op_vp=$&v_vpop
-set op_vref=$&v_vrefop
-set op_vsense=$&v_vsenseop
-set op_vbias_cas=$&v_vbias_casop
-set op_vbias_3v3=$&v_vbias_3v3op
-set op_vbias_casc=$&v_vbias_cascop
-set op_vbias_cg=$&v_vbias_cgop
-set op_vbias_icg=$&v_vbias_icgop
-set op_vbias_buf=$&v_vbias_bufop
-set op_vbias_cs=$&v_vbias_csop
-set op_vbias_csc=$&v_vbias_cscop
-set op_iladder=$&i_ladder_avg
 
 set op_id1=$&id1op
 set op_gm1=$&gm1op
@@ -525,20 +408,6 @@ set op_sat2=$&sat2op
 set op_gmid2=$&gmid2op
 set op_ro2=$&ro2op
 
-set op_id3=$&id3op
-set op_gm3=$&gm3op
-set op_gmb3=$&gmb3op
-set op_gds3=$&gds3op
-set op_vgs3=$&vgs3op
-set op_vds3=$&vds3op
-set op_vbs3=$&vbs3op
-set op_vth3=$&vth3op
-set op_vov3=$&vov3op
-set op_vdsat3=$&vdsat3op
-set op_sat3=$&sat3op
-set op_gmid3=$&gmid3op
-set op_ro3=$&ro3op
-
 set op_id4=$&id4op
 set op_gm4=$&gm4op
 set op_gmb4=$&gmb4op
@@ -553,82 +422,19 @@ set op_sat4=$&sat4op
 set op_gmid4=$&gmid4op
 set op_ro4=$&ro4op
 
-set op_id5=$&id5op
-set op_gm5=$&gm5op
-set op_gmb5=$&gmb5op
-set op_gds5=$&gds5op
-set op_vgs5=$&vgs5op
-set op_vds5=$&vds5op
-set op_vbs5=$&vbs5op
-set op_vth5=$&vth5op
-set op_vov5=$&vov5op
-set op_vdsat5=$&vdsat5op
-set op_sat5=$&sat5op
-set op_gmid5=$&gmid5op
-set op_ro5=$&ro5op
-
-set op_id6=$&id6op
-set op_gm6=$&gm6op
-set op_gmb6=$&gmb6op
-set op_gds6=$&gds6op
-set op_vgs6=$&vgs6op
-set op_vds6=$&vds6op
-set op_vbs6=$&vbs6op
-set op_vth6=$&vth6op
-set op_vov6=$&vov6op
-set op_vdsat6=$&vdsat6op
-set op_sat6=$&sat6op
-set op_gmid6=$&gmid6op
-set op_ro6=$&ro6op
-
-set op_id7=$&id7op
-set op_gm7=$&gm7op
-set op_gmb7=$&gmb7op
-set op_gds7=$&gds7op
-set op_vgs7=$&vgs7op
-set op_vds7=$&vds7op
-set op_vbs7=$&vbs7op
-set op_vth7=$&vth7op
-set op_vov7=$&vov7op
-set op_vdsat7=$&vdsat7op
-set op_sat7=$&sat7op
-set op_gmid7=$&gmid7op
-set op_ro7=$&ro7op
-
-set op_id9=$&id9op
-set op_gm9=$&gm9op
-set op_gmb9=$&gmb9op
-set op_gds9=$&gds9op
-set op_vgs9=$&vgs9op
-set op_vds9=$&vds9op
-set op_vbs9=$&vbs9op
-set op_vth9=$&vth9op
-set op_vov9=$&vov9op
-set op_vdsat9=$&vdsat9op
-set op_sat9=$&sat9op
-set op_gmid9=$&gmid9op
-set op_ro9=$&ro9op
-
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
-echo DC_SUPPLY_AND_BIAS_GENERATOR >> lna_core_06V_cgcs_report.txt
-echo PDC_mW $op_pdc ICORE_A $op_icore IIO_A $op_iio >> lna_core_06V_cgcs_report.txt
-echo BIAS_TOP_LEVEL_V VDD $op_vdd VP_BANDGAP $op_vp OTA_OUT_VREF $op_vref VSENSE $op_vsense ILADDER_A $op_iladder >> lna_core_06V_cgcs_report.txt
-echo BIAS_LADDER_V VBIAS_CAS $op_vbias_cas VBIAS_3V3 $op_vbias_3v3 VBIAS_CASC $op_vbias_casc VBIAS_CG $op_vbias_cg VBIAS_ICG $op_vbias_icg VBIAS_BUF $op_vbias_buf VBIAS_CS $op_vbias_cs VBIAS_CSC $op_vbias_csc >> lna_core_06V_cgcs_report.txt
+echo DC_SUPPLY_AND_BIAS >> lna_core_06V_cgcs_report.txt
+echo PDC_mW $op_pdc ICORE_A $op_icore >> lna_core_06V_cgcs_report.txt
+echo BIAS_V VDD $op_vdd VBIAS_CG $op_vbias_cg VBIAS_CS $op_vbias_cs VBIAS_CAS $op_vbias_cas >> lna_core_06V_cgcs_report.txt
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 echo DC_LNA_INTERNAL_NODE_VOLTAGES >> lna_core_06V_cgcs_report.txt
-echo NODES_V S $op_vs VX $op_vx VM1 $op_vm1 VM2 $op_vm2 NET10_DERIVED $op_vnet10 NET3 $op_vnet3 NET9_DERIVED $op_vnet9 NET8 $op_vnet8 VBUF $op_vbuf G_CS $op_vgcs G_CG $op_vgcg G_CSC $op_vgcsc >> lna_core_06V_cgcs_report.txt
-echo HIDDEN_NODE_CHECKS NET10_FROM_XM2 $op_vnet10 NET10_FROM_XM7 $op_vnet10check DIFFERENCE $op_vnet10diff NET9_FROM_XM1 $op_vnet9 NET9_FROM_XM4 $op_vnet9check DIFFERENCE $op_vnet9diff >> lna_core_06V_cgcs_report.txt
+echo NODES_V NET1 $op_vnet1 VM2 $op_vm2 NET2 $op_vnet2 VM1 $op_vm1 VX $op_vx G_CS $op_vgcs G_CG $op_vgcg >> lna_core_06V_cgcs_report.txt
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 echo TRANSISTOR_OPERATING_POINTS >> lna_core_06V_cgcs_report.txt
 echo FIELDS ID_A GM_S GMBS_S GDS_S VGS_V VDS_V VBS_V VTH_V VOV_V VDSAT_V SAT_MARGIN_V GM_OVER_ID_1_PER_V RO_OHM >> lna_core_06V_cgcs_report.txt
+echo XM2_CG_FEDBACK ID $op_id2 GM $op_gm2 GMBS $op_gmb2 GDS $op_gds2 VGS $op_vgs2 VDS $op_vds2 VBS $op_vbs2 VTH $op_vth2 VOV $op_vov2 VDSAT $op_vdsat2 SAT_MARGIN $op_sat2 GMID $op_gmid2 RO $op_ro2 >> lna_core_06V_cgcs_report.txt
 echo XM1_CS ID $op_id1 GM $op_gm1 GMBS $op_gmb1 GDS $op_gds1 VGS $op_vgs1 VDS $op_vds1 VBS $op_vbs1 VTH $op_vth1 VOV $op_vov1 VDSAT $op_vdsat1 SAT_MARGIN $op_sat1 GMID $op_gmid1 RO $op_ro1 >> lna_core_06V_cgcs_report.txt
-echo XM2_CG ID $op_id2 GM $op_gm2 GMBS $op_gmb2 GDS $op_gds2 VGS $op_vgs2 VDS $op_vds2 VBS $op_vbs2 VTH $op_vth2 VOV $op_vov2 VDSAT $op_vdsat2 SAT_MARGIN $op_sat2 GMID $op_gmid2 RO $op_ro2 >> lna_core_06V_cgcs_report.txt
-echo XM3_SOURCE_FOLLOWER ID $op_id3 GM $op_gm3 GMBS $op_gmb3 GDS $op_gds3 VGS $op_vgs3 VDS $op_vds3 VBS $op_vbs3 VTH $op_vth3 VOV $op_vov3 VDSAT $op_vdsat3 SAT_MARGIN $op_sat3 GMID $op_gmid3 RO $op_ro3 >> lna_core_06V_cgcs_report.txt
 echo XM4_CS_CASCODE ID $op_id4 GM $op_gm4 GMBS $op_gmb4 GDS $op_gds4 VGS $op_vgs4 VDS $op_vds4 VBS $op_vbs4 VTH $op_vth4 VOV $op_vov4 VDSAT $op_vdsat4 SAT_MARGIN $op_sat4 GMID $op_gmid4 RO $op_ro4 >> lna_core_06V_cgcs_report.txt
-echo XM5_CG_CURRENT_SINK ID $op_id5 GM $op_gm5 GMBS $op_gmb5 GDS $op_gds5 VGS $op_vgs5 VDS $op_vds5 VBS $op_vbs5 VTH $op_vth5 VOV $op_vov5 VDSAT $op_vdsat5 SAT_MARGIN $op_sat5 GMID $op_gmid5 RO $op_ro5 >> lna_core_06V_cgcs_report.txt
-echo XM6_BUFFER_CURRENT_SINK ID $op_id6 GM $op_gm6 GMBS $op_gmb6 GDS $op_gds6 VGS $op_vgs6 VDS $op_vds6 VBS $op_vbs6 VTH $op_vth6 VOV $op_vov6 VDSAT $op_vdsat6 SAT_MARGIN $op_sat6 GMID $op_gmid6 RO $op_ro6 >> lna_core_06V_cgcs_report.txt
-echo XM7_CG_CASCODE ID $op_id7 GM $op_gm7 GMBS $op_gmb7 GDS $op_gds7 VGS $op_vgs7 VDS $op_vds7 VBS $op_vbs7 VTH $op_vth7 VOV $op_vov7 VDSAT $op_vdsat7 SAT_MARGIN $op_sat7 GMID $op_gmid7 RO $op_ro7 >> lna_core_06V_cgcs_report.txt
-echo XM9_CANCELLATION_CS ID $op_id9 GM $op_gm9 GMBS $op_gmb9 GDS $op_gds9 VGS $op_vgs9 VDS $op_vds9 VBS $op_vbs9 VTH $op_vth9 VOV $op_vov9 VDSAT $op_sat9 SAT_MARGIN $op_sat9 GMID $op_gmid9 RO $op_ro9 >> lna_core_06V_cgcs_report.txt
 
 destroy $curplot
 
@@ -639,7 +445,7 @@ destroy $curplot
 * =============================================================================
 
 reset
-sp lin 101 500Meg 5Gig 1
+sp lin 7000 1Meg 7Gig 1
 set rfplot=$curplot
 
 let fghz=frequency/1e9
@@ -977,143 +783,13 @@ end
 wrdata lna_core_06V_cgcs_target_band.dat frequency s_1_1 s_2_1 s_1_2 s_2_2 s11db s21db s12db s22db nfdb nfmin_db kval mu mup delta_mag zin_re zin_im zout_re zout_im
 wrdata lna_core_06V_cgcs_broadband.dat frequency s11db s21db s12db s22db nfdb nfmin_db kval mu mup delta_mag zin_re zin_im zout_re zout_im
 
-* =============================================================================
-* NOISE-CANCELLATION A/B PROOF
-* Same method as before. For this to work, XC10 must use:
-* c_width=\{CNC_WIDTH\} c_length=\{CNC_LENGTH\}
-* =============================================================================
-
-set nc_on_plot=$rfplot
-
-alterparam CNC_WIDTH = 1e-6u
-alterparam CNC_LENGTH = 1e-6u
-reset
-
-sp lin 101 500Meg 5Gig 1
-set nc_off_plot=$curplot
-
-let fghz_nc=frequency/1e9
-
-let nf_nc_on=\{$nc_on_plot\}.nfdb
-let s21_nc_on=\{$nc_on_plot\}.s21db
-let s11_nc_on=\{$nc_on_plot\}.s11db
-let s22_nc_on=\{$nc_on_plot\}.s22db
-
-let nf_nc_off=real(NF)
-let s21_nc_off=db(s_2_1)
-let s11_nc_off=db(s_1_1)
-let s22_nc_off=db(s_2_2)
-
-let nf_improvement_db=nf_nc_off-nf_nc_on
-let gain_change_on_minus_off_db=s21_nc_on-s21_nc_off
-
-let nc_npts=length(frequency)
-
-let nc_ilo=0
-let nc_icenter=0
-let nc_ihi=0
-let nc_errlo=abs(frequency[0]-2.3e9)
-let nc_errcenter=abs(frequency[0]-2.4e9)
-let nc_errhi=abs(frequency[0]-2.5e9)
-let nc_ii=1
-
-while nc_ii < nc_npts
-let nc_newerr=abs(frequency[nc_ii]-2.3e9)
-if nc_newerr < nc_errlo
-let nc_errlo=nc_newerr
-let nc_ilo=nc_ii
-end
-let nc_newerr=abs(frequency[nc_ii]-2.4e9)
-if nc_newerr < nc_errcenter
-let nc_errcenter=nc_newerr
-let nc_icenter=nc_ii
-end
-let nc_newerr=abs(frequency[nc_ii]-2.5e9)
-if nc_newerr < nc_errhi
-let nc_errhi=nc_newerr
-let nc_ihi=nc_ii
-end
-let nc_ii=nc_ii+1
-end
-
-let nc_freq_center=frequency[nc_icenter]
-let nc_nf_on_c=nf_nc_on[nc_icenter]
-let nc_nf_off_c=nf_nc_off[nc_icenter]
-let nc_imp_c=nf_improvement_db[nc_icenter]
-
-let nc_s21_on_c=s21_nc_on[nc_icenter]
-let nc_s21_off_c=s21_nc_off[nc_icenter]
-let nc_gain_delta_c=gain_change_on_minus_off_db[nc_icenter]
-
-let nc_s11_on_c=s11_nc_on[nc_icenter]
-let nc_s11_off_c=s11_nc_off[nc_icenter]
-let nc_s22_on_c=s22_nc_on[nc_icenter]
-let nc_s22_off_c=s22_nc_off[nc_icenter]
-
-let nc_imp_min=nf_improvement_db[nc_ilo]
-let nc_imp_max=nf_improvement_db[nc_ilo]
-let nc_imp_min_i=nc_ilo
-let nc_imp_max_i=nc_ilo
-
-let nc_ii=nc_ilo
-while nc_ii <= nc_ihi
-if nf_improvement_db[nc_ii] < nc_imp_min
-let nc_imp_min=nf_improvement_db[nc_ii]
-let nc_imp_min_i=nc_ii
-end
-if nf_improvement_db[nc_ii] > nc_imp_max
-let nc_imp_max=nf_improvement_db[nc_ii]
-let nc_imp_max_i=nc_ii
-end
-let nc_ii=nc_ii+1
-end
-
-let nc_imp_min_f=frequency[nc_imp_min_i]
-let nc_imp_max_f=frequency[nc_imp_max_i]
-
-let nc_practical_threshold_db=0.20
-
-echo ============================================================ >> lna_core_06V_cgcs_report.txt
-echo NOISE_CANCELLATION_AB_PROOF >> lna_core_06V_cgcs_report.txt
-echo METHOD ON_CNC_8P2PF OFF_CNC_1E_MINUS18F_XM7_XM9_STILL_BIASED_AND_LOADING_RETAINED >> lna_core_06V_cgcs_report.txt
-echo ACTUAL_CENTER_SAMPLE_HZ $&nc_freq_center >> lna_core_06V_cgcs_report.txt
-echo NF_ON_DB $&nc_nf_on_c NF_OFF_DB $&nc_nf_off_c NF_IMPROVEMENT_DB $&nc_imp_c >> lna_core_06V_cgcs_report.txt
-echo S21_ON_DB $&nc_s21_on_c S21_OFF_DB $&nc_s21_off_c S21_ON_MINUS_OFF_DB $&nc_gain_delta_c >> lna_core_06V_cgcs_report.txt
-echo S11_ON_DB $&nc_s11_on_c S11_OFF_DB $&nc_s11_off_c >> lna_core_06V_cgcs_report.txt
-echo S22_ON_DB $&nc_s22_on_c S22_OFF_DB $&nc_s22_off_c >> lna_core_06V_cgcs_report.txt
-echo NF_IMPROVEMENT_MIN_DB_2P3_TO_2P5 $&nc_imp_min AT_HZ $&nc_imp_min_f >> lna_core_06V_cgcs_report.txt
-echo NF_IMPROVEMENT_MAX_DB_2P3_TO_2P5 $&nc_imp_max AT_HZ $&nc_imp_max_f >> lna_core_06V_cgcs_report.txt
-echo PRACTICAL_CENTER_THRESHOLD_DB $&nc_practical_threshold_db >> lna_core_06V_cgcs_report.txt
-
-if nc_imp_c > 0
-echo CENTER_DIRECTIONAL_TEST PASS_CANCELLATION_LOWERS_NF >> lna_core_06V_cgcs_report.txt
-else
-echo CENTER_DIRECTIONAL_TEST FAIL_CANCELLATION_DOES_NOT_LOWER_NF >> lna_core_06V_cgcs_report.txt
-end
-
-if nc_imp_min > 0
-echo FULL_TARGET_BAND_TEST PASS_CANCELLATION_LOWERS_NF_ACROSS_2P3_TO_2P5_GHZ >> lna_core_06V_cgcs_report.txt
-else
-echo FULL_TARGET_BAND_TEST FAIL_NF_IMPROVEMENT_NOT_POSITIVE_ACROSS_ENTIRE_TARGET_BAND >> lna_core_06V_cgcs_report.txt
-end
-
-if nc_imp_c >= nc_practical_threshold_db
-echo PRACTICAL_CENTER_TEST PASS_IMPROVEMENT_AT_LEAST_0P20_DB >> lna_core_06V_cgcs_report.txt
-else
-echo PRACTICAL_CENTER_TEST FAIL_IMPROVEMENT_BELOW_0P20_DB >> lna_core_06V_cgcs_report.txt
-end
-
-wrdata lna_core_06V_cgcs_noise_cancellation.dat nf_nc_on nf_nc_off nf_improvement_db s21_nc_on s21_nc_off s11_nc_on s11_nc_off s22_nc_on s22_nc_off
-
-alterparam CNC_WIDTH = 63.9529u
-alterparam CNC_LENGTH = 63.9529u
 reset
 
 * =============================================================================
 * WIDEBAND STABILITY 10 MHZ TO 30 GHZ
 * =============================================================================
 
-sp dec 11 100Meg 10G 1
+sp dec 101 10Meg 30G 1
 set stabilityplot=$curplot
 
 let wbdelta=s_1_1*s_2_2-s_1_2*s_2_1
@@ -1150,8 +826,7 @@ echo REPORT lna_core_06V_cgcs_report.txt >> lna_core_06V_cgcs_report.txt
 echo TARGET_DATA lna_core_06V_cgcs_target_band.dat >> lna_core_06V_cgcs_report.txt
 echo BROADBAND_DATA lna_core_06V_cgcs_broadband.dat >> lna_core_06V_cgcs_report.txt
 echo STABILITY_DATA lna_core_06V_cgcs_stability.dat >> lna_core_06V_cgcs_report.txt
-echo NOISE_CANCELLATION_DATA lna_core_06V_cgcs_noise_cancellation.dat >> lna_core_06V_cgcs_report.txt
-echo PLOTS S_PARAMETERS NF_NFMIN NOISE_CANCELLATION_ON_OFF NF_IMPROVEMENT S21_ON_OFF >> lna_core_06V_cgcs_report.txt
+echo PLOTS S_PARAMETERS NF_NFMIN STABILITY_MU_MUP >> lna_core_06V_cgcs_report.txt
 echo ============================================================ >> lna_core_06V_cgcs_report.txt
 
 * =============================================================================
@@ -1168,20 +843,17 @@ setscale fghz
 *plot nfdb nfmin_db xlimit 2.3 2.5
 
 plot s11db s22db s21db xlimit 0.5 5 ylimit -30 30
-plot s11re s11im xlimit 2.2 2.6 ylimit -1 1
+plot s22re s22im xlimit 2.2 2.6 ylimit -1 1
 *plot z22re z22im xlimit 0.5 5
 *plot s21db xlimit 0 7
 *plot s12db xlimit 0 7
 *plot s22db xlimit 0 7
 plot nfdb nfmin_db xlimit 0.5 5 ylimit 0 5
 
-setplot $nc_off_plot
-setscale fghz_nc
-set xbrushwidth=2
+setplot $stabilityplot
+setscale wbfghz
 
-*plot nf_nc_on nf_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'Noise figure (dB)'
-*plot nf_improvement_db xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'NF OFF - NF ON (dB)'
-*plot s21_nc_on s21_nc_off xlimit 2.3 2.5 xlabel 'Frequency (GHz)' ylabel 'S21 (dB)'
+plot wbmu wbmup xlimit 0.01 30 ylimit 0 3 xlabel 'Frequency (GHz)' ylabel 'Stability factor'
 
 .endc
 "
@@ -1196,14 +868,22 @@ C {vsource.sym} -620 -1230 1 0 {name=VBCS value=\{VBIAS_CS\} savecurrent=false}
 C {lab_pin.sym} -560 -1230 2 0 {name=p24 sig_type=std_logic lab=vbias_cs}
 C {vsource.sym} -620 -1120 1 0 {name=VBCS1 value=\{VBIAS_CAS\} savecurrent=false}
 C {lab_pin.sym} -560 -1120 2 0 {name=p49 sig_type=std_logic lab=vbias_cas}
-C {vsource.sym} -770 -1000 3 0 {name=VBCS2 value=\{VBIAS_BUF\} savecurrent=false}
-C {lab_pin.sym} -830 -1000 0 0 {name=p53 sig_type=std_logic lab=vbias_buf}
-C {vsource.sym} -780 -1110 3 0 {name=VBCS3 value=\{VBIAS_ICG\} savecurrent=false}
-C {lab_pin.sym} -840 -1110 0 0 {name=p54 sig_type=std_logic lab=vbias_icg}
-C {vsource.sym} -710 -940 2 0 {name=VBCS4 value=\{VBIAS_CSC\} savecurrent=false}
-C {lab_pin.sym} -710 -880 3 0 {name=p35 sig_type=std_logic lab=vbias_csc}
-C {vsource.sym} -620 -1020 1 0 {name=VBCS5 value=\{VBIAS_CASC\} savecurrent=false}
-C {lab_pin.sym} -560 -1020 2 0 {name=p67 sig_type=std_logic lab=vbias_casc}
+C {vsource.sym} -980 -920 3 0 {name=VBCS2 value=\{VBIAS_BUF\} savecurrent=false
+spice_ignore=true}
+C {lab_pin.sym} -1040 -920 0 0 {name=p53 sig_type=std_logic lab=vbias_buf
+spice_ignore=true}
+C {vsource.sym} -810 -1220 3 0 {name=VBCS3 value=\{VBIAS_ICG\} savecurrent=false
+spice_ignore=true}
+C {lab_pin.sym} -870 -1220 0 0 {name=p54 sig_type=std_logic lab=vbias_icg
+spice_ignore=true}
+C {vsource.sym} -830 -860 2 0 {name=VBCS4 value=\{VBIAS_CSC\} savecurrent=false
+spice_ignore=true}
+C {lab_pin.sym} -830 -800 3 0 {name=p35 sig_type=std_logic lab=vbias_csc
+spice_ignore=true}
+C {vsource.sym} -690 -720 1 0 {name=VBCS5 value=\{VBIAS_CASC\} savecurrent=false
+spice_ignore=true}
+C {lab_pin.sym} -630 -720 2 0 {name=p67 sig_type=std_logic lab=vbias_casc
+spice_ignore=true}
 C {code_shown.sym} 1350 -990 0 0 {name=s2 only_toplevel=false value="
 .param VBIAS_CAS_CG=3.30
 
@@ -1239,54 +919,25 @@ footprint=1206
 device=resistor
 m=1
 spice_ignore=true}
-C {code_shown.sym} 1210 -1840 0 0 {name=ngspice_s1 only_toplevel=true 
-value="
-
-.temp 25
-
-.control
-
-*set spnum = 1
-
-*foreach Lval 1n 2n 3n 4n 5n 10n
-*	alter l.x1.l1 $Lval
-
-*foreach Rval 2.5 5 7.5 10 12.5 15
-*	alter r.x1.Rs $Rval
-
-	sp lin 500 100e6 10e9 1
-*end
-
-*plot vdb(sp1.s_2_1) vdb(sp2.s_2_1) vdb(sp3.s_2_1) vdb(sp4.s_2_1) vdb(sp5.s_2_1) vdb(sp6.s_2_1)
-plot vdb(sp1.s_2_1)
-plot nf NFmin
-plot vdb(sp1.s_1_1)
-write lna-core_tb.raw
-
-let Rbase = 50
-wrs2p /foss/designs/lna_core_tb.s2p
-
-.endc
-"
-spice_ignore=true}
-C {lna_core_parts.sym} 440 -870 0 0 {name=x4}
-C {lab_pin.sym} 260 -910 0 0 {name=p2 sig_type=std_logic lab=rf_in_pad
+C {lna_core_parts.sym} 400 -910 0 0 {name=x4
 }
-C {lab_pin.sym} 620 -910 2 0 {name=p9 sig_type=std_logic lab=rf_out_pad
+C {lab_pin.sym} 220 -950 0 0 {name=p3 sig_type=std_logic lab=rf_in_pad
 }
-C {lab_pin.sym} 440 -1000 1 0 {name=p12 sig_type=std_logic lab=vdd
+C {lab_pin.sym} 220 -890 0 0 {name=p9 sig_type=std_logic lab=vbias_cg
 }
-C {lab_pin.sym} 260 -830 0 0 {name=p19 sig_type=std_logic lab=vbias_cs
+C {lab_pin.sym} 220 -870 0 0 {name=p12 sig_type=std_logic lab=vbias_cs
 }
-C {lab_pin.sym} 260 -850 0 0 {name=p20 sig_type=std_logic lab=vbias_cg
+C {lab_pin.sym} 220 -850 0 0 {name=p19 sig_type=std_logic lab=vbias_cas
 }
-C {lab_pin.sym} 260 -810 0 0 {name=p23 sig_type=std_logic lab=vbias_cas
+C {lab_pin.sym} 400 -780 3 0 {name=p20 sig_type=std_logic lab=vss
 }
-C {lab_pin.sym} 260 -870 0 0 {name=p26 sig_type=std_logic lab=g_cg
+C {lab_pin.sym} 400 -1040 1 0 {name=p23 sig_type=std_logic lab=vdd
 }
-C {vsource.sym} 50 -830 0 0 {name=V3 value=1 savecurrent=false}
-C {gnd.sym} 50 -800 0 0 {name=l2 lab=GND}
-C {lab_pin.sym} 50 -890 0 0 {name=p28 sig_type=std_logic lab=g_cg
+C {lab_pin.sym} 580 -950 2 0 {name=p26 sig_type=std_logic lab=rf_out_pad
 }
-C {lab_pin.sym} 440 -740 3 0 {name=p29 sig_type=std_logic lab=vss
+C {lab_pin.sym} 220 -910 0 0 {name=p28 sig_type=std_logic lab=g_cg
+}
+C {vsource.sym} -60 -760 0 0 {name=V3 value=1 savecurrent=false}
+C {lab_pin.sym} -60 -698.75 3 0 {name=p29 sig_type=std_logic lab=vss}
+C {lab_pin.sym} -60 -830 0 0 {name=p30 sig_type=std_logic lab=g_cg
 }
