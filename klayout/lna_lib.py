@@ -324,13 +324,17 @@ def _coil_read(path):
                 if s.is_text() or (c.cell_index() == t.cell_index() and not keep and s.dbbox().left >= pe - 1e-6):
                     s.delete()
     b = t.dbbox()
+    rx, ry = max(abs(b.left), b.right), max(abs(b.bottom), b.top)
     geo = {"pe": pe, "p1": (mk["p1"].bottom, mk["p1"].top), "p2": (mk["p2"].bottom, mk["p2"].top),
-           "r": max(abs(b.left), b.right, abs(b.bottom), b.top)}
+           "r": max(rx, ry), "rx": rx, "ry": ry}
     return src, geo
 
 
 def coil_geom(path):
-    """geometry of a coil (see _coil_read): pe = port edge x, p1 / p2 = (y0, y1) of the ports, r = half size"""
+    """geometry of a coil (see _coil_read): pe = port edge x, p1 / p2 = (y0, y1) of the ports, r = half size (max
+    of rx/ry, kept for square coils / generic keep-out checks), rx / ry = half-extent along x / y separately (a
+    square coil has rx == ry == r; a rectangular one -- e.g. LEQ_MAIN_RECT -- does not, callers that check a
+    placement fit against a specific axis must use rx or ry, not r)"""
     return _coil_read(path)[1]
 
 
