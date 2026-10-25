@@ -196,7 +196,6 @@
   }
  },
  "lna_core_output_match": {
-  "with_cap": true,
   "C1": {
    "W": 64.61,
    "L": 54.0,
