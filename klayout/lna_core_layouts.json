@@ -218,22 +218,22 @@
    420.0
   ],
   "LSHUNT_OUT": {
-   "coil": "LSHUNT_OUT_coil.gds",
+   "coil": "LSHUNT_OUT_RECT_coil.gds",
    "centre": [
-    665.795,
-    602.0
+    748.0,
+    567.0
    ],
    "ports": "west"
   },
   "macro": [
    1186,
-   1204
+   1104
   ],
   "frame": [
    0,
    -353,
    1186,
-   851
+   751
   ],
   "pins": {
    "output_cs": "Metal5 x=380.0 y=498.305",

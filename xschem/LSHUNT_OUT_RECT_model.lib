@@ -1,0 +1,25 @@
+* LSHUNT_OUT_RECT_model.lib -- rectangular reshape of LSHUNT_OUT (lna_core_output_match's own
+* coil, same 2.5041nH target as the original square LSHUNT_OUT_coil.gds -- deliberately reused
+* value, not a coincidence), shrunk in world-Y / grown in world-X to let Y_N shrink toward the
+* 1070x1070 macro budget. Real EM characterization (openEMS, good_tries/LSHUNT_OUT_RECT_CAND2_X280.0_Y125.0_N2_W26,
+* one Newton-step correction from an initial 270.0/128.0 guess), not yet snp2le-fitted (ideal/rl
+* sections only -- this project's check_lna_core_layouts.py LVS strips all inductor models from
+* comparison regardless, so this does not block DRC/LVS verification; snp2le fitting is a
+* follow-up, same convention as every other coil in this project once needed).
+*   ideal  : single ideal inductor, L=2.4844n
+*   rl     : EM-derived series L+R, L=2.4844n R=3.2081ohm
+* Select the active one from the including file via:
+*   .lib <path>/LSHUNT_OUT_RECT_model.lib ideal   (or rl)
+
+.lib ideal
+.SUBCKT LSHUNT_OUT_RECT_MODEL p1 p2
+L1 p1 p2 2.4844n
+.ENDS LSHUNT_OUT_RECT_MODEL
+.endl ideal
+
+.lib rl
+.SUBCKT LSHUNT_OUT_RECT_MODEL p1 p2
+R1 p1 mid_LSHUNT_OUT_RECT 3.2081
+L1 mid_LSHUNT_OUT_RECT p2 2.4844n
+.ENDS LSHUNT_OUT_RECT_MODEL
+.endl rl

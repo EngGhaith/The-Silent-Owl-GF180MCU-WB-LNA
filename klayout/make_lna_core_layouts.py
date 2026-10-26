@@ -88,7 +88,7 @@ def pf(v):
 SP_KO = 25.0  # keep-out around every inductor
 COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
-         ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_coil.gds"}
+         ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_RECT_coil.gds"}
 # MACRO_W history: 1204 (original, pre-existing overflow vs the 1070 padframe-tile budget: L1 reused LSHUNT_OUT's
 # own square coil, r=211.295, world-X -- this appears TWICE in the LEQ->L1->LD4 chain's east-west budget, once to
 # clear L1 from LEQ and once again for L1's own half-width before LD4) -> 1434 (commit cc900b6: LEQ_MAIN_RECT's
@@ -109,7 +109,20 @@ COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_
 # project investigation, reports/ld4_ld2_rectangular_reshape_investigation.html on main_pex, found reshaping LD4
 # is a legitimate but separate area-reduction lever for a DIFFERENT question -- not pursued here).
 MACRO_W, RING = 1186, 12
-Y_S, Y_N = -353, 851  # south / north macro edge. Y_N: still set by LSHUNT_OUT (output_match, unchanged/fixed coil)
+Y_S, Y_N = -353, 751  # south / north macro edge. Y_N shrunk 851 -> 751: LSHUNT_OUT (output_match) is now also
+# reshaped rectangular (LSHUNT_OUT_RECT_coil.gds, same 2.5041nH target, ry 211.295 -> 141, rx -> 296 -- it was
+# the sole remaining driver of the macro's Y-direction overflow, sitting almost exactly against the old
+# Y_N=851 with ~0.7um margin). LSH_CY re-centred (602 -> 532) for the new ry.
+#
+# 751, not the 711 LSHUNT_OUT's OWN fit alone would allow: once LSHUNT_OUT stopped being the binding
+# constraint, LD2 (lna_core_cs, square, untouched, ry=108.5) became the new one -- its own "LD2 does not fit"
+# assert (cy + ry + SP_KO + RING <= Y_N, cy=LD2_CY=600 fixed by its own bias-lead keep-outs, ~6.5um of
+# south-ward slack only, not enough to matter) needs Y_N >= 745.5, which rounds up to the nearest
+# pitch-aligned value (Y_N mod 20 == 11, same tile-grid alignment constraint as commit 30e895b) of 751.
+# (Y_N - Y_S) = 1104 -- back to this project's ORIGINAL pre-reshape height (coincidentally), still over the
+# 1070 budget by 34um. Reshaping LD2 itself (same technique, different ~4.30nH target) is the next lever if
+# this needs to go lower -- not attempted here. MACRO_W=1186 (116um over 1070, see its own comment above) is
+# now the more binding dimension of the two either way.
 # sitting almost exactly as tight against the north ring as it can (0.7 um margin on each side of its own Y-band)
 # -- this is the pre-existing (independent of the LEQ/L1 work) Y overflow's root cause: LSHUNT_OUT cannot be
 # reshaped (lna_core_output_match keeps the original square coil, per the task), so Y_N cannot be reduced below
@@ -149,7 +162,27 @@ L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL l
 # constant), since it depends on LEQ's own east edge, which varies with whichever coil GDS is in use
 LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
 LD2_PORT_X, LD2_CY = 340.0, 600.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
-LSH_PORT_X, LSH_CY = 455.0, 602.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
+# Tried reshaping LD2 rectangular (LD2_RECT_coil.gds, rx 108.5 -> 146.2 / ry 108.5 -> 76.0, same 4.30nH target,
+# see /foss/designs/rapidpassives/try4/newflow/good_tries/LD2_RECT_CAND2_X130.2_Y60.0_N3_W1.75/) to relax the
+# "LD2 does not fit" assert below -- reverted. Two problems, either one fatal on its own: (1) it doesn't even
+# help -- LSHUNT_OUT_RECT is the binding constraint on Y_N (needs Y_N >= ~745, pitch-rounds to 751 regardless of
+# LD2's own margin), so a smaller LD2 ry buys nothing. (2) it doesn't fit the channel at all: LD2_PORT_X=340 is
+# pinned by where port 1/2 must land to meet the fixed LD2_VDD_X=(350,360) / VX_X=(377,387) columns (vbias
+# columns bound the west side at x<=90). The old square's east edge (cx+r=340.5) just clears those columns
+# (340.5 < 350); growing rx to 146.2 pushes the bulk's east edge to 343 **at best** -- any PORT_X large enough
+# to also clear the west-side vbias assert (needs >= 405.4) drags the whole coil (port included) past x=350/387,
+# so the coil's own M5 turns end up physically UNDER the VDD_X/VX_X columns -- confirmed via a render showing
+# both columns running straight through the coil body -- and that is exactly what produced the vdd/output_match
+# LVS short (lna_core_parts net "output_cs|output_match|rf_out_pad|vdd"). The channel between the vbias columns
+# and VDD_X/VX_X is only wide enough for rx <~ 110 (barely more than the square's 108.5): not worth it without a
+# bigger rework (moving VDD_X/VX_X/vbias themselves, which has its own cascading guard-ring clearance issues --
+# see build_cs). Back to the original square LD2_coil.gds.
+LSH_PORT_X, LSH_CY = 455.0, 567.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
+# LSH_CY re-centred for LSHUNT_OUT_RECT's ry=141. Feasible range is actually (561.9, 573] with Y_N=751: the
+# low end comes from the OTHER assert down in build_output_match ("rf_out port must be the lower one, clear of
+# the cap") -- q1 (rf_out port) sits at local y in [-27,-1] pre-rotation, so world q1_bottom = cy-27 must clear
+# the output cap's top plate + 20um margin (q1_min_y ~= 534.9 for the real cap geometry), i.e. cy > 561.9; the
+# high end is the "LSHUNT_OUT does not fit" assert (cy + ry + SP_KO + RING <= Y_N = 751). 567 sits mid-range.
 VDD4_X = (1158.0, 1168.0)  # vdd lead of LD4 along the east edge to the north edge -- shrunk back down from the
 # cc900b6 1396/1406, now even below the pre-cc900b6 1166/1176, since L1's own world-X shrink moves the whole
 # LEQ->L1->LD4 chain (and therefore LD4's own east edge) west; LD4 itself is untouched
