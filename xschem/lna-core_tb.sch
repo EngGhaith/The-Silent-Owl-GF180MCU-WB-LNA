@@ -260,7 +260,7 @@ value="
 .lib $::env(PWD)/LEQ_MAIN_RECT2_model.lib rl
 .lib $::env(PWD)/L1_RECT_model.lib rl
 .lib $::env(PWD)/LD2_model.lib rl
-.lib $::env(PWD)/LD4_model.lib rl
+.lib $::env(PWD)/LD4_RECT_model.lib rl
 "}
 C {code_shown.sym} 840 -870 0 0 {name=s1 only_toplevel=false value="
 

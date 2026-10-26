@@ -1,0 +1,36 @@
+* LD4_RECT_model.lib -- two interchangeable implementations of the same
+* LD4_RECT_MODEL subckt (same name + pin interface in every section):
+*   ideal  : single ideal inductor, L=8.4824n
+*   rl     : EM-derived series L+R, L=8.4824n R=30.2594ohm
+* Select the active one from the including file via:
+*   .lib <path>/LD4_RECT_model.lib ideal   (or rl)
+*
+* Rectangular reshape of LD4 (N=3, W=2um, S=2um, SC2 stack tier -- TM+M4 shunted
+* via real TV via-stitching across the whole trace; distinct from LD2's
+* nostack/TM-only N=3/W=1.75 family), outer half-extents (outer_half_x,
+* outer_half_y) = (216.0, 93.0) -> rx=232.0, ry=109.0 (ry shrunk from the
+* square's 166.0, rx grown to compensate and conserve L). EM verified via
+* openEMS (gds2openEMS, PEC boundaries, energy_limit=-60dB, resonance_estimation,
+* 2.4GHz, OPENEMS-GF180MCUD-1P5M-TM11KA-MIMB-STACKED2.xml): L=8.4824nH (+0.50%
+* vs the square's 8.4401nH/8.44nH target), R=30.2594ohm (+3.88% vs 29.13ohm --
+* secondary, LD4 is intentionally lossy by design), Q=4.227 (-3.3%). Confirmed
+* on the first candidate, no correction iteration needed.
+* Floorplan motive: this coil is chained immediately east of L1 in build_cg and
+* was the sole driver pinning MACRO_W at 1186 (east edge cx4+166=1151, plus a
+* now-removed dedicated vdd column that pinned it further to 1186); the smaller
+* ry brings its east edge to ~1037, under LSHUNT_OUT's own 1044 floor.
+* See /foss/designs/rapidpassives/try4/newflow/good_tries/LD4_RECT_CAND1_X216.0_Y93.0_N3_W2_SC2/
+* (STATUS.md) for the full derivation.
+
+.lib ideal
+.SUBCKT LD4_RECT_MODEL p1 p2
+L1 p1 p2 8.4824n
+.ENDS LD4_RECT_MODEL
+.endl ideal
+
+.lib rl
+.SUBCKT LD4_RECT_MODEL p1 p2
+R1 p1 mid_LD4_RECT 30.2594
+L1 mid_LD4_RECT p2 8.4824n
+.ENDS LD4_RECT_MODEL
+.endl rl

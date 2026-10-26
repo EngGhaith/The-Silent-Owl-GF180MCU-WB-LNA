@@ -53,7 +53,7 @@ def blk2world(bx, by):
 COILS = {
     "LEQ": ("lna_core_input_match", "LEQ_MAIN_RECT2_coil.gds"),
     "L1": ("lna_core_cg", "L1_RECT_coil.gds"),
-    "LD4": ("lna_core_cg", "LD4_coil.gds"),
+    "LD4": ("lna_core_cg", "LD4_RECT_coil.gds"),
     "LD2": ("lna_core_cs", "LD2_coil.gds"),
     "LSHUNT_OUT": ("lna_core_output_match", "LSHUNT_OUT_RECT_coil.gds"),
 }

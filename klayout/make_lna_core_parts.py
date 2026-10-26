@@ -249,13 +249,28 @@ def build_supply(ly, top):
     S.box("m2", CS_STRAP_X + 2, yw + 8, xw + 1, yw + 12)
     yt = max(sy for sx, sy in grp_b)
     xt = max(sx for sx, sy in grp_b if sy == yt)
-    x4 = g(cg["LD4"]["centre"][0] + 6)  # east of LD4 port 1 (cx + 1 .. cx + 3)
-    yv = (ld4[1] + 12, ld4[1] + 22)  # between the LD4 vdd lead and the vm2 trace
+    # x4: via3/via4 stack location for group B's own vdd tap. Used to be "east of LD4 port 1" (centre + 6), landing
+    # either inside LD4_RECT's own via-dense body (V3.2a/V4.2a spacing violations against the coil's own vias) or,
+    # moved further east onto the real rail band, shorting vdd to vss outright: S.stack(..., 3, 5) draws M3 AND M4
+    # AND M5 at the same spot (see lib.Cell.stack) -- M4 is vss everywhere near here, both inside LD4_RECT's own
+    # SC2 shunt trace (shunt_metal=46, i.e. M4, running the whole way around its ring: confirmed M4 x 819..1037 at
+    # this y) and in the ring band (x >= W - RING, confirmed M4 x 1058..1065), so any 3-5 stack dropped in either
+    # place ties vss (M4) straight to vdd (M5) through its own via cuts. The ONLY M4-clear window at this y is
+    # 1037..1058 (confirmed empty of M4 in both the coil and the ring) -- the stack lands there, with a plain
+    # M5-only bridge (no via, no M4) carrying it the rest of the way onto the real rail, exactly how the old
+    # dedicated VDD4_X column (removed when LD4's own vdd lead became a short local run) used to reach it.
+    x4 = g(1040.0)
+    assert 1037.0 < x4 and x4 + 10 < W - RING, "group B vdd tap: M4-clear window closed, re-derive x4"
+    yv = (ld4[1] + 15, ld4[1] + 25)  # between the LD4 vdd lead and the vm2 trace. Offset +15/+25, not +12/+22:
+    # ld4[1] (ld4_vdd_lead's own y0) moved 333 -> 330 when LD4's vdd lead became a short local run off its own q1
+    # port instead of a dedicated column at a fixed LD4_VDD_Y, eating into this band's small (2 um) margin against
+    # yt (the tallest free tile row below it) -- widened back out.
     assert yt + PITCH + 4 <= yv[0] and yv[1] + 1 <= 357
     S.box("m3", xt + 8, yt + 16, xt + 12, yv[1])
     S.box("m3", xt + 8, yv[0], x4 + 10, yv[1])
     S.box("m3", x4, ld4[1], x4 + 10, yv[1])
     S.stack(x4, ld4[1], x4 + 10, ld4[1] + 10, 3, 5)
+    S.box("m5", x4 + 10, ld4[1], W - RING + 2, ld4[1] + 10)  # plain M5 bridge, no via/M4, onto the real rail
 
     S.label(1, "vss", 6, (Y0 + H) / 2)
     S.label(5, "vdd", W / 2, H - 7)

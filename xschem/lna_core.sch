@@ -230,7 +230,7 @@ L=33.118u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
-C {LD4_model.sym} 760 -1055 0 0 {name=XLD4}
+C {LD4_RECT_model.sym} 760 -1055 0 0 {name=XLD4}
 C {lab_pin.sym} 660 -1055 1 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 860 -1055 1 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
 C {L1_RECT_model.sym} 800 -440 0 0 {name=XL1}
