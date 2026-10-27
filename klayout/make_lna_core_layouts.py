@@ -709,29 +709,32 @@ def build_cg(ly):
     top.box("m1", rw2[0], rw2[1], rw2[2], rw2[3] + 2.5)
     top.stack(rw2[0] - 0.4, rw2[3] + 1.0, rw2[2] + 0.4, rw2[3] + 2.5, 1, 3)
     xvc = vbias_column(top, "vbias_cs", (rw2[0] + rw2[2]) / 2, rw2[3] + 1.0)
-    # --- LD4: coil south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 (east) -> vdd, short
-    # lead north past its own keep-out into the generic tile fabric (same convention as LD2's own vdd lead -- see
-    # make_lna_core_parts.py's build_supply(), which reads ld4_vdd_lead below for its foreign-metal exclusion).
-    # Previously ran a dedicated column all the way to a fixed east-edge rail (VDD4_X=(1158,1168)), which pinned
-    # MACRO_W >= 1185 on its own regardless of what else needed the width -- removed, since the generic tile fabric
-    # immediately north of LD4 already carries vdd (M5) and a short local reach is all that's needed.
+    # --- LD4: relocated to the NW corner, decoupled from the L1 chain (re-floorplan request). rot=90, no mirror
+    # ("+90 deg" per request): ports face north -- confirmed by direct probe of coil_ports() under this rotation.
+    # q1 (vdd, port1) lands WEST, q2 (vm2/drain signal, port2) lands EAST -- opposite of the old (rot=90,
+    # mirror=True) placement's own arrangement, where q2 was west.
     geo = coil_geom(P, "LD4")
-    # LD4: rot=90 swaps axes too, same convention as L1 above
-    cx4, cy4 = g(cx1 + g1["ry"] + SP_KO + geo["ry"]), g(LD4_PORT_Y - geo["pe"])
-    assert cy4 - geo["rx"] - RING >= Y_S + RING, "LD4 does not fit"
-    assert cx4 + geo["ry"] + RING <= MACRO_W, "LD4 does not fit the macro width"
-    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90, mirror=True)
-    assert q2[2] < q1[0], "vm2 port must be the western one"
-    yv = VM2_Y
-    assert yv[0] - 4 >= plates[1][3] and q2[3] + 10 <= yv[1]
-    top.box("m5", *q2)
-    top.box("m5", q2[2] - 10, q2[3] - 0.5, q2[2], yv[1])
-    top.box("m5", dc[0], yv[0], q2[2], yv[1])
+    # cx4=438 (not 234, directly above LEQ): a first attempt at 234 directly overlapped cg's own C2/C3 MIM cap
+    # bank (c9_plates, x=210-319, y=244-353) -- confirmed by a huge pile of real MIMTM/via DRC violations, not
+    # assumed from geometry alone. 438 clears that bank (needs cx4-ry>=319+SP_KO), L1, LEQ, and the cg guard ring,
+    # all at this same cy.
+    cx4, cy4 = 438.0, 490.0
+    assert cy4 + geo["rx"] + SP_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"  # rot=90: world-Y
+    # extent is local rx
+    assert cx4 - geo["ry"] - SP_KO >= 0, "LD4 (NW) does not fit against the west edge"  # world-X extent is ry
+    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90)
+    assert q1[0] < q2[0], "q1 (vdd) must be the western port, q2 (vm2) the eastern one"
     top.box("m5", *q1)
-    ld4_vdd_y1 = g(q1[3] + 12)
-    assert ld4_vdd_y1 < Y_N, "LD4 vdd lead shortening computed past the macro edge"
-    top.box("m5", q1[0], q1[1], q1[2], ld4_vdd_y1)
-    top.label(5, "vdd", (q1[0] + q1[2]) / 2, (q1[1] + ld4_vdd_y1) / 2)
+    top.box("m5", *q2)
+    # vm2 (q2): the drain-bus dc column already runs up to the C2 cap's own top-plate height (p1[3]) -- continue
+    # it north to meet q2, jogging east to q2's own x (q2 is east of dc here, unlike the main_pex redo where it
+    # happened to land close to dc already).
+    top.box("m5", dc[0], p1[3], dc[1], q2[1] + 0.5)
+    top.box("m5", dc[0], q2[1], q2[2], q2[3])
+    # vdd (q1): short local reach north into the generic tile fabric -- q1 (west) and q2 (east) share the same
+    # y-band but sit at different x, so this run never crosses q2's own position.
+    top.box("m5", q1[0], q1[1], q1[2], Y_N)
+    top.label(5, "vdd", (q1[0] + q1[2]) / 2, Y_N - 1)
     INFO[P] = {"M1": {"rows": rows, "fingers_per_row": ma["nf"], "wf": wf, "L": l2,
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
@@ -739,7 +742,7 @@ def build_cg(ly):
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north"},
                "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
-               "ld4_vdd_lead": [q1[0], q1[1], q1[2], ld4_vdd_y1],
+               "ld4_vdd_lead": [q1[0], q1[1], q1[2], Y_N],
                "vm2_column_x": list(dc),
                "pins": {"input_match": "Metal5 x=82 y=290..300", "output_cs": list(gp), "g_cg": f"Metal3 west edge y={GCG_Y}",
                         "vbias_cg": f"Metal3 north edge x={xvb:.2f}", "vbias_cs": f"Metal3 north edge x={xvc:.2f}",
