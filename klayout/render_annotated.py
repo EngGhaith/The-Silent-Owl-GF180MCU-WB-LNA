@@ -3,14 +3,24 @@
 
   klayout -zz -rm render_annotated.py   (run via plain python3, not -b -r, since we need PIL)
   python3 render_annotated.py [out.png] ["achievement caption"]
+
+Two-stage by necessity: this stage (pya loaded) only computes geometry and saves the raw
+klayout render + a JSON sidecar describing the overlay; _render_overlay.py (invoked below as a
+genuinely separate `python3` process, no pya import anywhere in it) does the actual PIL/
+ImageDraw/ImageFont work. Discovered empirically: with pya and PIL's font rendering (_imagingft,
+backed by FreeType) loaded in the SAME process, draw.text() intermittently crashes with a
+DecompressionBombError reporting a garbage/huge pixel count for the glyph mask size -- not a real
+oversized image, and not fixed by retrying in-process or by switching between `klayout -b -r` and
+`klayout -zz -rm`. Looks like the two libraries' FreeType usage conflicting in one process. Giving
+PIL its own process (no pya at all) made it reliable.
 """
 import json
 import os
+import shutil
 import subprocess
 import sys
 
 import pya
-from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
@@ -31,14 +41,6 @@ view_box = lv.box()  # DBox: the world-coordinate box actually shown
 lv.save_image(RAW, W_PX, H_PX)
 
 vb_l, vb_b, vb_r, vb_t = view_box.left, view_box.bottom, view_box.right, view_box.top
-
-
-def to_px(x, y):
-    """world (um) -> pixel (klayout image: y flipped, origin top-left)"""
-    px = (x - vb_l) / (vb_r - vb_l) * W_PX
-    py = H_PX - (y - vb_b) / (vb_t - vb_b) * H_PX
-    return px, py
-
 
 # ---- macro placement (from make_lna_top.py's own printed geometry convention) ----
 MACRO_ORIGIN = (410.3, 1461.3)  # world (x, y) of block coordinate (0, Y0)
@@ -93,77 +95,29 @@ for inst in top.each_inst():
 
 macro_world = (MACRO_ORIGIN[0], MACRO_ORIGIN[1], MACRO_ORIGIN[0] + MACRO_W, MACRO_ORIGIN[1] + MACRO_H)
 
-# ================================================================ overlay
-img = Image.open(RAW).convert("RGB")
-draw = ImageDraw.Draw(img)
-
-
-def font(sz):
-    for path in ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"):
-        if os.path.exists(path):
-            return ImageFont.truetype(path, sz)
-    return ImageFont.load_default()
-
-
-F_TITLE, F_LABEL, F_SMALL = font(26), font(18), font(14)
-YELLOW, CYAN, WHITE, RED = (255, 220, 0), (0, 230, 230), (255, 255, 255), (255, 70, 70)
-
-# macro outline + dimensions
-mx0, my0 = to_px(macro_world[0], macro_world[1])
-mx1, my1 = to_px(macro_world[2], macro_world[3])
-draw.rectangle([mx0, my1, mx1, my0], outline=YELLOW, width=3)
-dim_y = min(my0 + 28, H_PX - 50)
-draw.line([(mx0, dim_y), (mx1, dim_y)], fill=YELLOW, width=2)
-draw.line([(mx0, dim_y - 6), (mx0, dim_y + 6)], fill=YELLOW, width=2)
-draw.line([(mx1, dim_y - 6), (mx1, dim_y + 6)], fill=YELLOW, width=2)
-draw.text(((mx0 + mx1) / 2, dim_y + 10), f"{MACRO_W:.0f} um (budget 1070)", fill=YELLOW, font=F_LABEL, anchor="mt")
-dim_x = mx1 + 28
-draw.line([(dim_x, my1), (dim_x, my0)], fill=YELLOW, width=2)
-draw.line([(dim_x - 6, my1), (dim_x + 6, my1)], fill=YELLOW, width=2)
-draw.line([(dim_x - 6, my0), (dim_x + 6, my0)], fill=YELLOW, width=2)
-txt = f"{MACRO_H:.0f} um (budget 1070)"
-tw = draw.textlength(txt, font=F_LABEL)
-img2 = Image.new("RGBA", (int(tw) + 10, 30), (0, 0, 0, 0))
-d2 = ImageDraw.Draw(img2)
-d2.text((5, 0), txt, fill=YELLOW, font=F_LABEL)
-img2 = img2.rotate(90, expand=True)
-img.paste(img2, (int(dim_x + 10), int((my0 + my1) / 2 - img2.height / 2)), img2)
-
-# coil annotations
-for name, (x0, y0, x1, y1) in coil_boxes.items():
-    px0, py0 = to_px(x0, y0)
-    px1, py1 = to_px(x1, y1)
-    draw.rectangle([px0, py1, px1, py0], outline=CYAN, width=2)
-    cxp, cyp = (px0 + px1) / 2, (py0 + py1) / 2
-    tw = draw.textlength(name, font=F_LABEL)
-    draw.rectangle([cxp - tw / 2 - 4, py1 - 24, cxp + tw / 2 + 4, py1 - 2], fill=(0, 0, 0))
-    draw.text((cxp, py1 - 6), name, fill=CYAN, font=F_LABEL, anchor="mb")
-
-# pad annotations
-for net, l, b, r, t in pads:
-    p0 = to_px(l, b)
-    p1 = to_px(r, t)
-    cx, cy = (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2
-    color = RED if net in ("rf_in", "rf_out") else WHITE
-    draw.rectangle([p0[0], p1[1], p1[0], p0[1]], outline=color, width=2)
-    label_y = p0[1] + 14 if t > 2600 else cy
-    anchor = "mt" if t > 2600 else "rm"
-    lx = cx if t > 2600 else p0[0] - 6
-    draw.text((lx, label_y), net, fill=color, font=F_SMALL, anchor=anchor)
-
-# title / caption
 try:
     BRANCH = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=HERE, capture_output=True,
                              text=True, check=True).stdout.strip()
 except Exception:
     BRANCH = "?"
-title = f"The-Silent-Owl GF180MCU LNA -- {BRANCH} -- macro {MACRO_W:.0f} x {MACRO_H:.0f} um (pad-tile budget 1070 x 1070)"
-draw.rectangle([0, 0, img.width, 40], fill=(0, 0, 0))
-draw.text((10, 6), title, fill=WHITE, font=F_TITLE)
-if CAPTION:
-    draw.rectangle([0, img.height - 34, img.width, img.height], fill=(0, 0, 0))
-    draw.text((10, img.height - 28), CAPTION, fill=(180, 255, 180), font=F_LABEL)
 
-img.save(OUT)
-print("wrote", OUT)
+sidecar = {
+    "w_px": W_PX, "h_px": H_PX, "view_box": [vb_l, vb_b, vb_r, vb_t],
+    "macro_world": list(macro_world), "macro_w": MACRO_W, "macro_h": MACRO_H,
+    "coil_boxes": coil_boxes, "pads": pads, "branch": BRANCH, "out": OUT, "caption": CAPTION,
+}
+SIDECAR_PATH = "/tmp/_lna_render_sidecar.json"
+json.dump(sidecar, open(SIDECAR_PATH, "w"))
+
+# NOTE: do NOT use sys.executable here -- inside klayout's embedded Python, sys.executable resolves
+# to the klayout binary itself (re-running this same conflicted interpreter, which was observed to
+# hang rather than crash). Find a real system python3 explicitly instead.
+PY3 = shutil.which("python3") or shutil.which("python")
+if not PY3:
+    raise SystemExit("no system python3 found on PATH -- needed for the overlay subprocess")
+r = subprocess.run([PY3, os.path.join(HERE, "_render_overlay.py"), SIDECAR_PATH, RAW],
+                    capture_output=True, text=True, timeout=60)
+sys.stdout.write(r.stdout)
+sys.stderr.write(r.stderr)
+if r.returncode != 0:
+    raise SystemExit(f"overlay subprocess failed (exit {r.returncode})")
