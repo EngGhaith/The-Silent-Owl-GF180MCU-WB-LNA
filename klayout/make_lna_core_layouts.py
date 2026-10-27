@@ -109,8 +109,14 @@ COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_
 # (either LD4_RECT's own SC2 shunt trace, M4 the whole way around its ring, or the east ring band's own M4) --
 # see build_supply()'s own comment at that site for the full story and the fix (a plain M5-only bridge, no via,
 # landing in the one M4-clear window between the coil and the ring).
-MACRO_W, RING = 1062, 12
-Y_S, Y_N = -353, 751  # main_pex: bumped from main_layout's ported 731 -- main_pex's own output series cap
+MACRO_W, RING = 1102, 12  # grown from 1062 for the re-floorplan's LSHUNT_OUT SE relocation: the corridor east of
+# L1's own east edge (779) to the old east edge was only 251um wide, 31um short of LSHUNT_OUT_RECT's own 282um
+# diameter at rot=270 (ports south, axes swapped: world-X extent = local ry = 141). First-shot sizing, to be
+# tightened once the coils are reshaped again for this new topology (if ever).
+Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S-2*RING) mod 20 == 0) for the same
+# re-floorplan: LSHUNT_OUT's long rf_out return lead needs a clear east-west channel south of both its own and
+# L1's keep-outs (L1 south edge -318, LSHUNT_OUT's own ~-326 at its new site) -- see LSH_CHANNEL_Y below.
+# main_pex: bumped from main_layout's ported 731 -- main_pex's own output series cap
 # (lna_core_output_match.sch) is larger than main's, needing more LSHUNT_OUT port clearance (q1_min_y). See LSH_CY below.
 # reshaped rectangular (LSHUNT_OUT_RECT_coil.gds, same 2.5041nH target, ry 211.295 -> 141, rx -> 296 -- it was
 # the sole remaining driver of the macro's Y-direction overflow, sitting almost exactly against the old
@@ -203,17 +209,13 @@ LD2_PORT_X, LD2_CY = 340.0, 595.0  # LD2 north-west, ports east: port 2 -> vx co
 # and VDD_X/VX_X is only wide enough for rx <~ 110 (barely more than the square's 108.5): not worth it without a
 # bigger rework (moving VDD_X/VX_X/vbias themselves, which has its own cascading guard-ring clearance issues --
 # see build_cs). Back to the original square LD2_coil.gds.
-LSH_PORT_X, LSH_CY = 455.0, 583.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
-# main_pex-specific retune (main_layout used 563 against its own, smaller output cap): feasible range here is
-# (577.6, 588] -- low end from "rf_out port must clear the cap" (q1_min_y ~= 550.6 for main_pex's real cap size,
-# bigger than main's ~534.9), high end from "LSHUNT_OUT does not fit" (cy+ry+SP_KO+RING <= Y_N=751). 583 mid-range.
-# LSH_CY re-centred for LSHUNT_OUT_RECT's ry=141. Feasible range is actually (561.9, 573] with Y_N=751: the
-# low end comes from the OTHER assert down in build_output_match ("rf_out port must be the lower one, clear of
-# the cap") -- q1 (rf_out port) sits at local y in [-27,-1] pre-rotation, so world q1_bottom = cy-27 must clear
-# the output cap's top plate + 20um margin (q1_min_y ~= 534.9 for the real cap geometry), i.e. cy > 561.9; the
-# high end is the "LSHUNT_OUT does not fit" assert (cy + ry + SP_KO + RING <= Y_N = 751). 567 sits mid-range.
-LD2_VDD_X = (350.0, 360.0)  # vdd lead of LD2 to the north edge
-LSH_VSS_X = (440.0, 450.0)  # vss lead of LSHUNT_OUT between the rf_out lead and the coil (Metal4 into the north ring)
+# LSH_PORT_X/LSH_CY/LSH_VSS_X (old north-east-of-rf_out-lead site) and LD2_VDD_X (old north-west-of-core site)
+# removed with those coils' own re-floorplan relocations (see LD2_NE_CX/CY in build_cs and LSH_SE_CX/CY below).
+LSH_SE_CX, LSH_SE_CY = 935.0, -30.0  # LSHUNT_OUT relocated SE: east of L1 (east edge 779 + SP_KO margin), roughly
+# at L1's own y level -- "due east" of it.
+LSH_CHANNEL_Y = -350.0  # east-west return channel for LSHUNT_OUT's long rf_out lead, south of both L1's own
+# keep-out (south edge -318) and LSHUNT_OUT's own (south edge ~-326), with real SP_KO clearance from each -- see
+# Y_S's own comment above for why Y_S had to grow to fit this
 GCG_Y, GCG_X = (430.0, 434.0), 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x = GCG_X)
 # bias pins (Metal3, north edge): jog west below LD2 at y = jog, then north at x
 VBIAS = {"vbias_cg": (445.0, 60.0), "vbias_cs": (452.0, 75.0), "vbias_cas": (459.0, 90.0)}
@@ -375,8 +377,9 @@ def build_output_match(ly):
     415). Same single-series-cap structure for both main and main_pex (only the target size/source symbol
     differs) -- om_lead_y() and every pin/frame coordinate stay identical either way (the cap is re-centred on
     the fixed OM_LEAD_Y regardless of its own size), so lna_core_cs needs no changes between variants.
-    LSHUNT_OUT: coil east of the rf_out lead, rotated 180 (ports west): port 1 (lower) -> rf_out lead, port 2 ->
-    vss (Metal5 north between the rf_out lead and the coil, Metal4 into the north ring band)
+    LSHUNT_OUT: coil relocated SE (re-floorplan, east of L1, rot=270, ports south): port 1 (q1, east) -> rf_out,
+    a long jog south-then-west-then-north back to the rf_out_pad column; port 2 (q2, west) -> vss, a short run
+    south to the (now much closer) south ring.
     """
     P = "lna_core_output_match"
     sch = sch_params(P)
@@ -398,28 +401,53 @@ def build_output_match(ly):
                 "top_plate": list(pt)}
     top.label(5, "output_cs", OM_IN_X + 1, yc)
     top.label(5, "rf_out_pad", xr, Y_N - 1)
-    # --- LSHUNT_OUT
+    # --- LSHUNT_OUT: relocated SE, decoupled from its old north-east-of-rf_out-lead site (re-floorplan request).
+    # rot=270 ("-90 deg" per request): ports face south -- confirmed by direct probe of coil_ports() under this
+    # rotation. q1 (rf_out, port1) lands east of q2 (vss, port2).
     geo = coil_geom(P, "LSHUNT_OUT")
-    cx, cy = g(LSH_PORT_X + geo["pe"]), LSH_CY
-    assert cy - geo["ry"] - SP_KO >= VM2_Y[1] and cy + geo["ry"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
-    assert cx + geo["rx"] + SP_KO / 2 <= MACRO_W - RING and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5, \
-        "LSHUNT_OUT does not fit the macro width"
-    (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=180)
-    assert q1[3] < q2[1] and q1[1] > q1_min_y, "rf_out port must be the lower one, clear of the cap / through-wire"
-    top.box("m5", xr + 5 - 1, q1[1], q1[2], q1[3])  # port 1 -> rf_out lead
-    vx0, vx1 = LSH_VSS_X
-    top.box("m5", vx0, q2[1], q2[2], q2[3])  # port 2 -> vss lead
-    yv = g(Y_N - RING - 14)
-    top.box("m5", vx0, q2[1], vx1, yv + 6)
-    top.stack(vx0, yv, vx1, yv + 6, 4, 5)
-    top.box("m4", vx0, yv, vx1, Y_N - 2)
-    top.label(4, "vss", (vx0 + vx1) / 2, Y_N - 3)
+    cx, cy = LSH_SE_CX, LSH_SE_CY
+    L1_EAST = 779.0  # lna_core_cg's own L1 east edge (build_cg, unchanged by this re-floorplan -- L1 itself did
+    # not move); cross-block constant since LSHUNT_OUT's new site must clear L1's own keep-out
+    assert cx - geo["ry"] - SP_KO >= L1_EAST, "LSHUNT_OUT (SE) does not clear L1's own keep-out"  # rot=270: world-X
+    # extent is local ry
+    assert cx + geo["ry"] + SP_KO + RING <= MACRO_W, "LSHUNT_OUT (SE) does not fit against the east edge"
+    assert cy - geo["rx"] - SP_KO >= Y_S + RING, "LSHUNT_OUT (SE) does not fit against the south edge"  # world-Y
+    # extent is local rx
+    (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=270)
+    assert q1[0] > q2[0], "q1 (rf_out) must be the eastern port, q2 (vss) the western one"
+    top.box("m5", *q1)
+    top.box("m5", *q2)
+    # vss (q2): the long rf_out channel below is a solid M5 bar spanning x=xr..q1[2], which includes q2's own x,
+    # at y=LSH_CHANNEL_Y..+6 -- any M5 path from q2 down to the ring crosses it, and q1's own M5 lead-in (q1's x,
+    # down to the channel) fills in the rest of that y-band too, so there is no x-jog that dodges both on the
+    # same layer (confirmed by two real LVS mismatches from the first, wrong-branch attempt at this same
+    # relocation). Fixed properly: drop q2 to Metal4 just above the channel and cross under it on M4 -- a
+    # different layer, so no via means no connection even where the two geometrically overlap -- then continue
+    # on M4 the rest of the way into the ring (which is M4=vss anyway, so this needs no further transition).
+    assert Y_S + RING <= LSH_CHANNEL_Y <= min(cy - geo["rx"] - SP_KO, -318.0 - SP_KO), \
+        "LSH_CHANNEL_Y must clear both L1's and LSHUNT_OUT's own keep-outs, and stay inside the south edge"
+    # y_m4 must leave a real gap above the channel's own top (LSH_CHANNEL_Y+6) for the stack()'s own M5 portion --
+    # same-layer shapes that only touch still merge into one polygon (same net), reproducing the same mismatch.
+    y_m4 = g(LSH_CHANNEL_Y + 6 + 5)
+    top.box("m5", q2[0], y_m4, q2[2], q2[3])
+    top.stack(q2[0], y_m4 - 2, q2[2], y_m4, 4, 5)
+    top.box("m4", q2[0], Y_S + 2, q2[2], y_m4)
+    top.label(4, "vss", (q2[0] + q2[2]) / 2, Y_S + 3)
+    # rf_out (q1): jog south below both LSHUNT_OUT's and L1's own keep-outs (LSH_CHANNEL_Y, asserted above), west
+    # all the way to a point east of pt (output_cs's own top plate -- bt sits only ~1um above pt at the same
+    # x-range, so a straight run up to bt[1] inside pt's own x-range would short rf_out to output_cs, confirmed
+    # by a real LVS mismatch from the first attempt), then north clear of pt, then a final jog west to meet bt.
+    xe = g(pt[2] + 6)
+    top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
+    top.box("m5", xe, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
+    top.box("m5", xe, LSH_CHANNEL_Y, xe + 2, bt[1] + 1)
+    top.box("m5", xr - 5, bt[1], xe + 2, bt[3])
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
-               "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "west"},
+               "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "south"},
                "macro": [MACRO_W, Y_N - Y_S], "frame": [0, Y_S, MACRO_W, Y_N],
                "pins": {"output_cs": f"Metal5 x={OM_IN_X} y={yc}", "rf_out_pad": f"Metal5 north edge x={xr}",
-                        "vss": f"Metal4 north edge x={vx0}..{vx1}"}}
+                        "vss": f"Metal4 south edge x={q2[0]}..{q2[2]}"}}
     return top
 
 

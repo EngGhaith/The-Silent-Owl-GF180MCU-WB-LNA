@@ -174,7 +174,7 @@
   "ld2_vdd_lead": [
    808.5,
    497.5,
-   1052,
+   1092,
    502.5
   ],
   "vx_column_x": [
@@ -215,25 +215,25 @@
   "LSHUNT_OUT": {
    "coil": "LSHUNT_OUT_RECT_coil.gds",
    "centre": [
-    748.0,
-    583.0
+    935.0,
+    -30.0
    ],
-   "ports": "west"
+   "ports": "south"
   },
   "macro": [
-   1062,
-   1104
+   1102,
+   1124
   ],
   "frame": [
    0,
-   -353,
-   1062,
+   -373,
+   1102,
    751
   ],
   "pins": {
    "output_cs": "Metal5 x=380.0 y=498.305",
    "rf_out_pad": "Metal5 north edge x=415.0",
-   "vss": "Metal4 north edge x=440.0..450.0"
+   "vss": "Metal4 south edge x=908.0..934.0"
   }
  }
 }
