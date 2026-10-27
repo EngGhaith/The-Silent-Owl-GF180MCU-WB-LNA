@@ -6,6 +6,7 @@
 """
 import json
 import os
+import subprocess
 import sys
 
 import pya
@@ -152,7 +153,12 @@ for net, l, b, r, t in pads:
     draw.text((lx, label_y), net, fill=color, font=F_SMALL, anchor=anchor)
 
 # title / caption
-title = f"The-Silent-Owl GF180MCU LNA -- main_layout -- macro {MACRO_W:.0f} x {MACRO_H:.0f} um (pad-tile budget 1070 x 1070)"
+try:
+    BRANCH = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=HERE, capture_output=True,
+                             text=True, check=True).stdout.strip()
+except Exception:
+    BRANCH = "?"
+title = f"The-Silent-Owl GF180MCU LNA -- {BRANCH} -- macro {MACRO_W:.0f} x {MACRO_H:.0f} um (pad-tile budget 1070 x 1070)"
 draw.rectangle([0, 0, img.width, 40], fill=(0, 0, 0))
 draw.text((10, 6), title, fill=WHITE, font=F_TITLE)
 if CAPTION:
