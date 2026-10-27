@@ -1,0 +1,216 @@
+<title>LD4 Multi-Block Floorplan Study</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#eef0f3;
+  --text:#1b222c; --text-dim:#5b6472; --border:#dde1e7;
+  --accent:#0e7c7b; --accent-soft:#0e7c7b1a; --band:#0e7c7b14;
+  --good:#1a8f5a; --warn:#c0501f; --bad:#c0392b;
+  --c-ld4:#3b63c7; --c-l1:#9db3ea; --c-leq:#6fb98f; --c-cs:#c17a0e; --c-ld2:#a85ec4; --c-lsh:#5aa3c9;
+  --shadow:0 1px 2px rgba(20,24,33,.04), 0 8px 24px -12px rgba(20,24,33,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161d; --surface:#171d26; --surface-2:#1e2530;
+    --text:#e7eaef; --text-dim:#8d97a6; --border:#2a3240;
+    --accent:#2bb3af; --accent-soft:#2bb3af22; --band:#2bb3af16;
+    --good:#3fc17f; --warn:#e0893f; --bad:#e2574a;
+    --c-ld4:#6f8fe0; --c-l1:#374a7d; --c-leq:#3f8f63; --c-cs:#e0a23a; --c-ld2:#c87fe0; --c-lsh:#5fb0dd;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#171d26; --surface-2:#1e2530;
+  --text:#e7eaef; --text-dim:#8d97a6; --border:#2a3240;
+  --accent:#2bb3af; --accent-soft:#2bb3af22; --band:#2bb3af16;
+  --good:#3fc17f; --warn:#e0893f; --bad:#e2574a;
+  --c-ld4:#6f8fe0; --c-l1:#374a7d; --c-leq:#3f8f63; --c-cs:#e0a23a; --c-ld2:#c87fe0; --c-lsh:#5fb0dd;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.55;}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 28px 80px;}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+header h1{font-size:27px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;}
+header .sub{color:var(--text-dim);font-size:14.5px;max-width:780px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);color:var(--text-dim);background:var(--surface);}
+.verdict-row{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap;}
+.verdict{flex:1 1 300px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);}
+.verdict .coil{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;}
+.verdict .call{font-size:19px;font-weight:700;margin:4px 0 6px;}
+.verdict.no .call{color:var(--bad);}
+.verdict p{margin:0;color:var(--text-dim);font-size:13.5px;}
+.callout{margin:28px 0;padding:16px 18px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;font-size:14px;color:var(--text-dim);box-shadow:var(--shadow);}
+.callout b{color:var(--text);}
+.callout.warn{border-left-color:var(--warn);}
+section{margin-top:44px;}
+h2{font-size:18px;font-weight:600;margin:0 0 4px;}
+h2 .num{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-weight:600;margin-right:8px;}
+.section-sub{color:var(--text-dim);font-size:13px;margin:0 0 18px;}
+h3{font-size:14.5px;font-weight:600;margin:26px 0 8px;}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
+th,td{padding:10px 13px;text-align:right;font-size:13px;border-bottom:1px solid var(--border);}
+th:first-child,td:first-child{text-align:left;}
+th{background:var(--surface-2);color:var(--text-dim);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+tr:last-child td{border-bottom:none;}
+td.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
+.formula{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin:12px 0;overflow-x:auto;white-space:pre;}
+.fig{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--shadow);margin:16px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-dim);margin-top:10px;justify-content:center;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.tag{font-size:10.5px;padding:1px 7px;border-radius:999px;font-family:'IBM Plex Mono',monospace;margin-left:6px;background:var(--surface-2);color:var(--text-dim);}
+code{font-family:'IBM Plex Mono',monospace;background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:12.5px;}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-dim);font-size:12px;}
+a{color:var(--accent);}
+ul{padding-left:20px;}
+li{margin:4px 0;font-size:13.5px;}
+</style>
+
+<div class="wrap">
+<header>
+<h1>LD4 multi-block floorplan study</h1>
+<div class="sub">Follow-up to <code>reports/ld4_ld2_rectangular_reshape_investigation.html</code>, which flagged &mdash; but did not check &mdash; whether decoupling LD4 from the L1 chain and placing it independently could get it closer to <code>lna_core_cg</code>'s guard ring (east edge x&nbsp;=&nbsp;208.3) than today's 616.5&nbsp;&micro;m gap. This is that check: an exhaustive, computational collision search of all four <code>lna_core_*</code> blocks' actual drawn geometry (not just the "obviously free-looking" region near cg), covering both LD4's current 332&times;332&nbsp;&micro;m footprint and every same-area rectangular reshape. No GDS, JSON, or floorplan code was changed.</div>
+<div class="badge-row">
+<span class="badge">branch: main_pex</span>
+<span class="badge">klayout/make_lna_core_{layouts,parts}.py (read only)</span>
+<span class="badge">klayout/lna_core_{input_match,cg,cs,output_match}.gds (read only)</span>
+<span class="badge">no coil, GDS, or JSON changed</span>
+</div>
+<div class="verdict-row">
+<div class="verdict no"><div class="coil">LD4 relocation</div><div class="call">No legal closer spot exists</div><p>An exhaustive scan of every candidate position in the 1204&times;1104&nbsp;&micro;m macro, for LD4's own footprint AND every same-area rectangular reshape, found <b>zero</b> legal placements closer to cg than today &mdash; even with zero clearance to neighbouring geometry.</p></div>
+</div>
+</header>
+
+<section>
+<h2><span class="num">01</span>Why a grid search, not just eyeballing the floorplan</h2>
+<p class="section-sub">The prior report's spot-check of the "obviously free" band (y&gt;200.5, north of L1; x&gt;~322, east of cg's C3 caps) already found two occupying objects from other blocks in it: <code>lna_core_cs</code>'s guard ring and <code>lna_core_output_match</code>'s LSHUNT_OUT coil. But that was one candidate pocket, checked by hand. Since all four <code>lna_core_*</code> cells are drawn in one shared coordinate frame and assembled with zero relative offset (<code>make_lna_core_parts.py</code>: each block is <code>top.insert(pya.CellInstArray(cell.cell_index(), pya.Trans()))</code> &mdash; identity transform), the right way to answer "is there anywhere else" is to pull every drawn shape of all four blocks into one KLayout <code>Region</code> and test candidate LD4 boxes against it directly, rather than trust a by-hand reading of the floorplan sketch.</p>
+
+<h3>Method</h3>
+<div class="formula">for each of the 4 lna_core_*.gds (as currently generated on main_pex):
+    region = merge(all shapes on all layers, excluding label layers [datatype 10])
+total = union of the 4 block regions                     # single shared-frame obstacle map
+
+for candidate size (W, H):
+    for candidate centre (x, y) on a 5-10 um grid inside the macro (0..1204, -253..851, inset by RING=12):
+        box = W x H axis-aligned rectangle at (x, y)
+        legal  <->  box does not touch `total` (optionally enlarged by a clearance buffer)
+    record the legal position with the smallest (west_edge_of_box - 208.3)   # = the "gap to cg" metric used before</div>
+<p>This automatically captures every obstacle from every block &mdash; guard rings, coils, MIM caps, resistors, bias/supply leads &mdash; with no risk of missing one the way a hand-sketch reading can.</p>
+</section>
+
+<section>
+<h2><span class="num">02</span>Search 1: LD4's own footprint (332&times;332 &micro;m), unchanged</h2>
+<p class="section-sub">Scanned every 5&nbsp;&micro;m grid position in the macro for a free 332&times;332 box, from a generous 10&nbsp;&micro;m clearance buffer down to bare non-overlap (0&nbsp;&micro;m).</p>
+<table>
+<tr><th>Clearance buffer</th><th>Legal positions found (anywhere in the macro)</th></tr>
+<tr><td>10 &micro;m</td><td class="num" style="color:var(--bad)">0</td></tr>
+<tr><td>5 &micro;m</td><td class="num" style="color:var(--bad)">0</td></tr>
+<tr><td>0 &micro;m (bare touching)</td><td class="num" style="color:var(--bad)">0</td></tr>
+</table>
+<p>Not "no position closer than today" &mdash; <b>no position at all</b>, anywhere else in the 1204&times;1104&nbsp;&micro;m macro, fits an unrotated 332&times;332&nbsp;&micro;m box without touching some other block's drawn geometry. LD4 fits where it is and essentially nowhere else as-is.</p>
+
+<h3>What's actually in the way near cg (the candidate pocket from the prior report, now itemised)</h3>
+<table>
+<tr><th>Object</th><th>Block</th><th>X range</th><th>Y range</th></tr>
+<tr><td>C2 (bottom plate) + vm2 column</td><td class="mono">lna_core_cg</td><td class="num">202.0 &ndash; 265.72</td><td class="num">282 &ndash; 430.82</td></tr>
+<tr><td>R4</td><td class="mono">lna_core_cg</td><td class="num">207.86 &ndash; 259.03</td><td class="num">436.42 &ndash; 438.22</td></tr>
+<tr><td>Guard ring</td><td class="mono">lna_core_cs</td><td class="num">279.7 &ndash; 374.54</td><td class="num">389.7 &ndash; 426.97</td></tr>
+<tr><td>LD2 coil</td><td class="mono">lna_core_cs</td><td class="num">123.5 &ndash; 340.5</td><td class="num">491.5 &ndash; 708.5</td></tr>
+<tr><td>LSHUNT_OUT coil</td><td class="mono">lna_core_output_match</td><td class="num">454.5 &ndash; 877.09</td><td class="num">390.7 &ndash; 813.3</td></tr>
+<tr><td>L1 coil</td><td class="mono">lna_core_cg</td><td class="num">377.25 &ndash; 799.84</td><td class="num">&ndash;222.09 &ndash; 200.5</td></tr>
+</table>
+<p>The gap between cg's own C3/C2/R4 (ending ~x=266) and the cs guard ring (starting x=279.7) is 13.7&nbsp;&micro;m; between the cs guard ring (ending x=374.54) and LSHUNT_OUT (starting x=454.5) it's 79.96&nbsp;&micro;m; both far short of 332&nbsp;&micro;m. Below y=200.5 the same x-range is occupied by L1 itself (west edge 377.25, only 25&nbsp;&micro;m &mdash; exactly one <code>SP_KO</code> keep-out &mdash; east of LEQ's own east edge at 352.25). There is no slot-shaped opening big enough for LD4 anywhere in this part of the macro; the four blocks' geometry interlocks almost edge-to-edge once L1, LD2, LSHUNT_OUT, and cg's own C2/R3/R4 are all accounted for.</p>
+</section>
+
+<section>
+<h2><span class="num">03</span>Search 2: every same-area rectangular reshape</h2>
+<p class="section-sub">Per the earlier reshape investigation, a rectangular recut of a coil (same winding area &rarr; same approximate L, pending a real EM re-run) is the only other lever available without accepting a different inductance. Swept width W from 40 to 620 &micro;m in 10 &micro;m steps, height H = 332&sup2;/W held to the same area, scanning every position for each (W, H) pair.</p>
+<table>
+<tr><th>W (&micro;m)</th><th>H (&micro;m)</th><th>Any legal fit?</th><th>Best gap to cg found</th></tr>
+<tr><td class="num">40 &ndash; 230</td><td class="num">&ndash;</td><td>no</td><td>&ndash;</td></tr>
+<tr><td class="num">240</td><td class="num">459.3</td><td style="color:var(--good)">yes</td><td class="num">683.7 &micro;m</td></tr>
+<tr><td class="num">250</td><td class="num">440.9</td><td style="color:var(--good)">yes</td><td class="num">683.7 &micro;m</td></tr>
+<tr><td class="num">260</td><td class="num">423.9</td><td style="color:var(--good)">yes</td><td class="num">683.7 &micro;m</td></tr>
+<tr><td class="num">270 &ndash; 620</td><td class="num">&ndash;</td><td>no</td><td>&ndash;</td></tr>
+</table>
+<p>Only a narrow band of very elongated aspect ratios (roughly 1:1.7&ndash;1:1.9, i.e. already a stretched rectangle, not a modest reshape) fits anywhere in the macro at all &mdash; and the <em>one</em> place it fits is a pocket at the macro's east edge (centre x&asymp;1012&ndash;1022, y&asymp;504&ndash;704), <b>683.7&nbsp;&micro;m</b> from cg: farther than today's 616.5&nbsp;&micro;m, not closer. No aspect ratio at the same area beats the current chained placement.</p>
+
+<h3>Where that one pocket actually is</h3>
+<div class="fig">
+<svg viewBox="0 0 980 560" width="100%" style="max-width:920px">
+  <!-- macro outline (x:0-1204 -> scale 0.75, y:-253..851 -> scale 0.47, flip y) -->
+  <g transform="translate(20,20)">
+  <rect x="0" y="0" width="903" height="517" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="0" y="-6" font-size="10" fill="var(--text-dim)" font-family="IBM Plex Mono">x=0, y=851</text>
+  <text x="820" y="531" font-size="10" fill="var(--text-dim)" font-family="IBM Plex Mono">x=1204, y=-253</text>
+  <!-- helper: X scale 0.75 (um->px), Y scale 0.47, y flipped: py = (851-y)*0.47 -->
+  <!-- cg guard ring x103-208 y280-310 -> py=(851-310)*0.47=254..(851-280)*0.47=268 -->
+  <rect x="77.3" y="254.1" width="78.8" height="13.4" fill="var(--c-l1)" fill-opacity="0.6" stroke="var(--c-l1)"/>
+  <text x="116" y="248" text-anchor="middle" font-size="9.5" fill="var(--text)" font-family="IBM Plex Mono">cg GR</text>
+  <!-- LEQ x35.5-352 y-120..196 -->
+  <rect x="26.6" y="307.8" width="237.6" height="148.5" fill="var(--c-leq)" fill-opacity="0.35" stroke="var(--c-leq)"/>
+  <text x="145" y="465" text-anchor="middle" font-size="10" fill="var(--text-dim)" font-family="IBM Plex Mono">LEQ</text>
+  <!-- L1 x377-800 y-222..200 -->
+  <rect x="282.9" y="304.6" width="316.9" height="197.9" fill="var(--c-l1)" fill-opacity="0.45" stroke="var(--c-l1)"/>
+  <text x="441" y="513" text-anchor="middle" font-size="10" fill="var(--text)" font-family="IBM Plex Mono" font-weight="600">L1</text>
+  <!-- LD4 current x825-1157 y-1.5..330.5 -->
+  <rect x="618.6" y="244.6" width="249.0" height="156.1" fill="var(--c-ld4)" fill-opacity="0.55" stroke="var(--c-ld4)" stroke-width="1.5"/>
+  <text x="743" y="326" text-anchor="middle" font-size="10.5" fill="var(--text)" font-family="IBM Plex Mono" font-weight="600">LD4 (today)</text>
+  <!-- cs GR x279.7-374.5 y389.7-427 -->
+  <rect x="209.8" y="199.3" width="71.1" height="17.5" fill="var(--c-cs)" fill-opacity="0.55" stroke="var(--c-cs)"/>
+  <text x="245" y="194" text-anchor="middle" font-size="9" fill="var(--text)" font-family="IBM Plex Mono">cs GR</text>
+  <!-- LD2 x123.5-340.5 y491.5-708.5 -->
+  <rect x="92.6" y="67.1" width="162.75" height="102.0" fill="var(--c-ld2)" fill-opacity="0.45" stroke="var(--c-ld2)"/>
+  <text x="174" y="123" text-anchor="middle" font-size="10" fill="var(--text)" font-family="IBM Plex Mono">LD2</text>
+  <!-- LSHUNT_OUT x454.5-877 y390.7-813.3 -->
+  <rect x="340.9" y="17.8" width="316.6" height="199.1" fill="var(--c-lsh)" fill-opacity="0.4" stroke="var(--c-lsh)"/>
+  <text x="499" y="120" text-anchor="middle" font-size="10" fill="var(--text)" font-family="IBM Plex Mono">LSHUNT_OUT</text>
+  <!-- the one found pocket: centre ~1017,600 W250 H441 -> x 892..1142, y 379.5..820.5 -->
+  <rect x="669" y="14.6" width="187.5" height="207.3" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="762" y="8" text-anchor="middle" font-size="10" fill="var(--accent)" font-family="IBM Plex Mono" font-weight="600">only reshape pocket found (683.7 &micro;m from cg)</text>
+  <!-- cg east edge reference line -->
+  <line x1="156.1" y1="0" x2="156.1" y2="517" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="160" y="510" font-size="9" fill="var(--accent)" font-family="IBM Plex Mono">cg east edge (x=208.3)</text>
+  </g>
+</svg>
+<div class="legend">
+  <span><i class="sw" style="background:var(--c-leq)"></i>LEQ</span>
+  <span><i class="sw" style="background:var(--c-l1)"></i>L1 / cg guard ring</span>
+  <span><i class="sw" style="background:var(--c-cs)"></i>cs guard ring</span>
+  <span><i class="sw" style="background:var(--c-ld2)"></i>LD2</span>
+  <span><i class="sw" style="background:var(--c-lsh)"></i>LSHUNT_OUT</span>
+  <span><i class="sw" style="background:var(--c-ld4)"></i>LD4 (current)</span>
+</div>
+</div>
+<p>The only free pocket roomy enough for an LD4-area rectangle sits past LSHUNT_OUT's east edge, beyond LD4's own current position &mdash; i.e. reshaping does not open a path toward cg, it only finds room farther away.</p>
+</section>
+
+<section>
+<h2><span class="num">04</span>Search 3: how big a square fits anywhere else, at all</h2>
+<p class="section-sub">To characterise the ceiling directly: with a modest 5&nbsp;&micro;m clearance, what is the largest square that fits <em>anywhere</em> in the macro outside LD4's current site?</p>
+<table>
+<tr><th>Side length</th><th>Legal positions</th></tr>
+<tr><td class="num">260 &micro;m</td><td class="num" style="color:var(--good)">126</td></tr>
+<tr><td class="num">270 &micro;m</td><td class="num" style="color:var(--good)">40</td></tr>
+<tr><td class="num">280 &micro;m</td><td class="num" style="color:var(--bad)">0</td></tr>
+</table>
+<p>The practical ceiling is <b>between 270 and 280&nbsp;&micro;m</b> per side &mdash; well under the 332&nbsp;&micro;m LD4 needs today. And even those 260&ndash;270&nbsp;&micro;m fits are all in the same far-east pocket identified above (x&asymp;887&ndash;1157, y&asymp;504&ndash;774): none are closer to cg than LD4's current west edge.</p>
+</section>
+
+<section>
+<h2><span class="num">05</span>Bottom line</h2>
+<ul>
+<li><b>No code change was made.</b> <code>klayout/make_lna_core_layouts.py</code>, the four <code>lna_core_*.gds</code>, and <code>lna_core_layouts.json</code> are untouched &mdash; there is nothing legal to switch LD4's placement to that would improve on today's 616.5&nbsp;&micro;m gap.</li>
+<li><b>The macro is not under-packed near cg.</b> The band that looks free in a floorplan sketch (y&gt;200.5, x&gt;~322) is in fact divided among six separate obstacles from three other blocks (L1, cg's own C2/R4, cs's guard ring, LD2, LSHUNT_OUT) with gaps of 13.7&ndash;80&nbsp;&micro;m between them &mdash; an order of magnitude short of the 332&nbsp;&micro;m LD4 needs.</li>
+<li><b>This isn't a near-miss.</b> An exhaustive position scan of LD4's exact footprint found <em>zero</em> legal spots anywhere else in the macro, even allowing bare (0&nbsp;&micro;m clearance) contact with neighbouring geometry. Sweeping every same-area rectangular aspect ratio from 40&times;2756 to 620&times;178&nbsp;&micro;m found legal fits only in a narrow band around 250&times;441&nbsp;&micro;m, and the one place those fit is <em>farther</em> from cg (683.7&nbsp;&micro;m) than today, past LSHUNT_OUT's east edge.</li>
+<li><b>Getting LD4 meaningfully closer to cg is not a placement-tuning problem.</b> It would require shrinking or relocating at least one of L1, the cs guard ring, LD2, or LSHUNT_OUT first to open a slot &mdash; i.e. re-floorplanning multiple blocks together, each with its own port routing and keep-outs to re-derive, which is out of scope for this study (and was already flagged as such in the prior reshape investigation).</li>
+</ul>
+</section>
+
+<footer>
+Generated on <code>main_pex</code> (worktree <code>agent-ad782ce7cfdf81441</code>) from the current <code>klayout/lna_core_{input_match,cg,cs,output_match}.gds</code> and <code>klayout/make_lna_core_{layouts,parts}.py</code>. Search method: KLayout <code>pya.Region</code> collision test over all four blocks' merged drawn geometry (all layers, label layers excluded), scanned on a 5&ndash;10&nbsp;&micro;m grid across the full macro (x 0..1204, y &minus;253..851, inset by the 12&nbsp;&micro;m supply ring). No EM re-characterization was run; no coil, GDS, or JSON file was modified.
+</footer>
+</div>
