@@ -487,33 +487,39 @@ def build_cs(ly):
     top.box("m3", T4["D"][2], yd0, VX_X[1], yd1)
     top.box("m2", T4["D"][2], yd0, ri[2] - 0.6, yd1)
     top.stack(VX_X[0], yd0, VX_X[1], yd1, 3, 5)
-    # LD2: coil north-west of the core, ports east
+    # --- LD2: relocated to the NE corner, decoupled from its old north-west-of-the-core site (re-floorplan
+    # request). rot=180: ports face west, back toward the core -- confirmed by direct probe of coil_ports()
+    # under this rotation. q1 (vdd, port1) lands south of q2 (vx/output_match, port2) -- opposite of the old
+    # (rot=0) placement's own "q2 below q1" arrangement.
+    LD2_NE_CX, LD2_NE_CY = 925.0, 615.0
     geo = coil_geom(P, "LD2")
-    cx, cy = g(LD2_PORT_X - geo["pe"]), LD2_CY
-    assert cx - geo["rx"] - SP_KO >= max(v[1] for v in VBIAS.values()) + 1, "LD2 over the bias leads"
-    assert cy - geo["ry"] - SP_KO >= max(v[0] for v in VBIAS.values()) + 1, "LD2 over the bias jogs"
-    assert cy + geo["ry"] + SP_KO + RING <= Y_N, "LD2 does not fit"
-    (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy)
-    assert q2[3] < q1[1] and q2[1] - 10 > om_lead_y() + 5, "vx port must be the lower one, above the C1 lead"
-    top.box("m5", *q2)
-    top.box("m5", q2[2] - 0.5, q2[3] - 10, VX_X[1], q2[3])  # port 2 -> vx column
-    top.box("m5", VX_X[0], yd0, VX_X[1], q2[3])  # vx column: C1 lead of lna_core_output_match, LD2 port 2
-    top.label(5, "output_match", (VX_X[0] + VX_X[1]) / 2, om_lead_y())
+    cx, cy = LD2_NE_CX, LD2_NE_CY
+    assert cx + geo["rx"] + SP_KO + RING <= MACRO_W, "LD2 (NE) does not fit against the east edge"
+    assert cy + geo["ry"] + SP_KO + RING <= Y_N, "LD2 (NE) does not fit against the north edge"
+    (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy, rot=180)
+    assert q1[1] < q2[1], "q1 (vdd) must be the southern port, q2 (vx) the northern one"
     top.box("m5", *q1)
-    top.box("m5", q1[2] - 0.5, q1[1], LD2_VDD_X[1], q1[1] + 10)  # port 1 -> vdd lead
-    # vdd: short run just past LD2's own keep-out into the generic tile fabric (which is continuous/abutting
-    # there, same convention as the macro's main vdd rail), instead of all the way to Y_N -- LD2's keep-out
-    # boundary is at cy + ry + SP_KO; tiles start right after it, so a short margin past that reliably lands
-    # inside a kept tile regardless of the grid's exact phase.
-    ld2_vdd_y1 = g(cy + geo["ry"] + SP_KO + 12)
-    assert ld2_vdd_y1 < Y_N, "LD2 vdd lead shortening computed past the macro edge"
-    top.box("m5", LD2_VDD_X[0], q1[1], LD2_VDD_X[1], ld2_vdd_y1)
-    assert LD2_VDD_X[1] + 5 <= VX_X[0]
-    top.label(5, "vdd", (LD2_VDD_X[0] + LD2_VDD_X[1]) / 2, (q1[1] + ld2_vdd_y1) / 2)
+    top.box("m5", *q2)
+    # vx (q2): extend the existing vx column (already reaches up to yd1 for cs's own transistor drain) straight
+    # north then east -- a long run now that LD2 sits far from the core.
+    top.box("m5", VX_X[0], yd1, VX_X[1], q2[1] + 0.5)
+    top.box("m5", VX_X[0], q2[1], q2[2], q2[3])
+    top.label(5, "output_match", (VX_X[0] + VX_X[1]) / 2, om_lead_y())
+    # vdd (q1): reach EAST into the generic tile fabric (east edge is close at this corner) -- NOT a straight box
+    # at q1's own y (crosses the coil's own body, picks up an MT.2a violation) and NOT a straight run north
+    # (crosses q2's own position, shorts vdd to output_match -- both earlier, real mistakes from the first,
+    # wrong-branch attempt at this same relocation). Jog WEST of the coil's own edge first, south below the
+    # coil's own south edge, then east, clearing the coil's own winding entirely on both axes.
+    xw = g(q1[0] - 5)
+    yd_vdd = g(cy - geo["ry"] - 9)
+    top.box("m5", xw, q1[1], q1[2], q1[3])  # bridge from q1 west to xw, at q1's own height
+    top.box("m5", xw, yd_vdd, xw + 2, q1[3])  # vertical run down at xw, clear of the coil's edge
+    top.box("m5", xw, yd_vdd, MACRO_W - RING + 2, yd_vdd + 5)  # horizontal run east, south of the coil
+    top.label(5, "vdd", MACRO_W - RING - 5, yd_vdd + 2.5)
     INFO[P] = {"M3": {"rows": 1, "fingers": m1["nf"], "wf": wf1, "L": l1, "sym": s1},
                "M2": {"rows": 1, "fingers": m4["nf"], "wf": wf4, "L": l4, "sym": s4},
-               "bus_w_um": wb, "guard_ring": R, "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "east"},
-               "ld2_vdd_lead": [LD2_VDD_X[0], q1[1], LD2_VDD_X[1], ld2_vdd_y1], "vx_column_x": list(VX_X),
+               "bus_w_um": wb, "guard_ring": R, "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "west"},
+               "ld2_vdd_lead": [xw, yd_vdd, MACRO_W - RING + 2, yd_vdd + 5], "vx_column_x": list(VX_X),
                "pins": {"input_cg": list(gp), "vbias_cas": f"Metal3 north edge x={xvn}", "vdd": "Metal5 north edge",
                         "output_match": f"Metal5 column x={VX_X}", "vss": "guard ring"}}
     return top
