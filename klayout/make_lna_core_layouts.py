@@ -85,24 +85,133 @@ def pf(v):
 
 
 # floorplan: coils, macro edges (core coordinates, see module doc)
-SP_KO = 25.0  # keep-out around every inductor
-COILS = {("lna_core_input_match", "LEQ"): "LEQ_coil.gds", ("lna_core_cg", "L1"): "LSHUNT_OUT_coil.gds",
-         ("lna_core_cg", "LD4"): "LD4_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
-         ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_coil.gds"}
-MACRO_W, RING = 1204, 12
-Y_S, Y_N = -253, 851  # south / north macro edge; inner size (W - 2 RING) x (Y_N - Y_S - 2 RING) = n x 20 um tiles
+SP_KO = 10.0  # keep-out around every inductor
+COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
+         ("lna_core_cg", "LD4"): "LD4_RECT_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
+         ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_RECT_coil.gds"}
+# MACRO_W history: 1204 (original) -> 1434 (commit cc900b6, LEQ_MAIN_RECT's reshape pushed the chain further east)
+# -> 1186 (L1_RECT + LEQ_MAIN_RECT2 jointly reshaped, see commit 76a36b3) -> 1070, the full 1070x1070 budget, via
+# two more changes, neither a coil reshape alone:
+#  1. LD4's own dedicated vdd lead (a fixed column, VDD4_X=(1158,1168), run all the way to the east rail) was
+#     replaced with a short local lead off its own port -- VDD4_X was pinning MACRO_W >= 1185 on its own,
+#     independent of any coil size (see build_cg's LD4 section).
+#  2. LD4 itself reshaped rectangular (LD4_RECT_coil.gds: N=3/W=2/SC2 drain-coil family, distinct from the
+#     N=2/W=26 spiral family LEQ/L1/LSHUNT_OUT share -- same tooling pattern generalised to it this session,
+#     see /foss/designs/rapidpassives/try4/newflow/good_tries/LD4_RECT_CAND1_X216.0_Y93.0_N3_W2_SC2/), world-X
+#     half-extent (local ry, since rot=90 swaps axes) shrunk 166 -> 109, world-Y half-extent (local rx) grown
+#     166 -> 232 to conserve the 8.44nH target (L=8.4824nH confirmed, +0.50%). This brought LD4's own east edge
+#     from 1151 down to 1037, under LSHUNT_OUT_RECT's own 1044 -- LSHUNT_OUT_RECT is now the sole binding
+#     constraint on MACRO_W (its own "does not fit the macro width" assert requires MACRO_W >= ~1068.5).
+# Removing LD4's old dedicated vdd column also broke a different thing: a separate enclosed tile group ("group B"
+# in make_lna_core_parts.py's build_supply()) tapped its own vdd connection by landing a Metal3-5 via stack near
+# that column's path, which incidentally guaranteed a real rail connection. Without the column, nothing near LD4
+# is actually rail-connected, and landing a fresh via stack anywhere nearby ties straight into a vss M4 plane
+# (either LD4_RECT's own SC2 shunt trace, M4 the whole way around its ring, or the east ring band's own M4) --
+# see build_supply()'s own comment at that site for the full story and the fix (a plain M5-only bridge, no via,
+# landing in the one M4-clear window between the coil and the ring).
+MACRO_W, RING = 1062, 12
+Y_S, Y_N = -353, 751  # main_pex: bumped from main_layout's ported 731 -- main_pex's own output series cap
+# (lna_core_output_match.sch) is larger than main's, needing more LSHUNT_OUT port clearance (q1_min_y). See LSH_CY below.
+# reshaped rectangular (LSHUNT_OUT_RECT_coil.gds, same 2.5041nH target, ry 211.295 -> 141, rx -> 296 -- it was
+# the sole remaining driver of the macro's Y-direction overflow, sitting almost exactly against the old
+# Y_N=851 with ~0.7um margin). LSH_CY re-centred (602 -> 532) for the new ry.
+#
+# 751, not the 711 LSHUNT_OUT's OWN fit alone would allow: once LSHUNT_OUT stopped being the binding
+# constraint, LD2 (lna_core_cs, square, untouched, ry=108.5) became the new one -- its own "LD2 does not fit"
+# assert (cy + ry + SP_KO + RING <= Y_N, cy=LD2_CY=600 fixed by its own bias-lead keep-outs, ~6.5um of
+# south-ward slack only, not enough to matter) needs Y_N >= 745.5, which rounds up to the nearest
+# pitch-aligned value (Y_N mod 20 == 11, same tile-grid alignment constraint as commit 30e895b) of 751.
+# (Y_N - Y_S) = 1104 -- back to this project's ORIGINAL pre-reshape height (coincidentally), still over the
+# 1070 budget by 34um. Reshaping LD2 itself (same technique, different ~4.30nH target) is the next lever if
+# this needs to go lower -- not attempted here. MACRO_W=1186 (116um over 1070, see its own comment above) is
+# now the more binding dimension of the two either way.
+# sitting almost exactly as tight against the north ring as it can (0.7 um margin on each side of its own Y-band)
+# -- this is the pre-existing (independent of the LEQ/L1 work) Y overflow's root cause: LSHUNT_OUT cannot be
+# reshaped (lna_core_output_match keeps the original square coil, per the task), so Y_N cannot be reduced below
+# ~850 without restructuring lna_core_cg's internal C3/vm2 trace layout (out of scope here). Y_S: moved from -253
+# to -345 (92 um more negative) to give L1 (and, to a lesser extent, LEQ) the extra world-Y room their X-shrinking
+# reshape needs (see MACRO_W comment above), including L1's own one-iteration EM correction (outer_half_x 239.5 ->
+# 244.5, to hit 2.5041nH within 0.07% instead of the first guess's 2.2% miss -- see L1_RECT_coil.gds's generation
+# notes). This is the direct cost of the X-fix, and the reason (Y_N - Y_S) does not also land at <=1070: fixing X
+# this way inherently costs Y headroom.
+#
+# -353 (not -345) specifically: make_lna_core_parts.py's tile grid is built top-down from Y_N (GY0 floors to the
+# nearest 20 um pitch from the north band), so (Y_N - Y_S - 2*RING) landing on an exact multiple of the 20 um
+# pitch is what makes the grid's southernmost row coincide with the south ring's own inner edge (Y_S + RING) --
+# at -345 it does not (12 um remainder), which silently broke every tile group's "touches the south rail" check
+# (groups() / touches_rail() in make_lna_core_parts.py) for the ENTIRE south portion of the macro -- confirmed by
+# directly inspecting the built lna_core_parts.gds: only 500 of 1130 free sites got tiles, with real tiles
+# starting no further south than y=249 (i.e. nothing at all below that, where L1 and LEQ now live, losing both
+# decoupling coverage and the supply-tile fabric the grid-connection work depends on). -353 is the nearest
+# pitch-aligned value that is still negative enough for L1's own fit assert to hold (-333 is the nearest aligned
+# value overall, but L1 does not fit there) -- confirmed via the same "regenerate, let the assert catch it"
+# empirical loop used throughout this file: regenerating at -353 restores tiles down to y=-331, 755 of the same
+# 1130 free sites kept (vs. 500), and the "groups_dropped" list returns to its normal small entries (~20/12/4/4/4
+# sites) instead of the ~630-site south-wide dropout -353 fixes. No DRC/LVS regression (re-verified clean).
+#
+# SP_KO 25 -> 10 (this phase, "bring coils closer to the grid tiles" pass): committed state (14380bc) had
+# SP_KO=25 / MACRO_W=1070 / Y_N=751 (height 1104, 34 um over the 1070x1070 pad-tile budget). Shrinking SP_KO
+# alone (no coil reshape) tightens MACRO_W/Y_N for free. SP_KO=8 looked clean (MACRO_W=1060, Y_N unchanged at
+# 731 -- same binding constraint, LSHUNT_OUT's cy_floor+ry+SP_KO+RING pitch-rounds to the same 731 at both 8
+# and 10) but produced a real, silent (DRC-clean) LVS short: lna_core_parts' vdd and vss merge into one net.
+# Root-caused empirically (real gf180mcu.lvs deck as ground truth throughout, not just DRC) by bisecting
+# SPIRAL_KO itself in make_lna_core_parts.py's build_supply() (same real-world margin as this SP_KO, must
+# always move together) with everything else held fixed: SPIRAL_KO=25 and 16 and 12 and 10 all LVS-match,
+# SPIRAL_KO=9 and 8 both LVS-mismatch, with the exact same 354-tile set at 8 and 9 (the critical ~70 extra
+# tiles that make the difference only drop out between 9 and 10). This isolates the short to specific generic
+# supply tiles landing within 9-10 um of a coil's own bbox -- close enough that DRC still sees legal spacing
+# everywhere, but something in the standard tile cell's own stepping-stone via construction (Via2/Via3 M2<->M4
+# and Via3/Via4 M3<->M5, see module doc) ends up on the same net as the nearby coil once that close (exact
+# mechanism not fully traced to one shape -- a from-scratch connectivity probe's own bisection couldn't
+# isolate it below ~5700 of 728k via4 shapes, "neither half alone reproduces it", pointing at a distributed/
+# redundant short rather than one bad via -- but the SPIRAL_KO bisection above is fully conclusive and is what
+# this fix is based on). SPIRAL_KO=10 kept as the safe value (one pitch-independent step above the confirmed-
+# bad 9), SP_KO matched to 10 here. MACRO_W bumped 1060 -> 1062 (LSHUNT_OUT's own "does not fit the macro
+# width" assert needs +SP_KO/2, i.e. +1 um for the +2 SP_KO; +2 taken for margin) -- re-verified DRC clean /
+# LVS match on all 4 blocks + the full lna_core_parts assembly (ANT.16_ii_ANT.* antenna violations on
+# lna_core_parts remain, pre-existing/benign per the module's own standalone-sub-assembly note). Net result:
+# height still 1084 (20 um under the committed 1104), width 1062 (8 um under the 1070 budget, down from 1060's
+# 10 um but still comfortably inside it) -- SPIRAL_KO could not safely go below 10 without reopening this short.
 RFO_X = 415.0  # rf_out_pad lead column (centre)
 YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
 # coil placement: port edge position (the ports face the core) and centre on the other axis
-LEQ_PORT_X, LEQ_CY = 36.0, 38.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
-L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (L1_VSS_X)
-L1_VSS_X = (360.0, 370.0)  # vss lead of L1: between LEQ and L1 down to the south ring
+LEQ_PORT_X, LEQ_CY = 36.0, -57.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
+# LEQ_CY re-centred for LEQ_MAIN_RECT2's ry=252 (feasible range [-59, -55] -- see "LEQ does not fit" assert below;
+# narrow because LEQ's own Y-band is itself now tightly re-optimized for the X fit, not because of newly-added slop)
+L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (lead L1_VSS_X
+# down to the south edge, narrowed to fit the smaller SP_KO gap -- see build_cg for why a north-reaching
+# grid-tap route doesn't work here)
+# L1_PORT_Y is UNCHANGED even though L1's own coil is reshaped: the port edge sits at L1_PORT_Y regardless of the
+# coil's rx/ry (ports are always `pe` in from the coil's own edge, and pe tracks rx under the rot=90 axis swap --
+# see build_cg's cy1 formula), so every lead/wire north of L1 (into YSL, the cg source bus, etc.) needed no changes
+# at all -- only the coil's own south-ward bulk (down to Y_S) grew, which is exactly the Y-budget cost above.
 LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
-LD2_PORT_X, LD2_CY = 340.0, 600.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
-LSH_PORT_X, LSH_CY = 455.0, 602.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
-VDD4_X = (1166.0, 1176.0)  # vdd lead of LD4 along the east edge to the north edge
-LD4_VDD_Y = (333.0, 343.0)  # LD4 port 1 -> VDD4_X, above the coil
+LD2_PORT_X, LD2_CY = 340.0, 595.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
+# Tried reshaping LD2 rectangular (LD2_RECT_coil.gds, rx 108.5 -> 146.2 / ry 108.5 -> 76.0, same 4.30nH target,
+# see /foss/designs/rapidpassives/try4/newflow/good_tries/LD2_RECT_CAND2_X130.2_Y60.0_N3_W1.75/) to relax the
+# "LD2 does not fit" assert below -- reverted. Two problems, either one fatal on its own: (1) it doesn't even
+# help -- LSHUNT_OUT_RECT is the binding constraint on Y_N (needs Y_N >= ~745, pitch-rounds to 751 regardless of
+# LD2's own margin), so a smaller LD2 ry buys nothing. (2) it doesn't fit the channel at all: LD2_PORT_X=340 is
+# pinned by where port 1/2 must land to meet the fixed LD2_VDD_X=(350,360) / VX_X=(377,387) columns (vbias
+# columns bound the west side at x<=90). The old square's east edge (cx+r=340.5) just clears those columns
+# (340.5 < 350); growing rx to 146.2 pushes the bulk's east edge to 343 **at best** -- any PORT_X large enough
+# to also clear the west-side vbias assert (needs >= 405.4) drags the whole coil (port included) past x=350/387,
+# so the coil's own M5 turns end up physically UNDER the VDD_X/VX_X columns -- confirmed via a render showing
+# both columns running straight through the coil body -- and that is exactly what produced the vdd/output_match
+# LVS short (lna_core_parts net "output_cs|output_match|rf_out_pad|vdd"). The channel between the vbias columns
+# and VDD_X/VX_X is only wide enough for rx <~ 110 (barely more than the square's 108.5): not worth it without a
+# bigger rework (moving VDD_X/VX_X/vbias themselves, which has its own cascading guard-ring clearance issues --
+# see build_cs). Back to the original square LD2_coil.gds.
+LSH_PORT_X, LSH_CY = 455.0, 583.0  # LSHUNT_OUT north-east, ports west: port 1 -> rf_out lead, port 2 -> vss (north)
+# main_pex-specific retune (main_layout used 563 against its own, smaller output cap): feasible range here is
+# (577.6, 588] -- low end from "rf_out port must clear the cap" (q1_min_y ~= 550.6 for main_pex's real cap size,
+# bigger than main's ~534.9), high end from "LSHUNT_OUT does not fit" (cy+ry+SP_KO+RING <= Y_N=751). 583 mid-range.
+# LSH_CY re-centred for LSHUNT_OUT_RECT's ry=141. Feasible range is actually (561.9, 573] with Y_N=751: the
+# low end comes from the OTHER assert down in build_output_match ("rf_out port must be the lower one, clear of
+# the cap") -- q1 (rf_out port) sits at local y in [-27,-1] pre-rotation, so world q1_bottom = cy-27 must clear
+# the output cap's top plate + 20um margin (q1_min_y ~= 534.9 for the real cap geometry), i.e. cy > 561.9; the
+# high end is the "LSHUNT_OUT does not fit" assert (cy + ry + SP_KO + RING <= Y_N = 751). 567 sits mid-range.
 LD2_VDD_X = (350.0, 360.0)  # vdd lead of LD2 to the north edge
 LSH_VSS_X = (440.0, 450.0)  # vss lead of LSHUNT_OUT between the rf_out lead and the coil (Metal4 into the north ring)
 GCG_Y, GCG_X = (430.0, 434.0), 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x = GCG_X)
@@ -293,7 +402,8 @@ def build_output_match(ly):
     geo = coil_geom(P, "LSHUNT_OUT")
     cx, cy = g(LSH_PORT_X + geo["pe"]), LSH_CY
     assert cy - geo["ry"] - SP_KO >= VM2_Y[1] and cy + geo["ry"] + SP_KO + RING <= Y_N, "LSHUNT_OUT does not fit"
-    assert cx + geo["rx"] + SP_KO / 2 <= VDD4_X[0] and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5
+    assert cx + geo["rx"] + SP_KO / 2 <= MACRO_W - RING and LSH_VSS_X[1] + 2 <= LSH_PORT_X - 0.5, \
+        "LSHUNT_OUT does not fit the macro width"
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=180)
     assert q1[3] < q2[1] and q1[1] > q1_min_y, "rf_out port must be the lower one, clear of the cap / through-wire"
     top.box("m5", xr + 5 - 1, q1[1], q1[2], q1[3])  # port 1 -> rf_out lead
@@ -434,10 +544,12 @@ def build_cg(ly):
       drains   : outer buses, joined east on a Metal5 column = vm2 -> C2 (bottom plate) and LD4
       gates    : inner straps (Metal3), joined east on Metal4 = g_cg -> C3 (4 MIM, 2x2, top plates) and R3
       source s : Metal5 west -> x = 82 (input_cg of the input match) and on south / east (YSL) to L1
-    L1: coil LSHUNT_OUT_coil.gds south (east of LEQ), ports north: port 1 -> source, port 2 -> vss (lead L1_VSS_X
-        down to the south edge)
-    LD4: coil LD4_coil.gds south-east, ports north: port 2 -> vm2 (trace VM2_Y), port 1 -> vdd (Metal5 east above
-         the coil, north to the edge at VDD4_X).
+    L1: coil L1_RECT_coil.gds south (east of LEQ), ports north: port 1 -> source, port 2 -> vss (lead L1_VSS_X
+        down to the south edge, narrowed to fit the SP_KO gap). Rectangular reshape of LSHUNT_OUT's own square coil (same 2.5041nH target,
+        deliberately reused value -- see the floorplan-fit report), shrunk in world-X / grown in world-Y to fit
+        the 1070x1070 macro budget.
+    LD4: coil LD4_coil.gds south-east, ports north: port 2 -> vm2 (trace VM2_Y), port 1 -> vdd (short Metal5 lead
+         north past its own keep-out into the generic tile fabric, same convention as LD2's vdd lead).
     C2 top plate = output_cs -> CS_GATE_PAD; R4: vbias_cs -> output_cs. Bias pins: see vbias_column.
     """
     P = "lna_core_cg"
@@ -546,9 +658,16 @@ def build_cg(ly):
     g1 = coil_geom(P, "L1")
     leq = coil_geom("lna_core_input_match", "LEQ")
     leq_east = LEQ_PORT_X + leq["pe"] + leq["rx"]  # LEQ: rot=180, no axis swap
+    L1_VSS_X = (g(leq_east + 1.0), g(leq_east + 6.0))  # centred in the SP_KO=8 gap between LEQ and L1: narrow
+    # (5um wide, 1um margin each side) to fit the smaller gap. A north-reaching grid-tap route (like LD2/LD4's
+    # vdd leads) was tried first and reverted: l1v sits inside the X-span of the horizontal "source" bus (xs ->
+    # l1p, CG source -> L1 port 1, drawn at y=YSL=(222,232) all the way from x=84 to l1p[2]), so ANY lead
+    # reaching north from l1v merges with that bus on M5 regardless of which layer the via transition itself
+    # uses -- confirmed via LVS (vss shorted straight to source/input_match). South, through this narrow gap
+    # and down to the south ring, stays clear of that bus's X/Y footprint entirely.
     # L1: rot=90 swaps axes -- its world-space X-extent is its local ry, world-space Y-extent is its local rx
     cx1, cy1 = g(leq_east + SP_KO + g1["ry"]), g(L1_PORT_Y - g1["pe"])
-    assert leq_east + 7 <= L1_VSS_X[0] and L1_VSS_X[1] + 7 <= cx1 - g1["ry"]
+    assert leq_east + 1 <= L1_VSS_X[0] and L1_VSS_X[1] + 1 <= cx1 - g1["ry"]
     assert cy1 - g1["rx"] - RING >= Y_S + RING, "L1 does not fit"
     (l1p, l1v), _, _ = place_coil(ly, top, P, "L1", cx1, cy1, rot=90, mirror=True)
     assert l1v[2] < l1p[0], "vss port must be the western one"
@@ -590,13 +709,17 @@ def build_cg(ly):
     top.box("m1", rw2[0], rw2[1], rw2[2], rw2[3] + 2.5)
     top.stack(rw2[0] - 0.4, rw2[3] + 1.0, rw2[2] + 0.4, rw2[3] + 2.5, 1, 3)
     xvc = vbias_column(top, "vbias_cs", (rw2[0] + rw2[2]) / 2, rw2[3] + 1.0)
-    # --- LD4: coil south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 (east) -> vdd lead along
-    # the top of the coil to VDD4_X, north along the east edge
+    # --- LD4: coil south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 (east) -> vdd, short
+    # lead north past its own keep-out into the generic tile fabric (same convention as LD2's own vdd lead -- see
+    # make_lna_core_parts.py's build_supply(), which reads ld4_vdd_lead below for its foreign-metal exclusion).
+    # Previously ran a dedicated column all the way to a fixed east-edge rail (VDD4_X=(1158,1168)), which pinned
+    # MACRO_W >= 1185 on its own regardless of what else needed the width -- removed, since the generic tile fabric
+    # immediately north of LD4 already carries vdd (M5) and a short local reach is all that's needed.
     geo = coil_geom(P, "LD4")
     # LD4: rot=90 swaps axes too, same convention as L1 above
     cx4, cy4 = g(cx1 + g1["ry"] + SP_KO + geo["ry"]), g(LD4_PORT_Y - geo["pe"])
-    assert cy4 - geo["rx"] - RING >= Y_S + RING and cx4 + geo["ry"] + 5 <= VDD4_X[0]
-    assert VDD4_X[1] + 5 <= MACRO_W - RING
+    assert cy4 - geo["rx"] - RING >= Y_S + RING, "LD4 does not fit"
+    assert cx4 + geo["ry"] + RING <= MACRO_W, "LD4 does not fit the macro width"
     (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90, mirror=True)
     assert q2[2] < q1[0], "vm2 port must be the western one"
     yv = VM2_Y
@@ -605,16 +728,10 @@ def build_cg(ly):
     top.box("m5", q2[2] - 10, q2[3] - 0.5, q2[2], yv[1])
     top.box("m5", dc[0], yv[0], q2[2], yv[1])
     top.box("m5", *q1)
-    assert abs(q1[3] - 0.5 - LD4_VDD_Y[0]) < 1e-6
-    top.box("m5", q1[0], LD4_VDD_Y[0], VDD4_X[1], LD4_VDD_Y[1])
-    # vdd: short east run straight into the macro's own east vdd rail band (make_lna_core_parts.py's build_supply()
-    # already runs a full-height vdd rail along the east edge, not just near the north corner) instead of a long
-    # column all the way to Y_N -- VDD4_X already sits only a short distance short of the band's inner edge
-    # (MACRO_W-RING), so this trades a ~500um run for a ~20um one.
-    ld4_vdd_x1 = g(MACRO_W - RING + 2)
-    assert VDD4_X[1] < ld4_vdd_x1 < MACRO_W - 2, "LD4 vdd lead must land inside the east rail band"
-    top.box("m5", VDD4_X[0], LD4_VDD_Y[0], ld4_vdd_x1, LD4_VDD_Y[1])
-    top.label(5, "vdd", (VDD4_X[0] + ld4_vdd_x1) / 2, (LD4_VDD_Y[0] + LD4_VDD_Y[1]) / 2)
+    ld4_vdd_y1 = g(q1[3] + 12)
+    assert ld4_vdd_y1 < Y_N, "LD4 vdd lead shortening computed past the macro edge"
+    top.box("m5", q1[0], q1[1], q1[2], ld4_vdd_y1)
+    top.label(5, "vdd", (q1[0] + q1[2]) / 2, (q1[1] + ld4_vdd_y1) / 2)
     INFO[P] = {"M1": {"rows": rows, "fingers_per_row": ma["nf"], "wf": wf, "L": l2,
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
@@ -622,7 +739,7 @@ def build_cg(ly):
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north"},
                "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
-               "ld4_vdd_lead": [VDD4_X[0], LD4_VDD_Y[0], ld4_vdd_x1, LD4_VDD_Y[1]],
+               "ld4_vdd_lead": [q1[0], q1[1], q1[2], ld4_vdd_y1],
                "vm2_column_x": list(dc),
                "pins": {"input_match": "Metal5 x=82 y=290..300", "output_cs": list(gp), "g_cg": f"Metal3 west edge y={GCG_Y}",
                         "vbias_cg": f"Metal3 north edge x={xvb:.2f}", "vbias_cs": f"Metal3 north edge x={xvc:.2f}",

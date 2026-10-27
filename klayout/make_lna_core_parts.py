@@ -11,7 +11,7 @@ Supply (cell lna_core_supply), layer plan of the team: M5 / M3 = vdd, M4 / M2 / 
          Via2 / Via3 join Metal2 and Metal4; north, east and south band also carry the vdd rail on Metal5 (gap at
          rf_out_pad, bridged on Metal3, Metal4 cut out around the bridge stacks)
   tiles  20 x 20 um supply tiles (layout/floorplan/cells) on a grid flush with the north band, on every site that
-         is >= KEEP from all block shapes and outside the inductor keep-outs (bbox + 25 um). Tiles abut ->
+         is >= KEEP from all block shapes and outside the inductor keep-outs (bbox + SPIRAL_KO, 10 um). Tiles abut ->
          continuous planes. Tile groups that touch the north / east / south band get vdd (rail) + vss (ring)
          there, group B (enclosed, GRP_B_AT) gets explicit straps, groups touching only the west band are left out.
   straps vss: CG guard ring -> west ring (Metal2), CS guard ring -> C3 bottom-plate bar (Metal2 + stack; the bar
@@ -40,10 +40,11 @@ BLOCKS = ["lna_core_input_match", "lna_core_cg", "lna_core_cs", "lna_core_output
 SUPPLY = "lna_core_supply"
 CELLS = os.path.join(HERE, "..", "layout", "floorplan", "cells")
 TILES = {"PG_PLAIN": "vss_m1m2m4_vdd_m3m5_20x20.gds", "PG_MIM": "vss_m1m2m4_vdd_m3m5_dcpl_mim_20x20_fix.gds"}
+TILE_10 = "vss_m1m2m4_vdd_m3m5_10x10.gds"  # half-pitch filler for narrow gaps the 20x20 grid can't reach
 INFO = json.load(open(os.path.join(HERE, "lna_core_layouts.json")))
 _, Y0, W, H = map(float, INFO["lna_core_output_match"]["frame"])  # macro x 0..W, y Y0..H (block coordinates)
 RING = 12.0
-PITCH, KEEP, SPIRAL_KO = 20.0, 4.0, 25.0
+PITCH, KEEP, SPIRAL_KO = 20.0, 4.0, 10.0
 N_MIM_MAX = 70  # x 4 MIMs x 5.1 x 6.3 um = 9000 um^2 on the common vss Metal4 plane (MIMTM.11: <= 10000)
 GRP_B_AT = (500.0, 300.0)  # a point inside tile group B (east of C3, below the vm2 trace)
 CG_STRAP_Y = (266.0, 270.0)  # Metal2 vss strap CG guard ring -> west band (between LEQ and the input match C1)
@@ -102,14 +103,14 @@ def free_sites(blk, ko):
     return sites
 
 
-def groups(sites):
+def groups(sites, step=PITCH):
     left, out = set(sites), []
     while left:
         s = left.pop()
         st, comp = [s], {s}
         while st:
             x, y = st.pop()
-            for n in ((x + PITCH, y), (x - PITCH, y), (x, y + PITCH), (x, y - PITCH)):
+            for n in ((x + step, y), (x - step, y), (x, y + step), (x, y - step)):
                 if n in left:
                     left.remove(n)
                     comp.add(n)
@@ -249,19 +250,98 @@ def build_supply(ly, top):
     S.box("m2", CS_STRAP_X + 2, yw + 8, xw + 1, yw + 12)
     yt = max(sy for sx, sy in grp_b)
     xt = max(sx for sx, sy in grp_b if sy == yt)
-    x4 = g(cg["LD4"]["centre"][0] + 6)  # east of LD4 port 1 (cx + 1 .. cx + 3)
-    yv = (ld4[1] + 12, ld4[1] + 22)  # between the LD4 vdd lead and the vm2 trace
+    # x4: via3/via4 stack location for group B's own vdd tap. S.stack(..., 3, 5) draws M3 AND M4 AND M5 at the same
+    # spot (see lib.Cell.stack) -- M4 is vss everywhere near here, both inside LD4_RECT's own SC2 shunt trace
+    # (shunt_metal=46, running the whole way around its ring) and in the ring band and in nearby generic tiles'
+    # own M4 plane, so any 3-5 stack dropped on top of any of those ties vss (M4) straight to vdd (M5) through its
+    # own via cuts. A fixed "a few um past LD4's own edge" offset broke twice already as MACRO_W/SP_KO changed
+    # (generic tiles' own merged M4 reaches much further than LD4's own nominal bbox implies) -- searched for a
+    # real M4-clear window here instead of assuming one, using the ACTUAL flattened M4 geometry (blocks + the
+    # tiles already placed above) at this specific y-band.
+    yv = (ld4[1] + 15, ld4[1] + 25)  # between the LD4 vdd lead and the vm2 trace. Offset +15/+25, not +12/+22:
+    # ld4[1] (ld4_vdd_lead's own y0) moved 333 -> 330 when LD4's vdd lead became a short local run off its own q1
+    # port instead of a dedicated column at a fixed LD4_VDD_Y, eating into this band's small (2 um) margin against
+    # yt (the tallest free tile row below it) -- widened back out.
     assert yt + PITCH + 4 <= yv[0] and yv[1] + 1 <= 357
+    ld4_east = cg["LD4"]["centre"][0] + lib.coil_geom(os.path.join(HERE, cg["LD4"]["coil"]))["ry"]
+    m4_now = pya.Region(top.begin_shapes_rec(ly.layer(46, 0))) + pya.Region(S.c.begin_shapes_rec(ly.layer(46, 0)))
+    # also avoid small M3 shapes: the tiles'/ring's own vss-tied M3 via-islands (Via2/Via3 stepping stones
+    # bridging M2-M4, see module doc) are a DIFFERENT net from the tile's own big M3=vdd plane despite sharing a
+    # layer -- the stack below draws M3 too (lo=3), so landing it on one of those islands ties vss straight to
+    # vdd through the stack's own via3 cut. Islands are small (~4x4um); the real vdd plane pieces here are not.
+    m3_now = pya.Region(top.begin_shapes_rec(ly.layer(42, 0))) + pya.Region(S.c.begin_shapes_rec(ly.layer(42, 0)))
+    m3_islands = pya.Region()
+    for p in m3_now.merged().each():
+        b = p.bbox()
+        if b.width() < um(10) or b.height() < um(10):
+            m3_islands.insert(p)
+    search_box = pya.Region(dbox((ld4_east, ld4[1] - 1, W - RING, ld4[1] + 11)))
+    blocked = ((m4_now + m3_islands) & search_box).merged()
+    x4 = None
+    for cand in range(int(ld4_east) + 3, int(W - RING) - 13):
+        if (blocked & pya.Region(dbox((cand - 1, ld4[1] - 1, cand + 11, ld4[1] + 11)))).is_empty():
+            x4 = g(float(cand))
+            break
+    assert x4 is not None and x4 + 10 < W - RING - 2, "group B vdd tap: no M4/vss-island-clear window found"
     S.box("m3", xt + 8, yt + 16, xt + 12, yv[1])
     S.box("m3", xt + 8, yv[0], x4 + 10, yv[1])
     S.box("m3", x4, ld4[1], x4 + 10, yv[1])
     S.stack(x4, ld4[1], x4 + 10, ld4[1] + 10, 3, 5)
+    S.box("m5", x4 + 10, ld4[1], W - RING + 2, ld4[1] + 10)  # plain M5 bridge, no via/M4, onto the real rail
 
     S.label(1, "vss", 6, (Y0 + H) / 2)
     S.label(5, "vdd", W / 2, H - 7)
+
+    # ---------------- half-pitch (10x10) fill: narrow leftover gaps the 20x20 grid can't reach -- e.g. the strip
+    # between a coil's own SPIRAL_KO clearance and a block edge, too thin for a full 20x20 site but wide enough
+    # for a 10x10 one. Same legality test as free_sites() (KEEP from every block shape, outside every coil's own
+    # SPIRAL_KO), minus the sites already covered by a 20x20 tile, ring band, or strap (everything drawn into S
+    # so far -- "placed" below). PITCH/2 grid on the SAME GX0/GY0 origin, so a 10x10 site boundary always lines
+    # up with either a 20x20 site boundary or its midline -- no half-um-off alignment drift between the two grids.
+    # Connectivity: rather than re-deriving a half-pitch touches_rail(), a 10x10 group is kept if it physically
+    # touches the fabric already drawn into S (tiles + ring + straps, all of which are rail-connected by this
+    # point) -- a strict superset of "touches the rail directly" and the same "drop isolated/floating groups"
+    # discipline as the 20x20 grid's own keep = touches_rail(c) or c is grp_b filter above.
+    placed = pya.Region()
+    for li in ly.layer_indexes():
+        placed += pya.Region(S.c.begin_shapes_rec(li))
+    placed.merge()
+    HALF = PITCH / 2
+    nx10, ny10 = int((W - RING - GX0) // HALF), int((H - RING - GY0) // HALF)
+    sites10 = set()
+    for i in range(nx10):
+        for j in range(ny10):
+            x0, y0 = GX0 + i * HALF, GY0 + j * HALF
+            b = pya.Box(um(x0), um(y0), um(x0 + HALF), um(y0 + HALF))
+            if not pya.Region(b.enlarged(um(KEEP), um(KEEP))).interacting(blk).is_empty():
+                continue
+            if not pya.Region(b).overlapping(ko).is_empty():
+                continue
+            if not pya.Region(b).interacting(placed).is_empty():
+                continue  # already covered by a 20x20 tile / ring / strap
+            sites10.add((x0, y0))
+    comps10 = groups(sites10, step=HALF)
+    kept10 = []
+    for c in comps10:
+        region = pya.Region()
+        for x0, y0 in c:
+            region.insert(pya.Box(um(x0), um(y0), um(x0 + HALF), um(y0 + HALF)))
+        if not region.sized(1).interacting(placed).is_empty():  # 1 dbu = touches, not just nearby
+            kept10.append(c)
+    sites10_kept = sorted(s for c in kept10 for s in c)
+    if sites10_kept:  # only import the tile cell if it will actually be instantiated -- an imported-but-unplaced
+        # cell has no parent, making it a SECOND top cell in the written GDS (same orphaned-cell gotcha this
+        # project hit once already with PG_MIM at N_MIM_MAX=0: ly.top_cell() / lvs_layout()'s strip.py both
+        # crash with "multiple top cells").
+        cell10 = import_tile(ly, "PG_PLAIN_10", TILE_10)
+        for x0, y0 in sites10_kept:
+            S.place(cell10, x0 + HALF / 2, y0 + HALF / 2)
+
     stats = {"tiles": len(sites), "PG_MIM": n_mim, "PG_PLAIN": len(sites) - n_mim,
              "decap_pF": round(n_mim * 4 * lib.c_mim_pf(5.1, 6.3), 2), "ring_m3_islands": n_isl,
-             "vdd_rail_bridges": bridges, "groups_dropped": [sorted(c)[:1] + [len(c)] for c in comps if c not in keep]}
+             "vdd_rail_bridges": bridges, "groups_dropped": [sorted(c)[:1] + [len(c)] for c in comps if c not in keep],
+             "tiles_10x10": len(sites10_kept),
+             "tiles_10x10_dropped": sum(len(c) for c in comps10 if c not in kept10)}
     return S, stats
 
 
