@@ -109,10 +109,15 @@ COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_
 # (either LD4_RECT's own SC2 shunt trace, M4 the whole way around its ring, or the east ring band's own M4) --
 # see build_supply()'s own comment at that site for the full story and the fix (a plain M5-only bridge, no via,
 # landing in the one M4-clear window between the coil and the ring).
-MACRO_W, RING = 1102, 12  # grown from 1062 for the re-floorplan's LSHUNT_OUT SE relocation: the corridor east of
+MACRO_W, RING = 1100, 12  # grown from 1062 for the re-floorplan's LSHUNT_OUT SE relocation: the corridor east of
 # L1's own east edge (779) to the old east edge was only 251um wide, 31um short of LSHUNT_OUT_RECT's own 282um
-# diameter at rot=270 (ports south, axes swapped: world-X extent = local ry = 141). First-shot sizing, to be
-# tightened once the coils are reshaped again for this new topology (if ever).
+# diameter at rot=270 (ports south, axes swapped: world-X extent = local ry = 141). Tightened from the original
+# 1102 first-shot value (inductor-resize pass): LSHUNT_OUT's own "does not fit the east edge" assert computes to
+# exactly 1098 at this geometry/placement (cx=935, geo["ry"]=141, SP_KO=10, RING=12) -- no other coil comes close
+# (LD2 (NE) has ~45um of slack against MACRO_W even with its square geometry) -- 1100 keeps a 2um margin, same
+# convention as the "+2 taken for margin" SP_KO note below. No pitch-grid alignment constraint on MACRO_W (unlike
+# Y_N/Y_S): make_lna_core_parts.py's X tiling is flush with the WEST band only (GX0=RING fixed), the east side is
+# just a floor-divided remainder, no analog of GY0's "floor to the north band" trick.
 Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S-2*RING) mod 20 == 0) for the same
 # re-floorplan: LSHUNT_OUT's long rf_out return lead needs a clear east-west channel south of both its own and
 # L1's keep-outs (L1 south edge -318, LSHUNT_OUT's own ~-326 at its new site) -- see LSH_CHANNEL_Y below.

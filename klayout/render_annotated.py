@@ -43,7 +43,7 @@ lv.save_image(RAW, W_PX, H_PX)
 vb_l, vb_b, vb_r, vb_t = view_box.left, view_box.bottom, view_box.right, view_box.top
 
 # ---- macro placement (from make_lna_top.py's own printed geometry convention) ----
-MACRO_ORIGIN = (410.3, 1461.3)  # world (x, y) of block coordinate (0, Y0)
+MACRO_ORIGIN = (410.3, 1441.3)  # world (x, y) of block coordinate (0, Y0)
 INFO = json.load(open("lna_core_layouts.json"))
 _, Y0, MW, MH_Y = map(float, INFO["lna_core_output_match"]["frame"])
 MACRO_W, MACRO_H = MW, MH_Y - Y0
