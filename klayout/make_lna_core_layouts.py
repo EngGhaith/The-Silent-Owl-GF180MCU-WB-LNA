@@ -442,12 +442,16 @@ def build_output_match(ly):
     cx, cy = LSH_SE_CX, LSH_SE_CY
     L1_EAST = 779.0  # lna_core_cg's own L1 east edge (build_cg, unchanged by this re-floorplan -- L1 itself did
     # not move); cross-block constant since LSHUNT_OUT's new site must clear L1's own keep-out
-    assert cx - geo["ry"] - SP_KO >= L1_EAST, "LSHUNT_OUT (SE) does not clear L1's own keep-out"  # rot=270: world-X
-    # extent is local ry
-    assert cx + geo["ry"] + SP_KO + RING <= MACRO_W, "LSHUNT_OUT (SE) does not fit against the east edge"
-    assert cy - geo["rx"] - SP_KO >= Y_S + RING, "LSHUNT_OUT (SE) does not fit against the south edge"  # world-Y
+    # RING_KO (coil_guard_ring, Phase 2) replaces SP_KO here -- see LEQ's own comment for the full rationale.
+    # LSH_SE_CX/CY are fixed constants (not derived from SP_KO like L1's cx1 was), so this only relaxes the
+    # fit-check -- LSHUNT_OUT itself does not move.
+    assert cx - geo["ry"] - RING_KO >= L1_EAST, "LSHUNT_OUT (SE) does not clear L1's own keep-out"  # rot=270:
+    # world-X extent is local ry
+    assert cx + geo["ry"] + RING_KO + RING <= MACRO_W, "LSHUNT_OUT (SE) does not fit against the east edge"
+    assert cy - geo["rx"] - RING_KO >= Y_S + RING, "LSHUNT_OUT (SE) does not fit against the south edge"  # world-Y
     # extent is local rx
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=270)
+    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=270, w=RING_W, sp=RING_SP)
     assert q1[0] > q2[0], "q1 (rf_out) must be the eastern port, q2 (vss) the western one"
     top.box("m5", *q1)
     top.box("m5", *q2)
@@ -493,7 +497,8 @@ def build_output_match(ly):
     top.box("m5", xr - 5, bt[1], xe + 2, bt[3])
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
-               "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "south"},
+               "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "south",
+                              "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
                "macro": [MACRO_W, Y_N - Y_S], "frame": [0, Y_S, MACRO_W, Y_N],
                "pins": {"output_cs": f"Metal5 x={OM_IN_X} y={yc}", "rf_out_pad": f"Metal5 north edge x={xr}",
                         "vss": f"Metal4 south edge x={q2[0]}..{q2[2]}"}}

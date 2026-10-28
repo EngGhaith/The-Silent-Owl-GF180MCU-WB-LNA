@@ -76,7 +76,8 @@ def import_tile(ly, name, fname):
     return dst
 
 
-RING_COILS = {"lna_core_input_match": ["LEQ"], "lna_core_cs": ["LD2"], "lna_core_cg": ["L1"]}  # coils already converted to
+RING_COILS = {"lna_core_input_match": ["LEQ"], "lna_core_cs": ["LD2"], "lna_core_cg": ["L1"],
+              "lna_core_output_match": ["LSHUNT_OUT"]}  # coils already converted to
 # lib.coil_guard_ring() (pilot: LEQ; Phase 2 adds LD2/L1/LSHUNT_OUT here one at a time). For these, the coil's
 # own JSON "ring_outer" bbox (a real, grid-abuttable vss ring) replaces the generic bbox+SPIRAL_KO keep-out --
 # the ring's own drawn metal is already part of `blk` below, so a tile only needs the ordinary KEEP=4 clearance
