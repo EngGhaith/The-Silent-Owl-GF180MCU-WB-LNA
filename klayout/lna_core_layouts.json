@@ -62,7 +62,19 @@
     612.0,
     -57.5
    ],
-   "ports": "north"
+   "ports": "north",
+   "ring_inner": [
+    444.0,
+    -319.0,
+    780.0,
+    204.0
+   ],
+   "ring_outer": [
+    442.0,
+    -321.0,
+    782.0,
+    206.0
+   ]
   },
   "LD4": {
    "coil": "LD4_RECT_coil.gds",

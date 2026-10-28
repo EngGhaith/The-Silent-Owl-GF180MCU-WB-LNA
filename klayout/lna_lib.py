@@ -268,7 +268,38 @@ def _ring_stitch(cell, lay, x0, y0, x1, y1, sz, enc=0.15, pitch=20.0):
         cell.box(lay, cx_ - sz / 2, cy_ - sz / 2, cx_ + sz / 2, cy_ + sz / 2)
 
 
-def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0):
+def _carve(box, avoid, margin=0.5):
+    """`box` (x0,y0,x1,y1) minus each (x0,y0,x1,y1) in `avoid`, with real clearance `margin` added around every
+    avoid box (never a zero-gap cut -- same lesson as everywhere else in this project: KLayout merges touching
+    same-layer shapes regardless of intent). Splits along whichever axis `box` overlaps each avoid box on --
+    for a long thin ring-side box, that's normally its own long axis. Returns a list of remaining sub-boxes (0,
+    1, or 2 pieces per avoid overlap, applied one avoid box at a time)."""
+    pieces = [box]
+    for av in avoid:
+        ax0, ay0, ax1, ay1 = av
+        new_pieces = []
+        for px0, py0, px1, py1 in pieces:
+            if ax1 <= px0 or ax0 >= px1 or ay1 <= py0 or ay0 >= py1:
+                new_pieces.append((px0, py0, px1, py1))  # no overlap with this piece
+                continue
+            horiz = (px1 - px0) >= (py1 - py0)
+            if horiz:
+                lo, hi = ax0 - margin, ax1 + margin
+                if lo > px0:
+                    new_pieces.append((px0, py0, min(lo, px1), py1))
+                if hi < px1:
+                    new_pieces.append((max(hi, px0), py0, px1, py1))
+            else:
+                lo, hi = ay0 - margin, ay1 + margin
+                if lo > py0:
+                    new_pieces.append((px0, py0, px1, min(lo, py1)))
+                if hi < py1:
+                    new_pieces.append((px0, max(hi, py0), px1, py1))
+        pieces = new_pieces
+    return pieces
+
+
+def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0, avoid=()):
     """grid-compliant vss ring directly around a coil: a full Metal1-Metal2-Metal3-Metal4 stack (Via1 M1<->M2,
     Via2 M2<->M3, Via3 M3<->M4 -- GF180's via numbering connects ViaN to MetalN<->Metal(N+1), so M3 must be
     present even though only M1/M2/M4 carry vss in the tile convention below), with SPARSE cut stitching (one
@@ -291,6 +322,13 @@ def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0):
     rotation swaps which of rx/ry is the world-X vs world-Y half-extent -- same convention as every fit-assert
     in make_lna_core_layouts.py).
 
+    `avoid`: (x0,y0,x1,y1) world-coordinate boxes (with real margin added automatically, see _carve()) where the
+    ring must leave NO metal on any layer -- for a pre-existing crossing that tunnels through M1..M4 at this
+    exact (x,y) (e.g. another block's own dipped_column() dip-band), which blocks every layer the ring would
+    otherwise occupy there. Confirmed necessary, not hypothetical: output_match's own rf_out_pad crossing at
+    L1's site did exactly this and produced a real LVS short (rf_out_pad merging into vss) before this param
+    existed.
+
     Returns (clear, outer): each (x0, y0, x1, y1) in world coords. `clear` is the coil's own real keep-out
     boundary (nothing but this ring's own vss may enter clear..outer); `outer` is the ring's own outer edge --
     what make_lna_core_parts.py should let tile sites touch directly (not stay SPIRAL_KO away from)."""
@@ -302,17 +340,23 @@ def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0):
     outer = (clear[0] - w, clear[1] - w, clear[2] + w, clear[3] + w)
     x0, y0, x1, y1 = outer
     sides = [(x0, y0, x1, y0 + w), (x0, y1 - w, x1, y1), (x0, y0 + w, x0 + w, y1 - w), (x1 - w, y0 + w, x1, y1 - w)]
-    for b in sides:
-        cell.box("m1", *b)
-        cell.box("m2", *b)
-        cell.box("m3", *b)  # Via2 connects M2<->M3, Via3 connects M3<->M4 (GF180 numbering) -- M3 must be
-        cell.box("m4", *b)  # present as a stepping stone even though only M1/M2/M4 carry vss in the tile
-        # convention above
-    for i, b in enumerate(sides):  # sparse cut stitching, vertical sides without the corners (as guard_ring())
-        bx = b if i < 2 else (b[0], b[1] + 0.3, b[2], b[3] - 0.3)
-        _ring_stitch(cell, "v1", *bx, sz=VIA)
-        _ring_stitch(cell, "v2", *bx, sz=VIA)
-        _ring_stitch(cell, "v3", *bx, sz=VIA)
+    min_piece = 0.3  # drop a carved sliver this thin or thinner -- not wide enough for a real stitched cut anyway
+    for i, b in enumerate(sides):
+        for p in (_carve(b, avoid) if avoid else [b]):
+            if p[2] - p[0] <= min_piece or p[3] - p[1] <= min_piece:
+                continue  # carved down to nothing (or a sliver) by an `avoid` box -- leave the gap bare
+            cell.box("m1", *p)
+            cell.box("m2", *p)
+            cell.box("m3", *p)  # Via2 connects M2<->M3, Via3 connects M3<->M4 (GF180 numbering) -- M3 must be
+            cell.box("m4", *p)  # present as a stepping stone even though only M1/M2/M4 carry vss in the tile
+            # convention above
+            # sparse cut stitching, vertical sides without the corners (as guard_ring())
+            bx = p if i < 2 else (p[0], p[1] + 0.3, p[2], p[3] - 0.3)
+            if bx[2] - bx[0] <= 0 or bx[3] - bx[1] <= 0:
+                continue  # corner trim ate the whole (carved) piece -- metal above is still fine with no cuts
+            _ring_stitch(cell, "v1", *bx, sz=VIA)
+            _ring_stitch(cell, "v2", *bx, sz=VIA)
+            _ring_stitch(cell, "v3", *bx, sz=VIA)
     cell.label(1, "vss", (x0 + x1) / 2, y0 + w / 2)
     return clear, outer
 

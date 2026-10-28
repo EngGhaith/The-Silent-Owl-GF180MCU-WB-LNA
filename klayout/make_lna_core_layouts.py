@@ -753,10 +753,26 @@ def build_cg(ly):
     # uses -- confirmed via LVS (vss shorted straight to source/input_match). South, through this narrow gap
     # and down to the south ring, stays clear of that bus's X/Y footprint entirely.
     # L1: rot=90 swaps axes -- its world-space X-extent is its local ry, world-space Y-extent is its local rx
+    # cx1 keeps the SP_KO-based formula (not RING_KO) deliberately: L1_VSS_X's own vss lead already lives in
+    # this exact gap (leq_east+1..leq_east+6, tuned against the CURRENT cx1), and L1's own downstream routing
+    # (YSL crossing dip-bands, output_match's xe column threading L1's spiral gaps) was hand-tuned against L1's
+    # CURRENT position -- moving cx1 west would shift all of that and need the same re-verification cascade as
+    # last session's LVS-short hunting. Phase 2 adds L1's ring at its current site (real DRC/LVS safety win,
+    # same as LEQ/LD2) without yet reclaiming this gap's area; revisit only as a deliberate, separate follow-up.
     cx1, cy1 = g(leq_east + SP_KO + g1["ry"]), g(L1_PORT_Y - g1["pe"])
     assert leq_east + 1 <= L1_VSS_X[0] and L1_VSS_X[1] + 1 <= cx1 - g1["ry"]
     assert cy1 - g1["rx"] - RING >= Y_S + RING, "L1 does not fit"
     (l1p, l1v), _, _ = place_coil(ly, top, P, "L1", cx1, cy1, rot=90, mirror=True)
+    # avoid: output_match's own rf_out_pad crossing (build_output_match's xe=456 dipped_column, dip_bands
+    # [(-318,-312),(197,213),(220,244),(258,264),(272,286)], each with its own +-2um transition margin) tunnels
+    # through M3/M4 at x=456..458 to get past L1 at several points. Checked every band's own margin-extended
+    # range against BOTH ring walls it could reach (south wall y -321..-319, north wall y 204..206) -- exactly
+    # two overlaps, confirmed via LVS (the first found live, as a real "rf_out_pad merges with vss" short; the
+    # second found by the same overlap check before it could cause one): (197,213)+-2 = 195..215 hits the north
+    # wall; (-318,-312)+-2 = -320..-310 hits the south wall (only 1um of actual overlap, -320..-319, but real
+    # overlap all the same). The other 3 bands (all y>=220) don't reach either wall.
+    ring_in, ring_out = lib.coil_guard_ring(top, cx1, cy1, g1, rot=90, w=RING_W, sp=RING_SP,
+                                             avoid=[(454.0, 195.0, 460.0, 215.0), (454.0, -322.0, 460.0, -308.0)])
     assert l1v[2] < l1p[0], "vss port must be the western one"
     ysl = YSL
     assert l1v[3] + 9.5 + 5 <= ysl[0]
@@ -905,7 +921,8 @@ def build_cg(ly):
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
                "C3_pF": round(4 * lib.c_mim_pf(w9, l9), 3), "C2_pF": round(lib.c_mim_pf(w1, l1c), 3),
-               "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north"},
+               "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north",
+                      "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
                "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
                "ld4_vdd_lead": [q1[0], q1[1], q1[2], Y_N],
