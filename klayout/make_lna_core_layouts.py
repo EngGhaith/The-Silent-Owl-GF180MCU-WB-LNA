@@ -338,8 +338,12 @@ def build_input_match(ly):
 
 
 # ---------------------------------------------------------------- interfaces between the cells (floorplan coords)
-CS_GATE_PAD = (268.0, 399.5, 274.0, 405.5)  # input_cg of lna_core_cs = output_cs of lna_core_cg (Metal3..5 stack)
-VX_X = (377.0, 387.0)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode
+CS_X_SHIFT = 300.0  # cs re-floorplan: shift the whole transistor/pad subsystem east by this much to clear
+# LD4's new NW-corner placement (LD4 occupies local x 329..547 at this same y-band) -- LD2 itself is unaffected,
+# already independently placed at its own NE-corner target (LD2_NE_CX/CY) regardless of this shift.
+CS_GATE_PAD = (268.0 + CS_X_SHIFT, 399.5, 274.0 + CS_X_SHIFT, 405.5)  # input_cg of lna_core_cs = output_cs of
+# lna_core_cg (Metal3..5 stack)
+VX_X = (377.0 + CS_X_SHIFT, 387.0 + CS_X_SHIFT)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode
 C_OUT_PLATE = (391.0, 466.0)  # lower-left of the output C1 top plate (rotated: x extent = L, y extent = W)
 C_OUT_L = 54.0  # x extent of the output C1 plate (between the vx column and the LSHUNT_OUT vss lead)
 OM_IN_X = 380.0  # west end of the output_cs lead of lna_core_output_match
@@ -395,7 +399,20 @@ def build_output_match(ly):
     assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
     top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
     top.box("m5", bt[0], bt[1], bt[2], bt[3])
-    top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
+    # rf_out_pad's own north-reaching column crosses lna_core_cg's own q2 (vm2) lead -- CG's drain bus reaching
+    # LD4's drain port -- at local y 719..722.5, on the same layer (confirmed via NetTracer as the second bridge
+    # behind the "rf_out_pad merges with vdd/vss" LVS mismatch, the first being the YSL-bus crossing fixed
+    # above). Dipping CG's own q2 lead instead isn't practical there: it runs directly through LD4's own dense
+    # edge via array (792 vias within a few um of the crossing), and a new via transition collides with it.
+    # output_match's own column has no such conflict, so dip it here instead -- Metal4 for the crossing span,
+    # real clearance on both approaches (not just ending at q2's own edge).
+    yq0, yq1 = 714.0, 728.0  # dip zone, clear of CG's q2 lead (719..722.5) on both sides
+    assert bt[1] < yq0 and yq1 < Y_N
+    top.box("m5", xr - 5, bt[1], xr + 5, yq0)
+    top.stack(xr - 5, yq0, xr + 5, yq0 + 2, 4, 5)
+    top.box("m4", xr - 5, yq0 + 2, xr + 5, yq1 - 2)
+    top.stack(xr - 5, yq1 - 2, xr + 5, yq1, 4, 5)
+    top.box("m5", xr - 5, yq1, xr + 5, Y_N)
     q1_min_y = pt[3] + 20  # rf_out port must clear the cap
     cap_info = {cn: {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3), "schematic_pF": round(c_pf, 3)},
                 "top_plate": list(pt)}
@@ -437,10 +454,25 @@ def build_output_match(ly):
     # all the way to a point east of pt (output_cs's own top plate -- bt sits only ~1um above pt at the same
     # x-range, so a straight run up to bt[1] inside pt's own x-range would short rf_out to output_cs, confirmed
     # by a real LVS mismatch from the first attempt), then north clear of pt, then a final jog west to meet bt.
-    xe = g(pt[2] + 6)
+    # xe nudged from pt[2]+6 to 456.0: the straight run up to bt was found (via NetTracer) to cross
+    # lna_core_cg's own L1 coil at several points along its winding -- not a uniform block, but real metal on
+    # every turn at x 449..453 for most of L1's own height. x=456..460 threads between turns for most of that
+    # span (confirmed empirically, not assumed), leaving only the 6 narrow bands below where L1 (or its own
+    # port leads) still has metal -- Cell.dipped_column() crosses each on Metal4 with real clearance on both
+    # sides, same technique as every other cross-block crossing fixed in this re-floorplan.
+    xe = 456.0
+    assert pt[2] + 6 <= xe, "xe must still clear output_cs's own top plate (pt)"
     top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
     top.box("m5", xe, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
-    top.box("m5", xe, LSH_CHANNEL_Y, xe + 2, bt[1] + 1)
+    # (220, 244) merges two close-together bands into one: the Metal5-only vbias/YSL bus (222..232) and, right
+    # next to it, the supply-level vss strap (make_lna_core_parts.py's vss_straps(), CS guard ring -> C3
+    # bottom-plate bar) extended east to reach CS's own shifted guard ring (CS_STRAP_X) at 236..240 -- not an L1
+    # feature at all, only found by tracing the full "parts" assembly (invisible in lna_core_cg.gds alone, since
+    # the supply draws it later). Merged into one wider band instead of two adjacent ones specifically because
+    # two separate dipped_column() bands this close together would need their own mutual clearance too (each
+    # one's margin landing inside the other's), on top of each one's own margin from the real obstruction.
+    top.dipped_column(xe, LSH_CHANNEL_Y, bt[1] + 1,
+                       dip_bands=[(-318, -312), (197, 213), (220, 244), (258, 264), (272, 286)])
     top.box("m5", xr - 5, bt[1], xe + 2, bt[3])
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
@@ -484,7 +516,7 @@ def build_cs(ly):
     wb = math.ceil(i_ma / 2 * 2) / 2
     m1t, m1 = lib.fet_tile(ly, f"{P}__M1", volt_of(s1), wf1, l1, na1, nd1, ws=wb, wd=wb)
     m4t, m4 = lib.fet_tile(ly, f"{P}__M4", volt_of(s4), wf4, l4, na4, nd4, ws=wb, wd=wb, draw_s=False)
-    x_m1, y_m1 = 285.0, 400.0
+    x_m1, y_m1 = 285.0 + CS_X_SHIFT, 400.0
     tr1 = top.place(m1t, x_m1 - m1["row"][0], y_m1)
     T1 = {k: tbox(tr1, v) for k, v in m1.items() if k != "nf"}
     xc = (T1["row"][0] + T1["row"][2]) / 2
@@ -708,11 +740,58 @@ def build_cg(ly):
     ysl = YSL
     assert l1v[3] + 9.5 + 5 <= ysl[0]
     top.box("m5", xs[0], ysl[0], xs[1], y_s + 5)
-    top.box("m5", xs[0], ysl[0], l1p[2], ysl[1])
+    # YSL bus (CG source -> L1 port 1) crosses lna_core_output_match's own rf_out return lead on the same layer:
+    # a tall Metal5 column at x 451..453 running almost the full macro height (LSHUNT_OUT's rf_out detour around
+    # its own C1 cap, routed independently and unaware of this bus). Confirmed via NetTracer as the actual bridge
+    # behind the "input_cg merges with vdd/vss" LVS mismatch found after the re-floorplan (the rf_out lead itself
+    # ties further up into the vdd rail construction). Drop to Metal4 for just the crossing span, same fix
+    # pattern as LSHUNT_OUT's own vss-under-rf_out crossing.
+    # Single dip zone 446..466 covering both obstructions at once -- L1's own west-edge area and
+    # lna_core_output_match's own rf_out return column (x 456..460, moved there to thread L1's winding gaps --
+    # see build_output_match), close enough together to share one crossing. Confirmed via NetTracer as the
+    # actual bridge behind the "input_cg merges with vdd/vss" LVS mismatch found after the re-floorplan.
+    # Crosses on Metal3, not Metal4: output_match's own column dips to Metal4 at this exact same y-band (same
+    # dip_bands list, same underlying L1 feature) at x 456..460 -- using Metal4 here too would merge the two
+    # independent dips with each other on that shared layer (confirmed: that was the actual bug behind this
+    # crossing still merging after Metal4 was first tried). The transition stacks (3..5, so Metal4 appears only
+    # narrowly at their own 2um width, outside 456..460) must clear the column with real margin, not just end
+    # at its edge -- confirmed empirically that stopping a run exactly at another same-layer shape's edge still
+    # merges them (KLayout: touching, zero gap or not, is still one net). Metal3 confirmed clear here by direct
+    # GDS inspection.
+    xo0, xo1 = 446.0, 466.0
+    assert xs[0] < xo0 and xo1 < l1p[2]
+    top.box("m5", xs[0], ysl[0], xo0, ysl[1])
+    top.stack(xo0, ysl[0], xo0 + 2, ysl[1], 3, 5)
+    top.box("m3", xo0 + 2, ysl[0], xo1 - 2, ysl[1])
+    top.stack(xo1 - 2, ysl[0], xo1, ysl[1], 3, 5)
+    top.box("m5", xo1, ysl[0], l1p[2], ysl[1])
     top.box("m5", *l1p)
     top.box("m5", l1p[0], l1p[3] - 0.5, l1p[2], ysl[1])
     top.box("m5", *l1v)
-    top.box("m5", L1_VSS_X[0], l1v[3] - 0.5, l1v[2], l1v[3] + 9.5)
+    # L1's own vss lead (reaching east to its own port, l1v[2]) crosses lna_core_output_match's own rf_out_pad
+    # "xe" column (Metal5, x 451..453) on the same layer -- a third instance of the same cross-block M5 crossing
+    # class (confirmed via NetTracer as the bridge behind the residual "rf_out_pad merges with vss" LVS
+    # mismatch, after the first two crossings -- YSL bus and q2 -- were fixed above). No nearby via content
+    # here (confirmed by direct inspection, unlike q2's crossing next to LD4's own dense edge array), so dip
+    # cleanly: Metal4 for the crossing span, real clearance on both approaches.
+    # dip on Metal3, not Metal4: output_match's own column dips to Metal4 across this entire y-band too (same
+    # underlying L1 feature, its own dip_band (197, 213) with its own +-2um transition margin, so its Metal4
+    # usage really runs 197..213 and its own Metal4<->Metal5 transition stacks sit right at 197..199 and
+    # 211..213) -- Metal4 here would merge the two independent dips with each other, and a plain Metal5 strip
+    # anywhere in 211..213 would land squarely on output_match's own transition's Metal5 portion there, same
+    # lesson as the YSL-bus fix above, just discovered one layer later. So this dip's own upper edge is pinned
+    # to y_hi (no "above the dip" plain run at all) to swallow output_match's entire 197..213 Metal4 range;
+    # below, it starts clear of a separate, unrelated multi-layer (M1/M2/M3) feature at y 200..203.
+    y_lo, y_hi = l1v[3] - 0.5, l1v[3] + 9.5
+    yd0 = 204.0
+    xv0, xv1 = 446.0, 466.0  # clear of output_match's own column (456..460) with real margin on both sides
+    assert L1_VSS_X[0] < xv0 and xv1 < l1v[2] and y_lo < yd0 < y_hi
+    top.box("m5", L1_VSS_X[0], y_lo, l1v[2], yd0)
+    top.box("m5", L1_VSS_X[0], yd0, xv0, y_hi)
+    top.stack(xv0, yd0, xv0 + 2, y_hi, 3, 5)
+    top.box("m3", xv0 + 2, yd0, xv1 - 2, y_hi)
+    top.stack(xv1 - 2, yd0, xv1, y_hi, 3, 5)
+    top.box("m5", xv1, yd0, l1v[2], y_hi)
     # Metal5 down to just above the south ring band (vdd rail there), Metal4 into the band (vss)
     yb = Y_S + RING + 4
     top.box("m5", L1_VSS_X[0], yb, L1_VSS_X[1], l1v[3] + 9.5)
@@ -729,7 +808,25 @@ def build_cg(ly):
     assert dc[0] <= b1[0] and b1[2] <= dc[1]
     top.box("m5", dc[0], A["D"][1], dc[1], p1[3])  # vm2 column (drains -> C2 strap)
     gp = CS_GATE_PAD
-    top.box("m5", p1[2] - 1, gp[1], gp[2], gp[3])  # output_cs -> lna_core_cs input_cg pad
+    # output_cs -> lna_core_cs input_cg pad. CS_GATE_PAD moved ~300um east (cs re-floorplan, clearing LD4's
+    # new NW-corner placement): a straight Metal5 reach at this wire's own y would now run directly through
+    # LD4's own west/east edge via-stack busbars (local x 329..547, y 258..722 -- via1..via4 solid the whole
+    # height, confirmed by the deep-mode DRC short this exact straight reach produced) and, further east,
+    # through L1's own coil footprint too (occupies roughly x 436..779 below y~213). Route on Metal3 through
+    # the one confirmed-clear path instead: down through the narrow gap between C3's own east edge (322) and
+    # LD4's west edge (329), east at y~240 through the gap between L1 (ends ~213) and LD4 (starts 258) -- clear
+    # of both coils and of the Metal5-only vbias/YSL bus at y 222..232 (different layer, no via = no connection)
+    # -- then back up to Metal5 east of LD4's east edge (547). Every segment confirmed clear by direct GDS
+    # inspection, not assumed from geometry alone (same lesson as the C2/C3 collision found during LD4's own
+    # placement).
+    xd, yg_lo, xr = 324.0, 240.0, 558.0
+    top.box("m5", p1[2] - 1, gp[1], xd + 2, gp[3])  # M5 run from C2 east to the drop point (still west of LD4)
+    top.stack(xd, gp[1], xd + 2, gp[3], 3, 5)  # M5 -> M3, in the C3/LD4 gap
+    top.box("m3", xd, yg_lo, xd + 2, gp[3])  # drop to the L1/LD4 gap
+    top.box("m3", xd, yg_lo, xr + 2, yg_lo + 2)  # east under LD4, in the L1/LD4 gap (y 213..258)
+    top.box("m3", xr, yg_lo, xr + 2, gp[3])  # rise back up, east of LD4
+    top.stack(xr, gp[1], xr + 2, gp[3], 3, 5)  # M3 -> M5, east of LD4
+    top.box("m5", xr, gp[1], gp[2], gp[3])  # final run east into the pad
     top.label(5, "output_cs", (gp[0] + gp[2]) / 2, (gp[1] + gp[3]) / 2)
     # --- R4 above C2: west = vbias_cs (Metal3 north), east = output_cs (Metal5 down to the C2 top plate)
     r2 = resistor(ly, f"{P}__R4", sch, "R4")
@@ -764,7 +861,21 @@ def build_cg(ly):
     # it north to meet q2, jogging east to q2's own x (q2 is east of dc here, unlike the main_pex redo where it
     # happened to land close to dc already).
     top.box("m5", dc[0], p1[3], dc[1], q2[1] + 0.5)
-    top.box("m5", dc[0], q2[1], q2[2], q2[3])
+    # the horizontal jog to q2 runs east past q1's OWN vdd lead (q1[0]..q1[2]) at this exact y-band -- the "q1
+    # (west) and q2 (east) share the same y-band but sit at different x" note above only checked the two ports'
+    # own boxes against each other, not this jog wire crossing q1's column on its way further east. Confirmed via
+    # NetTracer as the real bridge behind the "output_cs merges with vdd" LVS mismatch (output_cs -> R4's own
+    # east-terminal stack -> C2 bottom plate = vm2 -> this very jog -> q1 -> vdd). Dip to Metal3 here; q1 itself
+    # has no Metal3 content, so the dip's own crossing can sit at q1's exact x, only the transition stacks need
+    # clearance -- tile fabric immediately outside LD4's keepout runs right up to ~433/~443 here, so margins are
+    # kept small (0.5-1 um, still real clearance, not a zero-gap touch) to fit the narrow corridor.
+    xq0, xq1 = q1[0] - 0.5, q1[2] + 0.5
+    assert dc[0] < xq0 - 1.0 and xq1 + 1.0 < q2[0]
+    top.box("m5", dc[0], q2[1], xq0, q2[3])
+    top.stack(xq0 - 1.0, q2[1], xq0, q2[3], 3, 5)
+    top.box("m3", xq0, q2[1], xq1, q2[3])
+    top.stack(xq1, q2[1], xq1 + 1.0, q2[3], 3, 5)
+    top.box("m5", xq1 + 1.0, q2[1], q2[2], q2[3])
     # vdd (q1): short local reach north into the generic tile fabric -- q1 (west) and q2 (east) share the same
     # y-band but sit at different x, so this run never crosses q2's own position.
     top.box("m5", q1[0], q1[1], q1[2], Y_N)

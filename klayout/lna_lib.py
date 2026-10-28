@@ -75,6 +75,26 @@ class Cell:
         for k in range(lo, hi):
             self.cuts(f"v{k}", x0, y0, x1, y1, enc)
 
+    def dipped_column(self, x, y0, y1, dip_bands, w=2.0, margin=2.0):
+        """vertical Metal5 run from y0 to y1 at (x, x+w) that drops to Metal4 (with real clearance stacks on
+        both sides, not just touching at the band edge) across each (lo, hi) in dip_bands -- for threading a
+        cross-block lead past a series of known obstructions (e.g. gaps in an inductor's own winding) on a
+        fixed grid column, instead of a single bespoke detour per obstruction."""
+        y0, y1 = sorted((y0, y1))
+        bands = sorted(dip_bands)
+        cur = y0
+        for lo, hi in bands:
+            assert cur <= lo - margin, f"dip band {(lo, hi)} leaves no room after y={cur}"
+            if lo - margin > cur:
+                self.box("m5", x, cur, x + w, lo - margin)
+            self.stack(x, lo - margin, x + w, lo, 4, 5)
+            self.box("m4", x, lo, x + w, hi)
+            self.stack(x, hi, x + w, hi + margin, 4, 5)
+            cur = hi + margin
+        assert cur <= y1, f"dip bands extend past y1={y1}"
+        if y1 > cur:
+            self.box("m5", x, cur, x + w, y1)
+
     def wire(self, lay, pts, w):
         """manhattan wire of width w through pts (each segment as a box, ends extended by w/2)"""
         for (xa, ya), (xb, yb) in zip(pts, pts[1:]):

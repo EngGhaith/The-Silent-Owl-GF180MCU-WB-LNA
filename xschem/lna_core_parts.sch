@@ -12,7 +12,7 @@ N 610 -320 640 -320 {lab=vbias_cg}
 N 610 -300 640 -300 {lab=g_cg}
 N 970 -390 1070 -390 {lab=#net2}
 N 1030 -300 1070 -300 {lab=vbias_cas}
-N 1370 -390 1480 -390 {lab=#net3}
+N 1370 -390 1480 -390 {lab=output_cs}
 N 1760 -390 1810 -390 {lab=rf_out_pad}
 N 190 -390 230 -390 {lab=rf_in_pad}
 N 1220 -460 1220 -430 {lab=vdd}
@@ -73,3 +73,4 @@ C {iopin.sym} 190 -515 0 1 {name=p18 lab=g_cg}
 C {lab_pin.sym} 240 -515 2 0 {name=p19 sig_type=std_logic lab=g_cg}
 C {lab_pin.sym} 1620 -205 3 0 {name=p7 sig_type=std_logic lab=vss
 }
+C {lab_pin.sym} 1420 -390 0 0 {name=p62 sig_type=std_logic lab=output_cs}

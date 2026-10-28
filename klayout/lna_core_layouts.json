@@ -129,9 +129,9 @@
   "pins": {
    "input_match": "Metal5 x=82 y=290..300",
    "output_cs": [
-    268.0,
+    568.0,
     399.5,
-    274.0,
+    574.0,
     405.5
    ],
    "g_cg": "Metal3 west edge y=(430.0, 434.0)",
@@ -158,9 +158,9 @@
   },
   "bus_w_um": 7.0,
   "guard_ring": [
-   279.7,
+   579.7,
    389.7,
-   374.54,
+   674.54,
    426.98
   ],
   "LD2": {
@@ -178,19 +178,19 @@
    502.5
   ],
   "vx_column_x": [
-   377.0,
-   387.0
+   677.0,
+   687.0
   ],
   "pins": {
    "input_cg": [
-    268.0,
+    568.0,
     399.5,
-    274.0,
+    574.0,
     405.5
    ],
    "vbias_cas": "Metal3 north edge x=90.0",
    "vdd": "Metal5 north edge",
-   "output_match": "Metal5 column x=(377.0, 387.0)",
+   "output_match": "Metal5 column x=(677.0, 687.0)",
    "vss": "guard ring"
   }
  },
