@@ -76,11 +76,12 @@ def import_tile(ly, name, fname):
     return dst
 
 
-RING_COILS = {"lna_core_input_match": ["LEQ"]}  # coils already converted to lib.coil_guard_ring() (pilot: LEQ;
-# Phase 2 of the guard-ring plan adds LD2/L1/LSHUNT_OUT here one at a time). For these, the coil's own JSON
-# "ring_outer" bbox (a real, grid-abuttable vss ring) replaces the generic bbox+SPIRAL_KO keep-out -- the ring's
-# own drawn metal is already part of `blk` below, so a tile only needs the ordinary KEEP=4 clearance from it,
-# not an extra SPIRAL_KO=10 margin on top of that. Un-converted coils keep the old bbox+SPIRAL_KO behaviour.
+RING_COILS = {"lna_core_input_match": ["LEQ"], "lna_core_cs": ["LD2"]}  # coils already converted to
+# lib.coil_guard_ring() (pilot: LEQ; Phase 2 adds LD2/L1/LSHUNT_OUT here one at a time). For these, the coil's
+# own JSON "ring_outer" bbox (a real, grid-abuttable vss ring) replaces the generic bbox+SPIRAL_KO keep-out --
+# the ring's own drawn metal is already part of `blk` below, so a tile only needs the ordinary KEEP=4 clearance
+# from it, not an extra SPIRAL_KO=10 margin on top of that. Un-converted coils keep the old bbox+SPIRAL_KO
+# behaviour.
 
 
 def block_geometry(ly, top):

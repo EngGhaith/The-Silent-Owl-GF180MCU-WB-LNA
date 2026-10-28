@@ -571,9 +571,11 @@ def build_cs(ly):
     LD2_NE_CX, LD2_NE_CY = 925.0, 615.0
     geo = coil_geom(P, "LD2")
     cx, cy = LD2_NE_CX, LD2_NE_CY
-    assert cx + geo["rx"] + SP_KO + RING <= MACRO_W, "LD2 (NE) does not fit against the east edge"
-    assert cy + geo["ry"] + SP_KO + RING <= Y_N, "LD2 (NE) does not fit against the north edge"
+    # RING_KO (coil_guard_ring, Phase 2) replaces SP_KO here -- see LEQ's own comment for the full rationale.
+    assert cx + geo["rx"] + RING_KO + RING <= MACRO_W, "LD2 (NE) does not fit against the east edge"
+    assert cy + geo["ry"] + RING_KO + RING <= Y_N, "LD2 (NE) does not fit against the north edge"
     (q1, q2), _, _ = place_coil(ly, top, P, "LD2", cx, cy, rot=180)
+    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=180, w=RING_W, sp=RING_SP)
     assert q1[1] < q2[1], "q1 (vdd) must be the southern port, q2 (vx) the northern one"
     top.box("m5", *q1)
     top.box("m5", *q2)
@@ -595,7 +597,9 @@ def build_cs(ly):
     top.label(5, "vdd", MACRO_W - RING - 5, yd_vdd + 2.5)
     INFO[P] = {"M3": {"rows": 1, "fingers": m1["nf"], "wf": wf1, "L": l1, "sym": s1},
                "M2": {"rows": 1, "fingers": m4["nf"], "wf": wf4, "L": l4, "sym": s4},
-               "bus_w_um": wb, "guard_ring": R, "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "west"},
+               "bus_w_um": wb, "guard_ring": R,
+               "LD2": {"coil": COILS[(P, "LD2")], "centre": [cx, cy], "ports": "west",
+                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
                "ld2_vdd_lead": [xw, yd_vdd, MACRO_W - RING + 2, yd_vdd + 5], "vx_column_x": list(VX_X),
                "pins": {"input_cg": list(gp), "vbias_cas": f"Metal3 north edge x={xvn}", "vdd": "Metal5 north edge",
                         "output_match": f"Metal5 column x={VX_X}", "vss": "guard ring"}}
