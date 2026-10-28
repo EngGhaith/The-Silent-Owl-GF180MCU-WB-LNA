@@ -895,10 +895,39 @@ def build_cg(ly):
     # assumed from geometry alone. 438 clears that bank (needs cx4-ry>=319+SP_KO), L1, LEQ, and the cg guard ring,
     # all at this same cy.
     cx4, cy4 = 438.0, 490.0
-    assert cy4 + geo["rx"] + SP_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"  # rot=90: world-Y
-    # extent is local rx
-    assert cx4 - geo["ry"] - SP_KO >= 0, "LD4 (NW) does not fit against the west edge"  # world-X extent is ry
+    # RING_KO (coil_guard_ring, Phase 3) replaces SP_KO here -- see LEQ's own comment for the full rationale.
+    # cx4/cy4 kept at their current values deliberately for this step (ring added first, at the CURRENT site,
+    # mirroring the L1/LD2/LSHUNT_OUT approach) -- repositioning west is a separate, subsequent step once the
+    # ring itself is proven clean here, given how many hand-tuned crossings already exist near LD4 (YSL bus,
+    # the CS_GATE_PAD detour at xd=324 only 5um west of LD4's own edge, the q1/vm2-jog crossing fixed earlier
+    # this session) -- more than any other coil.
+    assert cy4 + geo["rx"] + RING_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"  # rot=90:
+    # world-Y extent is local rx
+    assert cx4 - geo["ry"] - RING_KO >= 0, "LD4 (NW) does not fit against the west edge"  # world-X extent is ry
     (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90)
+    # avoid: the CS_GATE_PAD detour's own "drop to the L1/LD4 gap" M3 segment (xd=324, yg_lo=240 to gp[3]=405.5,
+    # see the CS_GATE_PAD block below) runs alongside LD4's ring west wall and touches it at x=326 with zero
+    # gap (confirmed live via LVS: output_cs merging into vss at the standalone cg level). Box: x 322..328 (2um
+    # real margin each side of the drop's own 324..326), y 238..407.5 (covers the drop's full 240..405.5 span
+    # with margin) -- carves that whole stretch out of the west wall rather than moving either structure, since
+    # CS_GATE_PAD's own xd/yg_lo values are shared with several other already-verified crossings in that
+    # function (see its own comments) and aren't safe to nudge casually.
+    # avoid #2/#3: lna_core_cs's own vbias_cas jog bar (build_cs's vbias_column() call, a wide M3 run from x=89
+    # near the west band east to ~577 near CS's own guard ring, at y~458..460) is wide enough to cross BOTH of
+    # LD4's ring's east (x 548..550) and west (x 326..328) walls at this same y -- only visible at the full
+    # "parts" assembly level (cg standalone is clean on its own; vbias_cas is drawn in cs). Confirmed live via
+    # LVS, twice: fixing only the east-wall overlap left the west-wall one as an equally-real second path for
+    # the same short (rf_out_pad/vbias_cas/vss all merging into one net) -- same bar, two separate crossings,
+    # both needed carving. Boxes: 2um real margin each side of the 458..460 x [548..550 / 326..328] overlaps.
+    # avoid #4: output_match's own xe=456 dipped_column (the same column whose 5 dip bands were already checked
+    # against L1's ring walls) also reaches LD4 -- systematically re-checked all 5 bands' own +-2um margins
+    # against all 4 of LD4's ring walls this time (south 255..257, north 723..725, west 326..328, east
+    # 548..550): exactly one hit, (258,264)+-2=256..266 vs the south wall. Confirmed live via LVS (same
+    # rf_out_pad/vss merge, this time with vbias_cas correctly no longer part of it). Box: x 454..460 (2um
+    # margin around the column's own 456..458), y 254..268 (2um margin around the 256..266 overlap).
+    ring_in, ring_out = lib.coil_guard_ring(top, cx4, cy4, geo, rot=90, w=RING_W, sp=RING_SP,
+                                             avoid=[(322.0, 238.0, 328.0, 407.5), (546.0, 456.0, 552.0, 462.0),
+                                                    (322.0, 456.0, 328.0, 462.0), (454.0, 254.0, 460.0, 268.0)])
     assert q1[0] < q2[0], "q1 (vdd) must be the western port, q2 (vm2) the eastern one"
     top.box("m5", *q1)
     top.box("m5", *q2)
@@ -931,7 +960,8 @@ def build_cg(ly):
                "C3_pF": round(4 * lib.c_mim_pf(w9, l9), 3), "C2_pF": round(lib.c_mim_pf(w1, l1c), 3),
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north",
                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
-               "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north"},
+               "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north",
+                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
                "ld4_vdd_lead": [q1[0], q1[1], q1[2], Y_N],
                "vm2_column_x": list(dc),
