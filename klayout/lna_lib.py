@@ -246,6 +246,77 @@ def guard_ring(cell, x0, y0, x1, y1, w=0.8, m2=True):
             cell.cuts("v1", *bx, enc=0.15)
 
 
+def _ring_stitch(cell, lay, x0, y0, x1, y1, sz, enc=0.15, pitch=20.0):
+    """sparse cut stitching along a long thin box's major axis -- one `sz`x`sz` cut roughly every `pitch`, not
+    a dense fill: no DRC rule requires via/contact density beyond each cut's own min size/spacing (only a
+    minimum, never a maximum), and a coil-scale ring (hundreds of um long) densely filled makes DRC/LVS on the
+    full macro assembly impractically slow (confirmed: a single dense-filled coil ring alone pushed a routine
+    check past a 580s timeout) for no electrical benefit over sparse stitching on a shield/keep-out ring.
+    `enc` insets the cut range from the box edge (same role as cuts()'s own `enc`) -- a cut flush with the
+    enclosing metal's own edge has zero overlap margin and fails the real deck's M#.3b/CO.4/CO.6-style overlap
+    rules at the two endpoints."""
+    w_box, h_box = x1 - x0 - 2 * enc, y1 - y0 - 2 * enc
+    horiz = w_box >= h_box
+    length = w_box if horiz else h_box
+    n = max(1, round(length / pitch))
+    for i in range(n + 1):
+        t = i / n if n else 0.5
+        if horiz:
+            cx_, cy_ = x0 + enc + sz / 2 + t * (w_box - sz), (y0 + y1) / 2
+        else:
+            cx_, cy_ = (x0 + x1) / 2, y0 + enc + sz / 2 + t * (h_box - sz)
+        cell.box(lay, cx_ - sz / 2, cy_ - sz / 2, cx_ + sz / 2, cy_ + sz / 2)
+
+
+def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0):
+    """grid-compliant vss ring directly around a coil: a full Metal1-Metal2-Metal3-Metal4 stack (Via1 M1<->M2,
+    Via2 M2<->M3, Via3 M3<->M4 -- GF180's via numbering connects ViaN to MetalN<->Metal(N+1), so M3 must be
+    present even though only M1/M2/M4 carry vss in the tile convention below), with SPARSE cut stitching (one
+    cut every ~20um per layer, not a dense fill -- see _ring_stitch's own docstring for why) -- i.e. vss on
+    exactly the layers the 20x20/10x10 supply tiles use for vss (M4/M2/M1, per make_lna_core_parts.py's own
+    documented convention), so a tile can abut this ring as a legitimate, intentional same-net merge instead of
+    needing a bare empty keep-out gap. No COMP/PPLUS substrate tap: unlike guard_ring() (used around active
+    transistor rows, where local substrate biasing matters for noise/latch-up), a passive coil has no nearby
+    active silicon needing one -- M1 can be plain floating-net metal with no COMP underneath, and skipping the
+    device-recognition layers here avoids a large, measured DRC-runtime cost (COMP triggers many extra rule
+    categories -- NW/DN/ESD/LVS_BJT/etc -- across the ring's hundreds-of-um perimeter for no benefit).
+
+    `sp` is a small REAL clearance (GF180 M#.2a min-space is 0.23-0.28um; this project's old SP_KO/SPIRAL_KO=10
+    was a self-imposed empirical margin against generic-tile proximity, not a PDK floor -- see make_lna_core_
+    layouts.py's own SPIRAL_KO bisection comment) from the coil's own true extent (geo["rx"]/["ry"], which
+    already accounts for its winding + inner-port M3/M4 underpass + port pads, per coil_geom()'s docstring) to
+    the ring's own inner edge. `w` is the ring's own wall thickness (wide enough for a real via-cut row).
+
+    rot must match the coil's own place_coil() rotation (mirror doesn't affect axis mapping, only a +-90
+    rotation swaps which of rx/ry is the world-X vs world-Y half-extent -- same convention as every fit-assert
+    in make_lna_core_layouts.py).
+
+    Returns (clear, outer): each (x0, y0, x1, y1) in world coords. `clear` is the coil's own real keep-out
+    boundary (nothing but this ring's own vss may enter clear..outer); `outer` is the ring's own outer edge --
+    what make_lna_core_parts.py should let tile sites touch directly (not stay SPIRAL_KO away from)."""
+    rx, ry = geo["rx"], geo["ry"]
+    wx, wy = (ry, rx) if round(rot / 90) % 2 == 1 else (rx, ry)
+    # `clear`: boundary between the coil's own true extent (+ small real gap `sp`) and the ring's own metal --
+    # nothing may occupy clear..outer except this ring.
+    clear = (cx - wx - sp, cy - wy - sp, cx + wx + sp, cy + wy + sp)
+    outer = (clear[0] - w, clear[1] - w, clear[2] + w, clear[3] + w)
+    x0, y0, x1, y1 = outer
+    sides = [(x0, y0, x1, y0 + w), (x0, y1 - w, x1, y1), (x0, y0 + w, x0 + w, y1 - w), (x1 - w, y0 + w, x1, y1 - w)]
+    for b in sides:
+        cell.box("m1", *b)
+        cell.box("m2", *b)
+        cell.box("m3", *b)  # Via2 connects M2<->M3, Via3 connects M3<->M4 (GF180 numbering) -- M3 must be
+        cell.box("m4", *b)  # present as a stepping stone even though only M1/M2/M4 carry vss in the tile
+        # convention above
+    for i, b in enumerate(sides):  # sparse cut stitching, vertical sides without the corners (as guard_ring())
+        bx = b if i < 2 else (b[0], b[1] + 0.3, b[2], b[3] - 0.3)
+        _ring_stitch(cell, "v1", *bx, sz=VIA)
+        _ring_stitch(cell, "v2", *bx, sz=VIA)
+        _ring_stitch(cell, "v3", *bx, sz=VIA)
+    cell.label(1, "vss", (x0 + x1) / 2, y0 + w / 2)
+    return clear, outer
+
+
 # ---------------------------------------------------------------- MIM tile
 MIM_ENC, MIM_HALO = 0.6, 1.2
 TAB_M4, TAB_STRAP, TAB_VIA_X = -3.4, (-3.0, -1.0), (-2.53, -1.73)

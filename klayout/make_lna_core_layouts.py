@@ -85,7 +85,15 @@ def pf(v):
 
 
 # floorplan: coils, macro edges (core coordinates, see module doc)
-SP_KO = 10.0  # keep-out around every inductor
+SP_KO = 10.0  # keep-out around every inductor not yet converted to a coil_guard_ring() (see RING_SP/RING_W)
+RING_SP, RING_W = 1.0, 2.0  # coil_guard_ring()'s own real clearance + wall thickness (pilot: LEQ only, see
+# build_input_match) -- replaces SP_KO's empirical 10um margin with a real, grid-compliant vss ring a supply
+# tile can directly abut (zero-gap, same net) instead of an empty keep-out. sp=1.0 is comfortably above the
+# GF180 deck's own M#.2a min-space (0.23-0.28um per layer) with margin for the coil's own underpass bracket;
+# w=2.0 is wide enough for a real Via2/Via3 cut row. Both numbers are provisional until verified against the
+# real DRC/LVS deck (see check_lna_core_layouts.py) -- bisect upward, never assume.
+RING_KO = RING_SP + RING_W  # total effective keep-out once a coil has its own ring (replaces SP_KO in that
+# coil's own fit-assert)
 COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_RECT_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_RECT_coil.gds"}
@@ -291,8 +299,11 @@ def build_input_match(ly):
     # --- LEQ
     geo = coil_geom(P, "LEQ")
     cx, cy = g(LEQ_PORT_X + geo["pe"]), LEQ_CY
-    assert cy + geo["ry"] + SP_KO <= YSL[0] and cy - geo["ry"] - RING >= Y_S + RING, "LEQ does not fit"
+    # RING_KO (coil_guard_ring, pilot coil) replaces SP_KO here -- LEQ's own guard ring takes over the margin
+    # a generic supply tile needs to keep from it; see RING_SP/RING_W/RING_KO's own comment above.
+    assert cy + geo["ry"] + RING_KO <= YSL[0] and cy - geo["ry"] - RING >= Y_S + RING, "LEQ does not fit"
     (q1, q2), _, _ = place_coil(ly, top, P, "LEQ", cx, cy, rot=180, mirror=True)
+    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=180, w=RING_W, sp=RING_SP)
     lead_x = 25.0  # rf_in lead column (centre)
     rf_y = 295.0
     x_e = 82.0
@@ -335,7 +346,8 @@ def build_input_match(ly):
         top.stack(10, yb0, 14, yb1, 4, 5)
         top.box("m5", 2, q2[1], 14, yb1)  # west column: overlaps q2's own vss box (x 2..36, y q2[1]..q2[3])
         cap_info["CPI"] = {"W": w2, "L": l2, "pF": round(cpi_pf, 3)}
-    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west"},
+    INFO[P] = {"LEQ": {"coil": COILS[(P, "LEQ")], "centre": [cx, cy], "ports": "west",
+                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
                **cap_info, "leq_vss_lead_y": [q2[1], q2[3]],
                "pins": {"rf_in_pad": "Metal5 west edge y=295", "input_cg": f"Metal5 east edge x={x_e} y=295",
                         "vss": "Metal5 west edge (LEQ port 2)"}}

@@ -76,6 +76,13 @@ def import_tile(ly, name, fname):
     return dst
 
 
+RING_COILS = {"lna_core_input_match": ["LEQ"]}  # coils already converted to lib.coil_guard_ring() (pilot: LEQ;
+# Phase 2 of the guard-ring plan adds LD2/L1/LSHUNT_OUT here one at a time). For these, the coil's own JSON
+# "ring_outer" bbox (a real, grid-abuttable vss ring) replaces the generic bbox+SPIRAL_KO keep-out -- the ring's
+# own drawn metal is already part of `blk` below, so a tile only needs the ordinary KEEP=4 clearance from it,
+# not an extra SPIRAL_KO=10 margin on top of that. Un-converted coils keep the old bbox+SPIRAL_KO behaviour.
+
+
 def block_geometry(ly, top):
     """all block shapes (merged, every drawn layer) and the spiral keep-out region"""
     blk = pya.Region()
@@ -83,12 +90,21 @@ def block_geometry(ly, top):
         if ly.get_info(li).datatype != 10:
             blk += pya.Region(top.begin_shapes_rec(li))
     blk.merge()
+    ring_boxes = {}  # (block name, coil name) -> ko Region, for RING_COILS entries
+    for blk_name, coils in RING_COILS.items():
+        for coil in coils:
+            ro = INFO[blk_name][coil]["ring_outer"]
+            ring_boxes[(blk_name, coil)] = pya.Box(um(ro[0]), um(ro[1]), um(ro[2]), um(ro[3]))
     ko = pya.Region()
     it = top.begin_instances_rec()
     while not it.at_end():
         c = it.inst_cell()
         if "__" in c.name and c.name.split("__")[-1][:1] == "L":
-            ko.insert(c.bbox().transformed(it.trans() * it.inst_trans()).enlarged(um(SPIRAL_KO), um(SPIRAL_KO)))
+            key = tuple(c.name.split("__")[:2])
+            if key in ring_boxes:
+                ko.insert(ring_boxes[key])
+            else:
+                ko.insert(c.bbox().transformed(it.trans() * it.inst_trans()).enlarged(um(SPIRAL_KO), um(SPIRAL_KO)))
         it.next()
     return blk, ko
 
