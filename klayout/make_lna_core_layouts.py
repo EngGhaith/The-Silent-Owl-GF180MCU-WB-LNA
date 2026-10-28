@@ -119,13 +119,16 @@ COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_
 # landing in the one M4-clear window between the coil and the ring).
 MACRO_W, RING = 1100, 12  # grown from 1062 for the re-floorplan's LSHUNT_OUT SE relocation: the corridor east of
 # L1's own east edge (779) to the old east edge was only 251um wide, 31um short of LSHUNT_OUT_RECT's own 282um
-# diameter at rot=270 (ports south, axes swapped: world-X extent = local ry = 141). Tightened from the original
-# 1102 first-shot value (inductor-resize pass): LSHUNT_OUT's own "does not fit the east edge" assert computes to
-# exactly 1098 at this geometry/placement (cx=935, geo["ry"]=141, SP_KO=10, RING=12) -- no other coil comes close
-# (LD2 (NE) has ~45um of slack against MACRO_W even with its square geometry) -- 1100 keeps a 2um margin, same
-# convention as the "+2 taken for margin" SP_KO note below. No pitch-grid alignment constraint on MACRO_W (unlike
-# Y_N/Y_S): make_lna_core_parts.py's X tiling is flush with the WEST band only (GX0=RING fixed), the east side is
-# just a floor-divided remainder, no analog of GY0's "floor to the north band" trick.
+# diameter at rot=270 (ports south, axes swapped: world-X extent = local ry = 141). Tightened to 1100 (inductor-
+# resize pass, SP_KO-based: 1098 exact minimum + 2um margin). Tried 1093 (RING_KO-based, once LSHUNT_OUT got its
+# own coil_guard_ring(): its own "does not fit the east edge" assert drops to 1091) and reverted -- a NEW real
+# DRC violation appeared (V2.1/V2.2a/V2.2b/V3.1/V3.2a/V3.2b, ~lna_core_supply's own Metal3-island construction
+# at the SE corner, nowhere near LSHUNT_OUT itself (y~-367, LSHUNT_OUT is at cy=-30) -- a separate sensitivity
+# of make_lna_core_parts.py's 40um island grid to the exact MACRO_W value, not something this coil's own ring
+# touches. 1100 stays the safe, verified value; tightening further needs that island-grid interaction debugged
+# on its own, not folded into the guard-ring plan. No pitch-grid alignment constraint on MACRO_W (unlike
+# Y_N/Y_S): make_lna_core_parts.py's X tiling is flush with the WEST band only (GX0=RING fixed), the east side
+# is just a floor-divided remainder, no analog of GY0's own "floor to the north band" trick.
 Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S-2*RING) mod 20 == 0) for the same
 # re-floorplan: LSHUNT_OUT's long rf_out return lead needs a clear east-west channel south of both its own and
 # L1's keep-outs (L1 south edge -318, LSHUNT_OUT's own ~-326 at its new site) -- see LSH_CHANNEL_Y below.
