@@ -364,7 +364,12 @@ CS_X_SHIFT = 300.0  # cs re-floorplan: shift the whole transistor/pad subsystem 
 CS_GATE_PAD = (268.0 + CS_X_SHIFT, 399.5, 274.0 + CS_X_SHIFT, 405.5)  # input_cg of lna_core_cs = output_cs of
 # lna_core_cg (Metal3..5 stack)
 VX_X = (377.0 + CS_X_SHIFT, 387.0 + CS_X_SHIFT)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode
-C_OUT_PLATE = (391.0, 466.0)  # lower-left of the output C1 top plate (rotated: x extent = L, y extent = W)
+C_OUT_PLATE = (585.0, 466.0)  # lower-left of the output C1 top plate (rotated: x extent = L, y extent = W).
+# X moved east from 391 (re-floorplan, user request): the original site put C1's own plate body (x=391..445,
+# y=466..530.61, a real MIM cap, not reroutable) directly inside lna_core_cg's own LD4 ring once LD4 moved to
+# the NW corner (world x=[113,577], y=[491,709] -- C1's old x-range sat entirely within LD4's new footprint,
+# confirmed via direct GDS inspection, not a formula guess). Y is unchanged (OM_LEAD_Y stays valid, no lna_core_cs
+# changes needed) -- only X moves, clear east of LD4's ring with margin.
 C_OUT_L = 54.0  # x extent of the output C1 plate (between the vx column and the LSHUNT_OUT vss lead)
 OM_IN_X = 380.0  # west end of the output_cs lead of lna_core_output_match
 
@@ -417,7 +422,18 @@ def build_output_match(ly):
     tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
     pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
     assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
-    top.box("m5", OM_IN_X, yc - 5, pt[0] + 1, yc + 5)
+    # output_cs lead (OM_IN_X -> C1's own top plate): dip to Metal3 (not Metal4 -- that's xe's own column dip
+    # layer just below, and this horizontal lead crosses xe's vertical one at x=456, y~498; using the same
+    # intermediate layer for both merged output_cs into rf_out_pad there, confirmed live via LVS) across
+    # lna_core_cg's own LD4 ring (world x=[113,577], y=[491,709]) -- this lead's own y (yc +-5 = 493.3..503.3)
+    # sits inside the ring's y-range for its entire x-span now that C1 moved east of it.
+    xb0 = OM_IN_X + 3.0  # short Metal5 buffer so the "output_cs" label (OM_IN_X+1) stays clearly on Metal5
+    xd0, xd1 = 578.0, 580.0  # 1-3um margin east of LD4's ring (577)
+    top.box("m5", OM_IN_X, yc - 5, xb0, yc + 5)
+    top.stack(xb0, yc - 5, xb0 + 2, yc + 5, 3, 5)
+    top.box("m3", xb0 + 2, yc - 5, xd0, yc + 5)
+    top.stack(xd0, yc - 5, xd1, yc + 5, 3, 5)
+    top.box("m5", xd1, yc - 5, pt[0] + 1, yc + 5)
     top.box("m5", bt[0], bt[1], bt[2], bt[3])
     # rf_out_pad's own north-reaching column crosses lna_core_cg's own q2 (vm2) lead -- CG's drain bus reaching
     # LD4's drain port -- at local y 719..722.5, on the same layer (confirmed via NetTracer as the second bridge
@@ -428,7 +444,21 @@ def build_output_match(ly):
     # real clearance on both approaches (not just ending at q2's own edge).
     yq0, yq1 = 714.0, 728.0  # dip zone, clear of CG's q2 lead (719..722.5) on both sides
     assert bt[1] < yq0 and yq1 < Y_N
-    top.box("m5", xr - 5, bt[1], xr + 5, yq0)
+    # dip to Metal3 through lna_core_cg's own LD4 ring (re-floorplanned to the NW corner, world x=[113,577],
+    # y=[491,709] in the shared frame) -- this column's own fixed path (x=410..420, bt[1]=531.61) sits entirely
+    # INSIDE that x-range, and bt[1] itself is already inside the ring's own y-range too (531.61 > 491), so there
+    # is no "below the ring" height left to jog sideways at -- any lateral detour box would itself have to cross
+    # the ring's own real winding metal at some y between 491 and 709 (tried first, caught live by the real DRC
+    # deck: MIMTM.9 pile at x~418, y~867 = 494 once un-shifted, i.e. the jog's own bottom box, not the vertical
+    # bypass). A same-x Metal3 dip for the whole ring-overlap span sidesteps the problem instead: different layer
+    # from the ring's own M5 winding, no lateral travel needed at all.
+    yr1 = 711.0  # 2um margin above LD4's own ring north edge (709)
+    yd0 = bt[1] + 4.0  # clear of the bottom-plate's own via4 tab columns (TAB_VIA_X) before starting the dip
+    top.box("m5", xr - 5, bt[1], xr + 5, yd0)
+    top.stack(xr - 5, yd0, xr + 5, yd0 + 2, 4, 5)
+    top.box("m4", xr - 5, yd0 + 2, xr + 5, yr1 - 2)
+    top.stack(xr - 5, yr1 - 2, xr + 5, yr1, 4, 5)
+    top.box("m5", xr - 5, yr1, xr + 5, yq0)
     top.stack(xr - 5, yq0, xr + 5, yq0 + 2, 4, 5)
     top.box("m4", xr - 5, yq0 + 2, xr + 5, yq1 - 2)
     top.stack(xr - 5, yq1 - 2, xr + 5, yq1, 4, 5)
@@ -485,7 +515,9 @@ def build_output_match(ly):
     # port leads) still has metal -- Cell.dipped_column() crosses each on Metal4 with real clearance on both
     # sides, same technique as every other cross-block crossing fixed in this re-floorplan.
     xe = 456.0
-    assert pt[2] + 6 <= xe, "xe must still clear output_cs's own top plate (pt)"
+    # xe used to need to clear C1's own plate from the WEST (pt[2]+6<=xe); C1 moved east past LD4's new ring (see
+    # C_OUT_PLATE), so the relationship flips -- xe now needs to stay clear of the plate from the EAST instead.
+    assert xe + 6 <= pt[0], "xe must still clear output_cs's own top plate (pt)"
     top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
     top.box("m5", xe, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
     # (220, 244) merges two close-together bands into one: the Metal5-only vbias/YSL bus (222..232) and, right
@@ -495,9 +527,22 @@ def build_output_match(ly):
     # the supply draws it later). Merged into one wider band instead of two adjacent ones specifically because
     # two separate dipped_column() bands this close together would need their own mutual clearance too (each
     # one's margin landing inside the other's), on top of each one's own margin from the real obstruction.
-    top.dipped_column(xe, LSH_CHANNEL_Y, bt[1] + 1,
-                       dip_bands=[(-318, -312), (197, 213), (220, 244), (258, 264), (272, 286)])
-    top.box("m5", xr - 5, bt[1], xe + 2, bt[3])
+    # (489, 709) is new: lna_core_cg's own LD4 ring (re-floorplanned to the NW corner, world y=[491,709]) now
+    # also crosses this column at x=456 (inside the ring's x=[113,577]) -- same dip technique, one more band.
+    # The column's own y1 is extended from bt[1]+1 to yr1b (past the ring, same safe height as the rf_out_pad
+    # column's own dip below) since bt itself moved east of the ring entirely and is reached via a bridge there
+    # instead of directly at bt[1] any more.
+    yr1b = 713.0
+    top.dipped_column(xe, LSH_CHANNEL_Y, yr1b,
+                       dip_bands=[(-318, -312), (197, 213), (220, 244), (258, 264), (272, 286), (489, 709)])
+    # bridge above LD4's ring (y=711..713, shared with the rf_out_pad column's own dip, which already has Metal5
+    # here) east to bt -- C1's own bottom-plate tab, now entirely east of the ring (x=585..639) so this whole
+    # bridge and the vertical drop to bt are clear of LD4 by construction, no further dip needed. The vertical
+    # drop is narrowed to 15um (not bt's own full 54um plate width) -- a solid 54x181 Metal5 slab tripped
+    # MSLOT5.1 (metal slotting, real DRC hit, not a formula guess); a routing-width connector doesn't need the
+    # plate's own full width.
+    top.box("m5", xr - 5, 711.0, bt[2], yr1b)
+    top.box("m5", bt[0], bt[1], bt[0] + 15.0, yr1b)
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
                "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "south",
@@ -686,37 +731,60 @@ def build_cg(ly):
         top.box("m2", x1, T["D"][1], dc[1], T["D"][3])
         top.box("m3", x1, T["D"][1], dc[1], T["D"][3])
         top.stack(dc[0], T["D"][1], dc[1], T["D"][3], 3, 5)
-    # --- C3: 2 x 2, left column tab west, right column rotated 180 (tab east), top plates joined in the middle
+    # --- C3: 4 x 1 (single row, re-arranged from the original 2x2 -- "free space in y direction" request).
+    # Two mirrored PAIRS side by side: cap1(rot=0,tab west) cap2(rot=180,tab east) | cap3(rot=0,tab west)
+    # cap4(rot=180,tab east). Each pair's own gap (cap1-cap2, cap3-cap4) has NEITHER cap's tab in it (both tabs
+    # point away from their own pair's gap, same as the old 2x2's left/right columns) -- these two gaps are
+    # where the g_cg top-plate join lives, same role as the old 2x2's single middle gap. The MIDDLE gap
+    # (cap2-cap3) is different: cap2's tab (east) and cap3's tab (west) both point INTO it -- this is a real,
+    # new adjacency the 2x2 never had (it only ever had one tab-free middle gap). A naive single M5 box spanning
+    # the whole row for g_cg would physically run through this middle gap's own y-band and merge with both
+    # tabs' own vss metal there -- caught here by hand-tracing the geometry, not by DRC, but still only trusted
+    # once the real deck confirms it (see this project's own session-long rule on this). Avoided below by using
+    # TWO separate join boxes, one per pair, never spanning the middle gap at the plates' own y-band at all.
     w9, l9 = um_grid(sch["C3"][1]["W"]), um_grid(sch["C3"][1]["L"])
     n9 = int(sch["C3"][1].get("m", 1))
     assert n9 == 4
-    gap9 = 8.0  # bottom plate to bottom plate (Metal4 g_cg strip in the gaps, >= 1.2 um from the plates)
-    xl = g(x1 + 14)
-    xr = g(xl + w9 + 2 * lib.MIM_ENC + gap9)
+    gapA = 8.0  # cap1-cap2 / cap3-cap4 gap (no tabs in it, hosts a g_cg join -- same value/role as the old gap9)
+    gap_vss = 2.0  # cap2-cap3 gap: real clearance between the two tabs' own M4 reach (TAB_M4=-3.4 each side)
+    xc1 = g(x1 + 14)
+    xc2 = g(xc1 + w9 + 2 * lib.MIM_ENC + gapA)
+    xc3 = g(xc2 + w9 + 3.4 + gap_vss + 3.4)
+    xc4 = g(xc3 + w9 + 2 * lib.MIM_ENC + gapA)
     yl = 244.0
-    yu = g(yl + l9 + 2 * lib.MIM_ENC + gap9)
-    assert yl + l9 + lib.MIM_ENC + 1.2 <= yg[0] and yu - lib.MIM_ENC - 1.2 >= yg[1]
+    assert yl + l9 + lib.MIM_ENC + 1.2 <= yg[0], "C3 row must clear the g_cg gate channel from below"
     c9, t9 = lib.mim_tile(ly, f"{P}__C3", w9, l9)
     plates, straps = [], []
-    for (px, py, rot) in ((xl, yl, 0), (xl, yu, 0), (xr, yl, 180), (xr, yu, 180)):
-        tr = top.place(c9, px + (w9 if rot else 0), py + (l9 if rot else 0), rot=rot)
+    for (px, rot) in ((xc1, 0), (xc2, 180), (xc3, 0), (xc4, 180)):
+        tr = top.place(c9, px + (w9 if rot else 0), yl + (l9 if rot else 0), rot=rot)
         plates.append(tbox(tr, t9["top"]))
         straps.append(tbox(tr, t9["bot"]))
-    top.box("m5", plates[0][2] - 1, plates[0][1], plates[2][0] + 1, plates[1][3])  # top plates (g_cg)
-    xm = (xl + w9 + lib.MIM_ENC + 1.2, xr - lib.MIM_ENC - 1.2)  # Metal4-free zone limits in the middle gap
-    top.box("m4", gj[0], yg[0], xm[1], yg[1])
-    top.stack(xm[0], yg[0], xm[1], yg[1], 4, 5)
+    # g_cg: two separate top-plate join boxes (one per pair), fed from ABOVE the row (same technique the old
+    # 2x2 code already used -- yg sits 2.6um above the row's own top edge yl+l9, well clear of every tab, which
+    # all live at the row's own y-band, not above it) via one shared M4 run + two separate M4->M5 transitions,
+    # one per join box. This never shares a y-band with the vss strap drops below the row at all.
+    # Join boxes extend up to yg[0] (not just yl+l9): the old 2x2's own join spanned both rows and so reached
+    # (and passed) yg's own height for free; this single row's join box is only l9 tall on its own, leaving a
+    # real 2.6um gap to the M4-M5 stack above with nothing bridging it -- confirmed live via LVS (2 of the 4 C3
+    # caps' top plates came back on floating/anonymous nets, not joined to g_cg at all).
+    joins = [(plates[0][2] - 1, plates[1][0] + 1), (plates[2][2] - 1, plates[3][0] + 1)]
+    for j0, j1 in joins:
+        top.box("m5", j0, yl, j1, yg[0])
+    top.box("m4", gj[0], yg[0], joins[1][1], yg[1])
+    for j0, j1 in joins:
+        xm = (j0 + lib.MIM_ENC + 1.2, j1 - lib.MIM_ENC - 1.2)
+        top.stack(xm[0], yg[0], xm[1], yg[1], 4, 5)
     top.label(4, "g_cg", gj[1] + 3, (yg[0] + yg[1]) / 2)
     for sb in straps:
         top.label(5, "vss", (sb[0] + sb[2]) / 2, (sb[1] + sb[3]) / 2)
-    # C3 bottom plates (vss) joined inside the block: Metal5 bar below C3 (y = C3_VSS_BAR), lower straps down to it,
-    # across the C3 channel to the upper straps, bar -> guard ring (Metal2); lna_core_parts extends the bar to the tiles
+    # C3 bottom plates (vss): 4 independent short drops straight onto C3_VSS_BAR -- simpler than the old 2x2's
+    # two-tier scheme (lower strap -> bar -> across the channel -> upper strap), since a single row has no
+    # "across the channel" case at all; bar -> guard ring (Metal2); lna_core_parts extends the bar to the tiles.
     yb0, yb1 = C3_VSS_BAR
     assert yb1 + lib.MIM_HALO <= yl - lib.MIM_ENC
-    top.box("m5", straps[0][0], yb0, straps[2][2], yb1)
-    for lo, up in ((straps[0], straps[1]), (straps[2], straps[3])):
-        top.box("m5", lo[0], yb0, lo[2], lo[1] + 1)  # lower strap down to the bar
-        top.box("m5", lo[0], lo[3] - 1, lo[2], up[1] + 1)  # across the C3 channel to the upper strap
+    top.box("m5", straps[0][0], yb0, straps[3][2], yb1)
+    for sb in straps:
+        top.box("m5", sb[0], yb0, sb[2], sb[1] + 1)
     top.stack(straps[0][0], yb0, straps[0][2], yb1, 2, 5)
     top.box("m2", R[2] - 0.8, yb0, straps[0][2], R[1] + 0.8)
     # --- R3 above the ring: west = vbias_cg (Metal3 north), east = g_cg (Metal4 -> gate join)
@@ -885,89 +953,55 @@ def build_cg(ly):
     top.box("m1", rw2[0], rw2[1], rw2[2], rw2[3] + 2.5)
     top.stack(rw2[0] - 0.4, rw2[3] + 1.0, rw2[2] + 0.4, rw2[3] + 2.5, 1, 3)
     xvc = vbias_column(top, "vbias_cs", (rw2[0] + rw2[2]) / 2, rw2[3] + 1.0)
-    # --- LD4: relocated to the NW corner, decoupled from the L1 chain (re-floorplan request). rot=90, no mirror
-    # ("+90 deg" per request): ports face north -- confirmed by direct probe of coil_ports() under this rotation.
-    # q1 (vdd, port1) lands WEST, q2 (vm2/drain signal, port2) lands EAST -- opposite of the old (rot=90,
-    # mirror=True) placement's own arrangement, where q2 was west.
+    # --- LD4: rotated to landscape (rot=180, no swap: world-X extent = rx = 232, world-Y extent = ry = 109) --
+    # user requirement, also the fix for a real collision found by direct GDS inspection: the OLD portrait
+    # placement (rot=90, cx4=438, cy4=490) had world-Y extent = rx = 232 -> world span y=[258,722], and its own
+    # x=[329,547] ring/winding territory directly overlapped the new 4x1 C3 row's east cap (cap3/cap4, x up to
+    # 436.76). Landscape shrinks LD4's own Y reach to only 218 total, freeing that space.
+    # Site: NW corner (user's explicit instruction -- "bring it to the left, fit to the NW edge, not under LD2"),
+    # not the first candidate tried (far east, in the LSHUNT_OUT/LD2 Y-gap). At cx4=345, cy4=600, world-X=[113,577]
+    # clears cg's own vbias_cg/vbias_cs columns (x=59..61 / 74..76, both reaching north to Y_N) with 22um real
+    # margin, and world-Y=[491,709] stays well clear of every south-side cg structure (LEQ/L1/C3 all y<=300ish)
+    # and well under Y_N=751 with RING_KO+RING margin. Confirmed empirically (probe_ld4_nw.py / begin_shapes_rec
+    # on the regenerated GDS) that this patch of cg is genuinely open on its own -- the only real obstacle is
+    # output_match's own rf_out_pad column (x=410..420, world y up to 714), which lands dead centre of this new
+    # footprint; see the detour added in build_output_match below, not fixed here (cross-block).
     geo = coil_geom(P, "LD4")
-    # cx4=438 (not 234, directly above LEQ): a first attempt at 234 directly overlapped cg's own C2/C3 MIM cap
-    # bank (c9_plates, x=210-319, y=244-353) -- confirmed by a huge pile of real MIMTM/via DRC violations, not
-    # assumed from geometry alone. 438 clears that bank (needs cx4-ry>=319+SP_KO), L1, LEQ, and the cg guard ring,
-    # all at this same cy.
-    cx4, cy4 = 438.0, 490.0
-    # RING_KO (coil_guard_ring, Phase 3) replaces SP_KO here -- see LEQ's own comment for the full rationale.
-    # cx4/cy4 kept at their current values deliberately for this step (ring added first, at the CURRENT site,
-    # mirroring the L1/LD2/LSHUNT_OUT approach) -- repositioning west is a separate, subsequent step once the
-    # ring itself is proven clean here, given how many hand-tuned crossings already exist near LD4 (YSL bus,
-    # the CS_GATE_PAD detour at xd=324 only 5um west of LD4's own edge, the q1/vm2-jog crossing fixed earlier
-    # this session) -- more than any other coil.
-    assert cy4 + geo["rx"] + RING_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"  # rot=90:
-    # world-Y extent is local rx
-    assert cx4 - geo["ry"] - RING_KO >= 0, "LD4 (NW) does not fit against the west edge"  # world-X extent is ry
-    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=90)
-    # avoid: the CS_GATE_PAD detour's own "drop to the L1/LD4 gap" M3 segment (xd=324, yg_lo=240 to gp[3]=405.5,
-    # see the CS_GATE_PAD block below) runs alongside LD4's ring west wall and touches it at x=326 with zero
-    # gap (confirmed live via LVS: output_cs merging into vss at the standalone cg level). Box: x 322..328 (2um
-    # real margin each side of the drop's own 324..326), y 238..407.5 (covers the drop's full 240..405.5 span
-    # with margin) -- carves that whole stretch out of the west wall rather than moving either structure, since
-    # CS_GATE_PAD's own xd/yg_lo values are shared with several other already-verified crossings in that
-    # function (see its own comments) and aren't safe to nudge casually.
-    # avoid #2/#3: lna_core_cs's own vbias_cas jog bar (build_cs's vbias_column() call, a wide M3 run from x=89
-    # near the west band east to ~577 near CS's own guard ring, at y~458..460) is wide enough to cross BOTH of
-    # LD4's ring's east (x 548..550) and west (x 326..328) walls at this same y -- only visible at the full
-    # "parts" assembly level (cg standalone is clean on its own; vbias_cas is drawn in cs). Confirmed live via
-    # LVS, twice: fixing only the east-wall overlap left the west-wall one as an equally-real second path for
-    # the same short (rf_out_pad/vbias_cas/vss all merging into one net) -- same bar, two separate crossings,
-    # both needed carving. Boxes: 2um real margin each side of the 458..460 x [548..550 / 326..328] overlaps.
-    # avoid #4: output_match's own xe=456 dipped_column (the same column whose 5 dip bands were already checked
-    # against L1's ring walls) also reaches LD4 -- systematically re-checked all 5 bands' own +-2um margins
-    # against all 4 of LD4's ring walls this time (south 255..257, north 723..725, west 326..328, east
-    # 548..550): exactly one hit, (258,264)+-2=256..266 vs the south wall. Confirmed live via LVS (same
-    # rf_out_pad/vss merge, this time with vbias_cas correctly no longer part of it). Box: x 454..460 (2um
-    # margin around the column's own 456..458), y 254..268 (2um margin around the 256..266 overlap).
-    ring_in, ring_out = lib.coil_guard_ring(top, cx4, cy4, geo, rot=90, w=RING_W, sp=RING_SP,
-                                             avoid=[(322.0, 238.0, 328.0, 407.5), (546.0, 456.0, 552.0, 462.0),
-                                                    (322.0, 456.0, 328.0, 462.0), (454.0, 254.0, 460.0, 268.0)])
-    assert q1[0] < q2[0], "q1 (vdd) must be the western port, q2 (vm2) the eastern one"
+    cx4, cy4 = 345.0, 600.0
+    assert cx4 - geo["rx"] - RING_KO >= 91.0 + 3.0, "LD4 (NW) does not clear the vbias_cg/cs/cas columns (x<=91)"
+    assert cy4 + geo["ry"] + RING_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"
+    (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=180)
+    ring_in4, ring_out4 = lib.coil_guard_ring(top, cx4, cy4, geo, rot=180, w=RING_W, sp=RING_SP)
+    # ports: both face WEST here (confirmed by direct probe), stacked close in Y (q1 south, q2 north, ~4um apart)
+    # but never turn toward each other -- q1 (vdd) only needs a short local stub, q2 (vm2) runs a short way east
+    # to "dc" at its own, different Y the whole way, so the two paths stay parallel and never cross.
+    assert q1[1] < q2[1] and q1[0] == q2[0], "q1 (vdd) must be the southern port, q2 (vm2) the northern one"
     top.box("m5", *q1)
     top.box("m5", *q2)
-    # vm2 (q2): the drain-bus dc column already runs up to the C2 cap's own top-plate height (p1[3]) -- continue
-    # it north to meet q2, jogging east to q2's own x (q2 is east of dc here, unlike the main_pex redo where it
-    # happened to land close to dc already).
-    top.box("m5", dc[0], p1[3], dc[1], q2[1] + 0.5)
-    # the horizontal jog to q2 runs east past q1's OWN vdd lead (q1[0]..q1[2]) at this exact y-band -- the "q1
-    # (west) and q2 (east) share the same y-band but sit at different x" note above only checked the two ports'
-    # own boxes against each other, not this jog wire crossing q1's column on its way further east. Confirmed via
-    # NetTracer as the real bridge behind the "output_cs merges with vdd" LVS mismatch (output_cs -> R4's own
-    # east-terminal stack -> C2 bottom plate = vm2 -> this very jog -> q1 -> vdd). Dip to Metal3 here; q1 itself
-    # has no Metal3 content, so the dip's own crossing can sit at q1's exact x, only the transition stacks need
-    # clearance -- tile fabric immediately outside LD4's keepout runs right up to ~433/~443 here, so margins are
-    # kept small (0.5-1 um, still real clearance, not a zero-gap touch) to fit the narrow corridor.
-    xq0, xq1 = q1[0] - 0.5, q1[2] + 0.5
-    assert dc[0] < xq0 - 1.0 and xq1 + 1.0 < q2[0]
-    top.box("m5", dc[0], q2[1], xq0, q2[3])
-    top.stack(xq0 - 1.0, q2[1], xq0, q2[3], 3, 5)
-    top.box("m3", xq0, q2[1], xq1, q2[3])
-    top.stack(xq1, q2[1], xq1 + 1.0, q2[3], 3, 5)
-    top.box("m5", xq1 + 1.0, q2[1], q2[2], q2[3])
-    # vdd (q1): short local reach north into the generic tile fabric -- q1 (west) and q2 (east) share the same
-    # y-band but sit at different x, so this run never crosses q2's own position.
-    top.box("m5", q1[0], q1[1], q1[2], Y_N)
-    top.label(5, "vdd", (q1[0] + q1[2]) / 2, Y_N - 1)
+    # vdd (q1): short reach further west into open space (clear of the vbias columns at x<=91) -- Phase 4's
+    # supply-grid rework will tie this into the tile fabric; a clean, DRC-legal stub is all LVS needs for now.
+    top.box("m5", q1[0] - 15.0, q1[1], q1[2], q1[3])
+    top.label(5, "vdd", q1[0] - 14.0, (q1[1] + q1[3]) / 2)
+    # vm2 (q2): short run east back to the drain-bus "dc" column (same destination as before the rotation) --
+    # extend the existing dc column (drawn above, currently reaching only p1[3]=430.22) further north to q2's own
+    # y=601..603, then jog west to meet q2. This y-band is well above C2's own top plate (372..430.22), so unlike
+    # the first candidate's own routing, no dip around C2 is needed here at all.
+    top.box("m5", dc[0], p1[3], dc[1], q2[3])
+    top.box("m5", q2[0], q2[1], dc[1], q2[3])
     INFO[P] = {"M1": {"rows": rows, "fingers_per_row": ma["nf"], "wf": wf, "L": l2,
                       "sym": s2},
                "bus_w_um": {"source": ws, "drain": wd}, "guard_ring": R,
                "C3_pF": round(4 * lib.c_mim_pf(w9, l9), 3), "C2_pF": round(lib.c_mim_pf(w1, l1c), 3),
                "L1": {"coil": COILS[(P, "L1")], "centre": [cx1, cy1], "ports": "north",
                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
-               "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "north",
-                       "ring_inner": list(ring_in), "ring_outer": list(ring_out)},
+               "LD4": {"coil": COILS[(P, "LD4")], "centre": [cx4, cy4], "ports": "west",
+                       "ring_inner": list(ring_in4), "ring_outer": list(ring_out4)},
                "c9_vss_straps": straps, "c9_plates": plates, "l1_vss_lead_x": list(L1_VSS_X),
-               "ld4_vdd_lead": [q1[0], q1[1], q1[2], Y_N],
+               "ld4_vdd_lead": [q1[0] - 15.0, q1[1], q1[2], q1[3]],
                "vm2_column_x": list(dc),
                "pins": {"input_match": "Metal5 x=82 y=290..300", "output_cs": list(gp), "g_cg": f"Metal3 west edge y={GCG_Y}",
                         "vbias_cg": f"Metal3 north edge x={xvb:.2f}", "vbias_cs": f"Metal3 north edge x={xvc:.2f}",
-                        "vdd": "Metal5 north edge", "vss": "guard ring, C3 straps, L1 port 2 (south edge)"}}
+                        "vdd": "Metal5 stub west of LD4", "vss": "guard ring, C3 straps, L1 port 2 (south edge)"}}
     return top
 
 
