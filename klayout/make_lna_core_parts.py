@@ -243,6 +243,15 @@ def build_supply(ly, top):
     # The south/west loops both start their own k=0 at the same (6, Y0 + 6) corner point -- dedup via set() so
     # that shared corner isn't drawn (and via-cut) twice, which deep-mode DRC (no auto-merge) flags as a real
     # overlap violation rather than silently coinciding.
+    # bridge_m3: the comment above has always promised "clear of... the bridges", but the check below only ever
+    # tested `m3_blk` (captured from the core blocks BEFORE this function drew any bridge) and `holes` (the M4
+    # cutouts, not the bridge's own M3) -- `bridges` was collected but never actually used. A real, pre-existing
+    # gap, exposed now that rf_out_pad's own vdd-rail bridge moved (user request, no longer routed near LD4) to
+    # a position where an island actually lands on it: confirmed via NetTracer, an island's own Via2 (vss, M2)
+    # landed on the SAME Metal3 polygon as the vdd bridge, shorting vdd to vss.
+    bridge_m3 = pya.Region()
+    for xa, xb in bridges:
+        bridge_m3.insert(dbox((xa, H - 10, xb + 6, H - 4)))
     isl = set()
     for k in range(int((W - 12) // 40) + 1):
         isl |= {(6 + 40 * k, Y0 + 6), (6 + 40 * k, H - 6)}
@@ -255,7 +264,8 @@ def build_supply(ly, top):
             continue
         b = (x - 1.5, y - 1.5, x + 1.5, y + 1.5)
         near = pya.Region(dbox(b).enlarged(um(3), um(3)))
-        if not near.interacting(m3_blk).is_empty() or not near.interacting(holes).is_empty():
+        if not near.interacting(m3_blk).is_empty() or not near.interacting(holes).is_empty() \
+                or not near.interacting(bridge_m3).is_empty():
             continue
         S.box("m3", *b)
         S.cuts("v2", *b)

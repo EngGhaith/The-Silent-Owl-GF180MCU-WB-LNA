@@ -42,14 +42,19 @@ NSLOT = 11
 CH = 40.0  # routing channel between the tile edge (pads) and the macro
 
 # pad assignment: (side, slot k) -> (pad cell, net); every other slot gets fillers
+# rf_out_pad moved from k=4 (macro x~390..465, directly over/near LD4's own ring) to k=7 (macro x~690..765,
+# the open gap between LD4's east edge (~580) and LD2's west edge (~816.5)) -- user request: route rf_out_pad
+# without crossing LD4's territory at all, instead of continuing to patch crossings through it. Flanked by vss
+# on both sides (k=6, k=8) for RF grounding, same convention as before (vss was already adjacent at k=3/k=5).
+# vdd moved to the now-free k=3 (k=4/5 are simply unused -> filler, same as any other unassigned slot).
 PADS = {
     ("N", 0): ("asig_5p0", "vbias_cg"),  # same west -> east order as the macro pins (x = 60 / 75 / 90)
     ("N", 1): ("asig_5p0", "vbias_cs"),
     ("N", 2): ("asig_5p0", "vbias_cas"),
-    ("N", 3): ("dvss", "vss"),
-    ("N", 4): ("asig_5p0", "rf_out_pad"),
-    ("N", 5): ("dvss", "vss"),
-    ("N", 6): ("dvdd", "vdd"),
+    ("N", 3): ("dvdd", "vdd"),
+    ("N", 6): ("dvss", "vss"),
+    ("N", 7): ("asig_5p0", "rf_out_pad"),
+    ("N", 8): ("dvss", "vss"),
     ("W", 4): ("dvss", "vss"),
     ("W", 5): ("asig_5p0", "rf_in_pad"),
     ("W", 6): ("dvss", "vss"),

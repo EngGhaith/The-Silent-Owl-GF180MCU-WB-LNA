@@ -257,8 +257,8 @@
   ],
   "output_cs_lead_y": 498.305,
   "rf_out_x": [
-   410.0,
-   420.0
+   720.0,
+   730.0
   ],
   "LSHUNT_OUT": {
    "coil": "LSHUNT_OUT_RECT_coil.gds",
@@ -292,7 +292,7 @@
   ],
   "pins": {
    "output_cs": "Metal5 x=380.0 y=498.305",
-   "rf_out_pad": "Metal5 north edge x=415.0",
+   "rf_out_pad": "Metal5 north edge x=725.0",
    "vss": "Metal4 south edge x=908.0..934.0"
   }
  }

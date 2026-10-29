@@ -194,7 +194,12 @@ Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S
 # lna_core_parts remain, pre-existing/benign per the module's own standalone-sub-assembly note). Net result:
 # height still 1084 (20 um under the committed 1104), width 1062 (8 um under the 1070 budget, down from 1060's
 # 10 um but still comfortably inside it) -- SPIRAL_KO could not safely go below 10 without reopening this short.
-RFO_X = 415.0  # rf_out_pad lead column (centre)
+RFO_X = 725.0  # rf_out_pad lead column (centre). Moved from 415 (user request): the old position ran this
+# column, and C1's own LD4-avoidance bridge feeding it, straight through lna_core_cg's own LD4 ring territory
+# (x=[113,580]) -- a real, repeatedly-confirmed source of cross-block shorts. 725 sits in the open gap between
+# LD4's east edge (~580) and LD2's west edge (~816.5, in lna_core_cs), matching the padframe's own rf_out_pad
+# slot (moved to N,7 in make_lna_top.py, macro x~690..765) so the pad-to-core jog stays short. No crossing of
+# LD4 (or anything else) is needed for this column at all now.
 YSL = (256.78, 266.78)  # L1 lead (CG source -> L1 port 1), runs east above LEQ. Shifted +DY_CG_BULK=34.78
 # (floorplan compaction, step 1): sourced from cg's own y_s (bridged by a connector that stretches to meet it
 # regardless of the gap), so it moves with the rest of cg's bulk, not independently.
@@ -454,34 +459,17 @@ def build_output_match(ly):
     top.stack(xd0, yc - 5, xd1, yc + 5, 3, 5)
     top.box("m5", xd1, yc - 5, pt[0] + 1, yc + 5)
     top.box("m5", bt[0], bt[1], bt[2], bt[3])
-    # rf_out_pad's own north-reaching column crosses lna_core_cg's own q2 (vm2) lead -- CG's drain bus reaching
-    # LD4's drain port -- at local y 719..722.5, on the same layer (confirmed via NetTracer as the second bridge
-    # behind the "rf_out_pad merges with vdd/vss" LVS mismatch, the first being the YSL-bus crossing fixed
-    # above). Dipping CG's own q2 lead instead isn't practical there: it runs directly through LD4's own dense
-    # edge via array (792 vias within a few um of the crossing), and a new via transition collides with it.
-    # output_match's own column has no such conflict, so dip it here instead -- Metal4 for the crossing span,
-    # real clearance on both approaches (not just ending at q2's own edge).
-    yq0, yq1 = 714.0, 728.0  # dip zone, clear of CG's q2 lead (719..722.5) on both sides
-    assert bt[1] < yq0 and yq1 < Y_N
-    # dip to Metal3 through lna_core_cg's own LD4 ring (re-floorplanned to the NW corner, world x=[113,577],
-    # y=[491,709] in the shared frame) -- this column's own fixed path (x=410..420, bt[1]=531.61) sits entirely
-    # INSIDE that x-range, and bt[1] itself is already inside the ring's own y-range too (531.61 > 491), so there
-    # is no "below the ring" height left to jog sideways at -- any lateral detour box would itself have to cross
-    # the ring's own real winding metal at some y between 491 and 709 (tried first, caught live by the real DRC
-    # deck: MIMTM.9 pile at x~418, y~867 = 494 once un-shifted, i.e. the jog's own bottom box, not the vertical
-    # bypass). A same-x Metal3 dip for the whole ring-overlap span sidesteps the problem instead: different layer
-    # from the ring's own M5 winding, no lateral travel needed at all.
-    yr1 = 711.0  # 2um margin above LD4's own ring north edge (709)
-    yd0 = bt[1] + 4.0  # clear of the bottom-plate's own via4 tab columns (TAB_VIA_X) before starting the dip
-    top.box("m5", xr - 5, bt[1], xr + 5, yd0)
-    top.stack(xr - 5, yd0, xr + 5, yd0 + 2, 4, 5)
-    top.box("m4", xr - 5, yd0 + 2, xr + 5, yr1 - 2)
-    top.stack(xr - 5, yr1 - 2, xr + 5, yr1, 4, 5)
-    top.box("m5", xr - 5, yr1, xr + 5, yq0)
-    top.stack(xr - 5, yq0, xr + 5, yq0 + 2, 4, 5)
-    top.box("m4", xr - 5, yq0 + 2, xr + 5, yq1 - 2)
-    top.stack(xr - 5, yq1 - 2, xr + 5, yq1, 4, 5)
-    top.box("m5", xr - 5, yq1, xr + 5, Y_N)
+    # rf_out_pad's own north-reaching column: a plain, direct Metal5 run, no dip needed. RFO_X moved to 725
+    # (user request) specifically so this column never enters lna_core_cg's own LD4 ring (x=[113,580]) or
+    # lna_core_cs's own FET block (x<=674.54) or LD2 (x>=816.5) at all -- the whole reason the old x=415 column
+    # needed two separate Metal3/Metal4 dips (one for LD4's ring, one for a CG q2/vm2 lead crossing that doesn't
+    # even apply at this new x) is gone by construction. Confirm via the real deck, not just by this reasoning,
+    # per this project's own standing rule -- but there is no known obstacle left to dip around here.
+    # bridge from bt (585..639) east to this column (720..730) -- without this, the column and bt are two
+    # separate, non-touching boxes and "rf_out_pad" ends up a floating net (confirmed via LVS: the label's own
+    # net had zero terminals, device $13's own bottom-plate terminal landed on a separate, unnamed net $2).
+    top.box("m5", bt[0], bt[1], xr + 5, bt[3])
+    top.box("m5", xr - 5, bt[1], xr + 5, Y_N)
     q1_min_y = pt[3] + 20  # rf_out port must clear the cap
     cap_info = {cn: {"W": w, "L": l, "pF": round(lib.c_mim_pf(w, l), 3), "schematic_pF": round(c_pf, 3)},
                 "top_plate": list(pt)}
@@ -546,22 +534,26 @@ def build_output_match(ly):
     # shifted cg-bulk band now overlaps both of those, so all three merge into one wider dip zone rather than
     # three overlapping ones (dipped_column() requires non-overlapping, margin-separated bands). Will need
     # re-splitting/re-measuring once L1 moves in step 2 and its own bands shift by a different delta.
-    # (489, 709) is new: lna_core_cg's own LD4 ring (re-floorplanned to the NW corner, world y=[491,709]) now
-    # also crosses this column at x=456 (inside the ring's x=[113,577]) -- same dip technique, one more band.
-    # The column's own y1 is extended from bt[1]+1 to yr1b (past the ring, same safe height as the rf_out_pad
-    # column's own dip below) since bt itself moved east of the ring entirely and is reached via a bridge there
-    # instead of directly at bt[1] any more.
-    yr1b = 713.0
-    top.dipped_column(xe, LSH_CHANNEL_Y, yr1b,
-                       dip_bands=[(-318, -312), (197, 213), (254.78, 286), (489, 709)])
-    # bridge above LD4's ring (y=711..713, shared with the rf_out_pad column's own dip, which already has Metal5
-    # here) east to bt -- C1's own bottom-plate tab, now entirely east of the ring (x=585..639) so this whole
-    # bridge and the vertical drop to bt are clear of LD4 by construction, no further dip needed. The vertical
-    # drop is narrowed to 15um (not bt's own full 54um plate width) -- a solid 54x181 Metal5 slab tripped
-    # MSLOT5.1 (metal slotting, real DRC hit, not a formula guess); a routing-width connector doesn't need the
-    # plate's own full width.
-    top.box("m5", xr - 5, 711.0, bt[2], yr1b)
-    top.box("m5", bt[0], bt[1], bt[0] + 15.0, yr1b)
+    # The column ends right after this last L1/bulk band (y=288, +2um margin) instead of continuing straight up
+    # through lna_core_cg's own LD4 ring (user request: never route rf_out under LD4 at all, not even via a
+    # layer dip -- a previous version of this code threaded x=456 all the way up through LD4's y-range on a
+    # Metal3/Metal4 dip, which is exactly the pattern being removed here). From here the path jogs EAST to clear
+    # LD4's ring (east edge ~580) while still well south of it (y~288-290, LD4 starts at y=488), then runs
+    # straight north at that x, entirely outside LD4's footprint, to meet bt directly.
+    ye0 = 288.0
+    top.dipped_column(xe, LSH_CHANNEL_Y, ye0,
+                       dip_bands=[(-318, -312), (197, 213), (254.78, 286)])
+    # jog east, clearing BOTH LD4's ring (east edge ~580) and pt (output_cs's own top plate, x=585..639,
+    # y=466..530.61) -- a straight run up at any x inside pt's own range would cut through it and short it to
+    # rf_out, confirmed by a real LVS mismatch the first time this exact mistake was made in this file. Going
+    # all the way to xg=645 (6um east of pt) avoids threading the tight ~5um gap between LD4 and pt altogether;
+    # the run north at xg stays clear of pt for its whole height since xg > pt[2]=639, then a short final jog
+    # west at bt's own height (above pt entirely) reaches into bt.
+    xg = pt[2] + 6.0
+    top.box("m5", xe, ye0, xg + 1, ye0 + 2)
+    top.box("m5", xg - 1, ye0, xg + 1, bt[1])
+    top.box("m5", bt[0], bt[1], xg + 1, bt[3])
+    # bt's own north-reaching column to the pad is the separate, direct run below (rf_out_pad / RFO_X=725).
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
                "rf_out_x": [xr - 5, xr + 5],
                "LSHUNT_OUT": {"coil": COILS[(P, "LSHUNT_OUT")], "centre": [cx, cy], "ports": "south",
