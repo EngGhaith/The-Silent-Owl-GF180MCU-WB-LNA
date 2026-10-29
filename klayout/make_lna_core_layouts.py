@@ -195,7 +195,9 @@ Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S
 # height still 1084 (20 um under the committed 1104), width 1062 (8 um under the 1070 budget, down from 1060's
 # 10 um but still comfortably inside it) -- SPIRAL_KO could not safely go below 10 without reopening this short.
 RFO_X = 415.0  # rf_out_pad lead column (centre)
-YSL = (222.0, 232.0)  # L1 lead (CG source -> L1 port 1), runs east above LEQ
+YSL = (256.78, 266.78)  # L1 lead (CG source -> L1 port 1), runs east above LEQ. Shifted +DY_CG_BULK=34.78
+# (floorplan compaction, step 1): sourced from cg's own y_s (bridged by a connector that stretches to meet it
+# regardless of the gap), so it moves with the rest of cg's bulk, not independently.
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
 # coil placement: port edge position (the ports face the core) and centre on the other axis
 LEQ_PORT_X, LEQ_CY = 36.0, -57.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
@@ -232,9 +234,24 @@ LSH_SE_CX, LSH_SE_CY = 935.0, -30.0  # LSHUNT_OUT relocated SE: east of L1 (east
 LSH_CHANNEL_Y = -350.0  # east-west return channel for LSHUNT_OUT's long rf_out lead, south of both L1's own
 # keep-out (south edge -318) and LSHUNT_OUT's own (south edge ~-326), with real SP_KO clearance from each -- see
 # Y_S's own comment above for why Y_S had to grow to fit this
-GCG_Y, GCG_X = (430.0, 434.0), 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x = GCG_X)
+GCG_Y, GCG_X = (464.78, 468.78), 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x =
+# GCG_X). Y shifted +DY_CG_BULK=34.78 (floorplan compaction step 1, tracks R3/R4 and the rest of cg's bulk).
 # bias pins (Metal3, north edge): jog west below LD2 at y = jog, then north at x
-VBIAS = {"vbias_cg": (445.0, 60.0), "vbias_cs": (452.0, 75.0), "vbias_cas": (459.0, 90.0)}
+VBIAS = {"vbias_cg": (479.78, 60.0), "vbias_cs": (483.0, 75.0), "vbias_cas": (720.0, 90.0)}
+# jog heights (first element of each tuple) adjusted for floorplan compaction step 1: vbias_cg/vbias_cs are
+# drawn in build_cg, starting from R3/R4 respectively. vbias_cg's own +DY_CG_BULK=34.78 shift is fine (R3 is far
+# from LD4, 137um of room). vbias_cs is NOT a blind +DY_CG_BULK shift, though -- R4 sits much closer to LD4's
+# ring (new R4 top 473.29 vs LD4 ring south 488, only 14.7um of window). A blind shift put the jog box's own
+# edge only 0.22um from LD4's ring south wall (real DRC hit: M3.2a); the first re-fit (yj=481) cleared that but
+# then overlapped vbias_cg's own jog (478.78..480.78) on the same Metal3 layer, merging the two nets (real LVS
+# short). yj=483 clears both: >=1.22um from vbias_cg's jog, 4um from LD4's ring south, 6.71um above R4's own
+# start (473.29). vbias_cas is drawn in build_cs off its own T4 gate strap (T4["G"]=472.40..473.40 after
+# +DY_CS_BULK) -- a blind "plenty of room, unadjusted" guess at yj=515.52 (just clearing T4's own gate) was
+# WRONG: that jog spans the full x=89..578 (vbias_column()'s own jog box, xn-1 to the column's starting x), and
+# y=515.52 falls inside lna_core_cg's own LD4 ring (y=[488,712]) -- a real cross-block short (vbias_cas merged
+# into vss, confirmed via NetTracer) invisible to cs's own standalone check since LD4 lives in a different
+# block entirely. yj=720 clears LD4's ring (north edge 712) with real margin instead. xn (second element) is
+# unrelated to Y, unchanged.
 
 
 def coil_geom(sch, name):
@@ -308,7 +325,8 @@ def build_input_match(ly):
     (q1, q2), _, _ = place_coil(ly, top, P, "LEQ", cx, cy, rot=180, mirror=True)
     ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=180, w=RING_W, sp=RING_SP)
     lead_x = 25.0  # rf_in lead column (centre)
-    rf_y = 295.0
+    rf_y = 329.78  # shifted +DY_CG_BULK=34.78 from 295.0: same net as cg's own y_s (build_cg draws the matching
+    # "input_match"/"input_cg" box at the identical height) -- floorplan compaction step 1, must co-shift.
     x_e = 82.0
     # --- series cap
     w1, l1, c_pf, cn = c_in_wl(sch)
@@ -361,8 +379,9 @@ def build_input_match(ly):
 CS_X_SHIFT = 300.0  # cs re-floorplan: shift the whole transistor/pad subsystem east by this much to clear
 # LD4's new NW-corner placement (LD4 occupies local x 329..547 at this same y-band) -- LD2 itself is unaffected,
 # already independently placed at its own NE-corner target (LD2_NE_CX/CY) regardless of this shift.
-CS_GATE_PAD = (268.0 + CS_X_SHIFT, 399.5, 274.0 + CS_X_SHIFT, 405.5)  # input_cg of lna_core_cs = output_cs of
-# lna_core_cg (Metal3..5 stack)
+CS_GATE_PAD = (268.0 + CS_X_SHIFT, 456.02, 274.0 + CS_X_SHIFT, 462.02)  # input_cg of lna_core_cs = output_cs of
+# lna_core_cg (Metal3..5 stack). Y shifted +DY_CS_BULK=56.52 (floorplan compaction step 1 -- tracks cs's own
+# FET row, the tighter side of this shared interface; margin on the cg side re-verified, not just assumed).
 VX_X = (377.0 + CS_X_SHIFT, 387.0 + CS_X_SHIFT)  # output_match (vx) Metal5 column of lna_core_cs, east of the cascode
 C_OUT_PLATE = (585.0, 466.0)  # lower-left of the output C1 top plate (rotated: x extent = L, y extent = W).
 # X moved east from 391 (re-floorplan, user request): the original site put C1's own plate body (x=391..445,
@@ -520,13 +539,13 @@ def build_output_match(ly):
     assert xe + 6 <= pt[0], "xe must still clear output_cs's own top plate (pt)"
     top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
     top.box("m5", xe, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
-    # (220, 244) merges two close-together bands into one: the Metal5-only vbias/YSL bus (222..232) and, right
-    # next to it, the supply-level vss strap (make_lna_core_parts.py's vss_straps(), CS guard ring -> C3
-    # bottom-plate bar) extended east to reach CS's own shifted guard ring (CS_STRAP_X) at 236..240 -- not an L1
-    # feature at all, only found by tracing the full "parts" assembly (invisible in lna_core_cg.gds alone, since
-    # the supply draws it later). Merged into one wider band instead of two adjacent ones specifically because
-    # two separate dipped_column() bands this close together would need their own mutual clearance too (each
-    # one's margin landing inside the other's), on top of each one's own margin from the real obstruction.
+    # (254.78, 286) merges what used to be three separate bands into one: the Metal5-only vbias/YSL bus (now
+    # 256.78..266.78, shifted +DY_CG_BULK=34.78 in floorplan compaction step 1) and the supply-level vss strap
+    # (CS guard ring -> C3 bottom-plate bar, also +DY_CG_BULK) that used to sit just east of it at 236..240, PLUS
+    # L1's own unmoved winding-gap bands at 258..264 and 272..286 (L1 itself doesn't move until step 2) -- the
+    # shifted cg-bulk band now overlaps both of those, so all three merge into one wider dip zone rather than
+    # three overlapping ones (dipped_column() requires non-overlapping, margin-separated bands). Will need
+    # re-splitting/re-measuring once L1 moves in step 2 and its own bands shift by a different delta.
     # (489, 709) is new: lna_core_cg's own LD4 ring (re-floorplanned to the NW corner, world y=[491,709]) now
     # also crosses this column at x=456 (inside the ring's x=[113,577]) -- same dip technique, one more band.
     # The column's own y1 is extended from bt[1]+1 to yr1b (past the ring, same safe height as the rf_out_pad
@@ -534,7 +553,7 @@ def build_output_match(ly):
     # instead of directly at bt[1] any more.
     yr1b = 713.0
     top.dipped_column(xe, LSH_CHANNEL_Y, yr1b,
-                       dip_bands=[(-318, -312), (197, 213), (220, 244), (258, 264), (272, 286), (489, 709)])
+                       dip_bands=[(-318, -312), (197, 213), (254.78, 286), (489, 709)])
     # bridge above LD4's ring (y=711..713, shared with the rf_out_pad column's own dip, which already has Metal5
     # here) east to bt -- C1's own bottom-plate tab, now entirely east of the ring (x=585..639) so this whole
     # bridge and the vertical drop to bt are clear of LD4 by construction, no further dip needed. The vertical
@@ -586,7 +605,8 @@ def build_cs(ly):
     wb = math.ceil(i_ma / 2 * 2) / 2
     m1t, m1 = lib.fet_tile(ly, f"{P}__M1", volt_of(s1), wf1, l1, na1, nd1, ws=wb, wd=wb)
     m4t, m4 = lib.fet_tile(ly, f"{P}__M4", volt_of(s4), wf4, l4, na4, nd4, ws=wb, wd=wb, draw_s=False)
-    x_m1, y_m1 = 285.0 + CS_X_SHIFT, 400.0
+    x_m1, y_m1 = 285.0 + CS_X_SHIFT, 456.52  # y_m1 shifted +DY_CS_BULK=56.52 from 400.0 (floorplan compaction
+    # step 1: close the gap to LD2's ring, 426.98 (old R top) -> 503.5 (LD2 ring south) - 20um routing margin)
     tr1 = top.place(m1t, x_m1 - m1["row"][0], y_m1)
     T1 = {k: tbox(tr1, v) for k, v in m1.items() if k != "nf"}
     xc = (T1["row"][0] + T1["row"][2]) / 2
@@ -608,9 +628,15 @@ def build_cs(ly):
     top.box("m3", gp[0], T1["G"][1], T1["G"][0], T1["G"][3])
     top.stack(*gp, 3, 5)
     top.label(5, "input_cg", (gp[0] + gp[2]) / 2, (gp[1] + gp[3]) / 2)
-    # vbias_cas: M4 gate strap -> west, Metal3 column north (jog west below LD2)
-    xv = g(R[0] - 3.0)
-    top.box("m3", xv - 1, T4["G"][1], T4["G"][0], T4["G"][3])
+    # vbias_cas: M4 gate strap -> west, Metal3 column north (jog west below LD2). xv used to be R[0]-3 (just
+    # west of cs's own guard ring, x~576.7) -- that put the column's own PRE-JOG vertical run (T4['s gate height
+    # 472.4 up to the jog, ~249um) directly inside lna_core_cg's own LD4 ring (x=[110,580], y=[488,712]) for its
+    # entire length (real cross-block short, confirmed via NetTracer: merged vbias_cas into vss even after
+    # fixing the jog height alone -- the jog clearing LD4 wasn't enough since the column below it was still
+    # inside the ring). T4["G"][0]=582 is already just east of LD4's ring; bridge east to xv=585 instead of west,
+    # clearing LD4 with real margin for the column's whole vertical run.
+    xv = 585.0
+    top.box("m3", T4["G"][0], T4["G"][1], xv + 1, T4["G"][3])
     xvn = vbias_column(top, "vbias_cas", xv, T4["G"][1])
     # vx: M4 drain bus -> east, Metal5 column
     yd0, yd1 = T4["D"][1], T4["D"][3]
@@ -674,7 +700,8 @@ def res_terms(c, ly):
     return f(m1[1]), f(m1[2]), f(m1[0])
 
 
-C3_VSS_BAR = (236.0, 240.0)  # y of the Metal5 bar joining the C3 bottom plates (vss)
+C3_VSS_BAR = (270.78, 274.78)  # y of the Metal5 bar joining the C3 bottom plates (vss). Shifted +DY_CG_BULK=
+# 34.78 (floorplan compaction step 1, tracks C3/the rest of cg's bulk).
 
 
 def build_cg(ly):
@@ -701,7 +728,10 @@ def build_cg(ly):
     ta, ma = lib.fet_tile(ly, f"{P}__M2A", volt_of(s2), wf, l2, na // rows, nd // rows, ws=ws, wd=wd)
     tb, mb = lib.fet_tile(ly, f"{P}__M2B", volt_of(s2), wf, l2, na // rows, nd // rows, ws=ws, wd=wd, draw_s=False)
     x1_target = 196.0  # east end of the row buses
-    y_s = 295.0  # centre of the shared source bus
+    y_s = 329.78  # centre of the shared source bus. Shifted +DY_CG_BULK=34.78 from 295.0 (floorplan compaction
+    # step 1: close the gap to LD4's ring, 438.22 (old R4 top) -> 488 (LD4 ring south) - 15um routing margin).
+    # Everything downstream (FET rows, guard ring, drain/gate buses) is formula-derived from this, no separate
+    # edit needed there. input_match's own rf_y must co-shift by the identical delta (same net, see rf_y).
     ox = x1_target - ma["S"][2]
     oya = g(y_s - (-(ma["S"][1] + ma["S"][3]) / 2))  # row A mirrored: local y -> -y
     tra = top.place(ta, ox, oya, mirror=True)
@@ -724,7 +754,8 @@ def build_cg(ly):
     for T in (A, B):
         top.box("m3", x1, T["G"][1], gj[1], T["G"][3])
         top.cuts("v3", gj[0], T["G"][1], gj[1], T["G"][3])
-    yg = (296.5, 300.5)  # g_cg Metal4 strip (C3 channel)
+    yg = (331.28, 335.28)  # g_cg Metal4 strip (C3 channel). Shifted +DY_CG_BULK=34.78 (floorplan compaction
+    # step 1, tracks yl/C3 below it).
     # --- drains: buses east -> Metal5 column (vm2)
     dc = (g(x1 + 6), g(x1 + 10))
     for T in (A, B):
@@ -751,7 +782,7 @@ def build_cg(ly):
     xc2 = g(xc1 + w9 + 2 * lib.MIM_ENC + gapA)
     xc3 = g(xc2 + w9 + 3.4 + gap_vss + 3.4)
     xc4 = g(xc3 + w9 + 2 * lib.MIM_ENC + gapA)
-    yl = 244.0
+    yl = 278.78  # shifted +DY_CG_BULK=34.78 from 244.0 (floorplan compaction step 1, tracks cg's bulk)
     assert yl + l9 + lib.MIM_ENC + 1.2 <= yg[0], "C3 row must clear the g_cg gate channel from below"
     c9, t9 = lib.mim_tile(ly, f"{P}__C3", w9, l9)
     plates, straps = [], []
@@ -914,7 +945,7 @@ def build_cg(ly):
     # --- C2: plate east of the vm2 column; bottom plate (tab west, on the column) = vm2, top plate = output_cs
     w1, l1c = um_grid(sch["C2"][1]["W"]), um_grid(sch["C2"][1]["L"])
     c1, t1 = lib.mim_tile(ly, f"{P}__C2", w1, l1c)
-    c1x, c1y = g(dc[1] + 0.9), 372.0
+    c1x, c1y = g(dc[1] + 0.9), 406.78  # c1y shifted +DY_CG_BULK=34.78 from 372.0 (floorplan compaction step 1)
     assert c1x + w1 + lib.MIM_ENC + 1.2 <= CS_GATE_PAD[0], "C2 bottom plate too close to the CS gate pad (MIMTM.1)"
     trc = top.place(c1, c1x, c1y)
     p1, b1 = tbox(trc, t1["top"]), tbox(trc, t1["bot"])

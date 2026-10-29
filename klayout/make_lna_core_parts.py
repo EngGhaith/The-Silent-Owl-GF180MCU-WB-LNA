@@ -52,8 +52,8 @@ GRP_B_AT = (500.0, 300.0)  # a point inside tile group B (east of C3, below the 
 CG_STRAP_Y = (266.0, 270.0)  # Metal2 vss strap CG guard ring -> west band (between LEQ and the input match C1)
 CS_STRAP_X = 632.0  # Metal2 vss strap CS guard ring -> C3 bar (east of C3). Shifted +300 along with cs's own
 # transistor/pad subsystem (cs re-floorplan, clearing LD4's new NW-corner placement) -- the bar itself (drawn
-# in lna_core_cg, unmoved) still reaches this x at y 236..240, below LD4's own footprint (starts at y=258),
-# so the longer run doesn't cross it.
+# in lna_core_cg) now reaches this x at y 270.78..274.78 (see vss_straps()'s own yb0/yb1 -- shifted along with
+# C3_VSS_BAR for the floorplan compaction step 1, no longer the original 236..240).
 GX0 = RING
 GY0 = H - RING - PITCH * int((H - Y0 - 2 * RING) // PITCH)  # grid flush with the north band
 um = lambda v: int(round(v * 1000))
@@ -108,6 +108,15 @@ def block_geometry(ly, top):
             else:
                 ko.insert(c.bbox().transformed(it.trans() * it.inst_trans()).enlarged(um(SPIRAL_KO), um(SPIRAL_KO)))
         it.next()
+    # output_match's C1 (not a coil, so the "L"-prefix heuristic above never catches it) plus its own
+    # LD4-avoidance bridge (reaching north to y=713 on Metal5, carrying rf_out_pad) need a real keepout wider
+    # than the generic KEEP=4um free_sites() check: confirmed via NetTracer that a tile placed only ~6um above
+    # the bridge's own top still merged output_cs/rf_out_pad into vss (DRC-clean, since a same-layer overlap
+    # between different nets is a physical-rules check, not a connectivity one -- LVS is what actually caught
+    # this). pt (top plate) = INFO[...]["top_plate"]; the bridge's own reach (yr1b=713) isn't itself in INFO, so
+    # it's accounted for here directly, with margin.
+    pt = INFO["lna_core_output_match"]["top_plate"]
+    ko.insert(pya.Box(um(pt[0] - 5), um(pt[1] - 5), um(pt[2] + 5), um(713.0 + 5)))
     return blk, ko
 
 
@@ -169,7 +178,11 @@ def vss_straps(S):
     # bar extended east, Metal2 column up to the ring
     Rs = cs["guard_ring"]
     st = cg["c9_vss_straps"]  # lower left, upper left, lower right, upper right
-    yb0, yb1 = 236.0, 240.0
+    yb0, yb1 = 270.78, 274.78  # matches C3_VSS_BAR in make_lna_core_layouts.py -- shifted +DY_CG_BULK=34.78
+    # (floorplan compaction step 1) from the old 236.0/240.0. This was a stale hardcoded literal, not derived
+    # from `st`/INFO, so it didn't auto-track C3's move -- confirmed as a real short via NetTracer (the old,
+    # now-disconnected strap at y=236..240 merged into a huge cross-macro vss net together with several signal
+    # nets routed nearby at that height).
     x0 = CS_STRAP_X
     assert st[2][2] + 6 <= x0 and Rs[0] + 2 <= x0 and x0 + 4 <= Rs[2] - 2
     S.box("m5", st[2][0], yb0, x0 + 4, yb1)
