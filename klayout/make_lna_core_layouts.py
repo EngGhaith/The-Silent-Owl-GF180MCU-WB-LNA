@@ -94,7 +94,7 @@ RING_SP, RING_W = 1.0, 2.0  # coil_guard_ring()'s own real clearance + wall thic
 # real DRC/LVS deck (see check_lna_core_layouts.py) -- bisect upward, never assume.
 RING_KO = RING_SP + RING_W  # total effective keep-out once a coil has its own ring (replaces SP_KO in that
 # coil's own fit-assert)
-COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
+COILS = {("lna_core_input_match", "LEQ"): "LEQ_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
          ("lna_core_cg", "LD4"): "LD4_RECT_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_RECT_coil.gds"}
 # MACRO_W history: 1204 (original) -> 1434 (commit cc900b6, LEQ_MAIN_RECT's reshape pushed the chain further east)
