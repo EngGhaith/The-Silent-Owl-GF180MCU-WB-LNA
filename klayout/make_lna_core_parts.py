@@ -178,11 +178,11 @@ def vss_straps(S):
     # bar extended east, Metal2 column up to the ring
     Rs = cs["guard_ring"]
     st = cg["c9_vss_straps"]  # lower left, upper left, lower right, upper right
-    yb0, yb1 = 270.78, 274.78  # matches C3_VSS_BAR in make_lna_core_layouts.py -- shifted +DY_CG_BULK=34.78
-    # (floorplan compaction step 1) from the old 236.0/240.0. This was a stale hardcoded literal, not derived
-    # from `st`/INFO, so it didn't auto-track C3's move -- confirmed as a real short via NetTracer (the old,
-    # now-disconnected strap at y=236..240 merged into a huge cross-macro vss net together with several signal
-    # nets routed nearby at that height).
+    yb0, yb1 = 390.46, 394.46  # matches C3_VSS_BAR in make_lna_core_layouts.py -- shifted +DY_CG_BULK2=119.68
+    # (step 3, cg/cs bulk consolidation) from 270.78/274.78. This is a hardcoded literal, not derived from
+    # `st`/INFO, so it does NOT auto-track C3's move -- a prior version of this exact duplicate (236.0/240.0)
+    # caused a real short via NetTracer (the old, now-disconnected strap merged into a huge cross-macro vss net
+    # together with several signal nets routed nearby at that height). Keep this in lockstep with C3_VSS_BAR.
     x0 = CS_STRAP_X
     assert st[2][2] + 6 <= x0 and Rs[0] + 2 <= x0 and x0 + 4 <= Rs[2] - 2
     S.box("m5", st[2][0], yb0, x0 + 4, yb1)
