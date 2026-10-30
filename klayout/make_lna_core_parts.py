@@ -151,9 +151,11 @@ def groups(sites, step=PITCH):
     return out
 
 
-def touches_rail(comp):
-    """group reaches the north, east or south ring band (vdd rail on Metal5 there, the west band has none)"""
-    return any(y + PITCH == H - RING or x + PITCH == W - RING or y == Y0 + RING for x, y in comp)
+def touches_rail(comp, step=PITCH):
+    """group reaches the north, east or south ring band (vdd rail on Metal5 there, the west band has none).
+    step defaults to the 20x20 grid's own PITCH; the 10x10 half-pitch fill passes HALF so a half-pitch group's
+    own far edge is checked against the same macro boundaries at its own resolution."""
+    return any(y + step == H - RING or x + step == W - RING or y == Y0 + RING for x, y in comp)
 
 
 def group_at(comps, x, y):
@@ -294,6 +296,21 @@ def build_supply(ly, top):
         step = len(far) / budget
         spread = {far[int(i * step)] for i in range(budget)}
     mim_sites = near_set | spread
+    # Guard against adjacent PG_MIM tiles: each tile is individually MIMTM.1-clean on its own, but two placed
+    # within one PITCH of each other in ANY direction -- including diagonally, confirmed via a real DRC run
+    # after a same-edge-only (left/below) guard still left 21 violations -- put their own edge-most MIM caps
+    # within the 1.2um MIMTM.1 spacing floor. Step 4's macro resize changed the "spread evenly" site selection
+    # enough to land tiles this close for the first time. Greedily demote one tile of every close MIM pair back
+    # to PG_PLAIN (checking all 8 neighbors, in sorted order so only already-decided neighbors are consulted) --
+    # a small loss of total decap area, not a correctness trade worth avoiding.
+    NEIGHBORS = [(dx, dy) for dx in (-PITCH, 0, PITCH) for dy in (-PITCH, 0, PITCH) if (dx, dy) != (0, 0)]
+    for x0, y0 in sorted(mim_sites):
+        if (x0, y0) not in mim_sites:
+            continue
+        for dx, dy in NEIGHBORS:
+            if (x0 + dx, y0 + dy) in mim_sites:
+                mim_sites.discard((x0, y0))
+                break
     for x0, y0 in sites:
         kind = "PG_MIM" if (x0, y0) in mim_sites else "PG_PLAIN"
         S.place(cells[kind], x0 + PITCH / 2, y0 + PITCH / 2)
@@ -310,10 +327,15 @@ def build_supply(ly, top):
     # SPIRAL_KO), minus the sites already covered by a 20x20 tile, ring band, or strap (everything drawn into S
     # so far -- "placed" below). PITCH/2 grid on the SAME GX0/GY0 origin, so a 10x10 site boundary always lines
     # up with either a 20x20 site boundary or its midline -- no half-um-off alignment drift between the two grids.
-    # Connectivity: rather than re-deriving a half-pitch touches_rail(), a 10x10 group is kept if it physically
-    # touches the fabric already drawn into S (tiles + ring + straps, all of which are rail-connected by this
-    # point) -- a strict superset of "touches the rail directly" and the same "drop isolated/floating groups"
-    # discipline as the 20x20 grid's own keep = touches_rail(c) or c is grp_b filter above.
+    # Connectivity: a 10x10 group is kept if EITHER it physically touches the fabric already drawn into S
+    # (tiles + ring + straps, all of which are rail-connected by this point) OR it reaches the macro rail
+    # directly at half-pitch resolution (touches_rail(c, step=HALF)) -- the direct check matters in practice:
+    # a coil whose own real drawn structure (not just its registered ring_outer keepout) extends a few extra um
+    # south of its nominal keepout can eat the ENTIRE first 20x20 row's own KEEP-enlarged clearance while still
+    # leaving enough room for a half-pitch (10um) row underneath it -- in that case there is no already-placed
+    # 20x20 tile for the 10x10 group to touch, so only the direct rail check keeps it (confirmed: this is
+    # exactly the case under L1/LSHUNT_OUT post-Step-4 resize -- the south 10x10 row would otherwise be
+    # entirely dropped despite having real, DRC-legal clearance).
     placed = pya.Region()
     for li in ly.layer_indexes():
         placed += pya.Region(S.c.begin_shapes_rec(li))
@@ -329,7 +351,14 @@ def build_supply(ly, top):
                 continue
             if not pya.Region(b).overlapping(ko).is_empty():
                 continue
-            if not pya.Region(b).interacting(placed).is_empty():
+            # "already covered": the perimeter ring band is drawn FLUSH with the tile grid's own GX0/GY0 origin
+            # (by design -- GY0 is "flush with the north band", and the south/east bands work the same way), so
+            # a south/east-edge site's own boundary always TOUCHES the ring -- and interacting() counts mere
+            # touching. Shrink the probe box by 1 dbu first so exact boundary-touching no longer registers,
+            # while any REAL overlap (an actual already-placed 20x20 tile, not just an adjacent band) still
+            # does. Without this, every south/east-edge 10x10 candidate was excluded here before it could even
+            # reach the touches_rail() check below -- confirmed via direct per-site debugging.
+            if not pya.Region(b).sized(-1).interacting(placed).is_empty():
                 continue  # already covered by a 20x20 tile / ring / strap
             sites10.add((x0, y0))
     comps10 = groups(sites10, step=HALF)
@@ -338,7 +367,7 @@ def build_supply(ly, top):
         region = pya.Region()
         for x0, y0 in c:
             region.insert(pya.Box(um(x0), um(y0), um(x0 + HALF), um(y0 + HALF)))
-        if not region.sized(1).interacting(placed).is_empty():  # 1 dbu = touches, not just nearby
+        if not region.sized(1).interacting(placed).is_empty() or touches_rail(c, step=HALF):  # 1 dbu = touches
             kept10.append(c)
     sites10_kept = sorted(s for c in kept10 for s in c)
     if sites10_kept:  # only import the tile cell if it will actually be instantiated -- an imported-but-unplaced
@@ -394,7 +423,7 @@ def main():
                 raise SystemExit(f"{OUT}: dbu {old.dbu} with content - convert to 0.001 um first")
             ly.read(OUT)  # keep own drawings in the top cell
     top = ly.cell(top_name) or ly.create_cell(top_name)
-    gen = BLOCKS + [SUPPLY, "PG_PLAIN", "PG_MIM"]
+    gen = BLOCKS + [SUPPLY, "PG_PLAIN", "PG_MIM", "PG_PLAIN_10"]
     for i in list(top.each_inst()):
         if ly.cell(i.cell_index).name in gen:
             i.delete()
@@ -413,6 +442,18 @@ def main():
         if ly.cell(i.cell_index).name in gen:
             i.transform(shift)
     top_pin_labels(ly, top)
+    # Defensive orphan-cell sweep (same gotcha make_lna_core_layouts.py already guards against): any cell with
+    # zero parents besides the real top cell gets written out as a SECOND top cell, which both DRC and LVS's own
+    # flatten step reject outright ("multiple top cells"). This project's own re-run-in-place design (reading
+    # OUT back in, then deleting+recreating only the exact `gen` names) can accumulate exactly this: a prior
+    # run's own "PG_PLAIN_10" (half-pitch 10x10 fill cell, only ever instantiated once tiles_10x10 > 0 -- a real
+    # first for this exact code path, since the fix that made it non-zero landed only this session) wasn't in
+    # the old cleanup's own name list, so a stale copy -- or a KLayout-auto-renamed "PG_PLAIN_10$1" duplicate --
+    # could survive as a genuine orphan. A blanket 0-parent sweep is more robust than chasing each new tile
+    # cell's own name by hand.
+    for c in list(ly.each_cell()):
+        if c.parent_cells() == 0 and c.cell_index() != top.cell_index():
+            ly.delete_cell(c.cell_index())
     ly.write(OUT)
     print(f"wrote {OUT}: top cell {top_name}, bbox {top.dbbox()}")
     print("supply:", json.dumps(stats))
