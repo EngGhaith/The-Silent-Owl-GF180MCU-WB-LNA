@@ -129,7 +129,12 @@ MACRO_W, RING = 1100, 12  # grown from 1062 for the re-floorplan's LSHUNT_OUT SE
 # on its own, not folded into the guard-ring plan. No pitch-grid alignment constraint on MACRO_W (unlike
 # Y_N/Y_S): make_lna_core_parts.py's X tiling is flush with the WEST band only (GX0=RING fixed), the east side
 # is just a floor-divided remainder, no analog of GY0's own "floor to the north band" trick.
-Y_S, Y_N = -373, 751  # south edge grown from -353 (kept pitch-aligned: (Y_N-Y_S-2*RING) mod 20 == 0) for the same
+Y_S, Y_N = -313, 751  # Step 4 (coil resize): south edge moves from -373 to -313 as the 3 bottom coils (LEQ/L1/
+# LSHUNT_OUT, all freshly re-sized/re-placed this step) shrink the macro back toward the 1070x1070 budget
+# (751-(-313)=1064, 6um under budget) -- re-pitch-aligned: (Y_N-Y_S-2*RING) mod 20 == (751-(-313)-24) mod 20 ==
+# 1040 mod 20 == 0. Everything below this point is accumulated history from EARLIER Y_S values (-373, -353,
+# -345, -253, ...) predating this step's coil resize -- kept for context on Y_N's own, still-valid derivation
+# (LD2/LSHUNT_OUT keep-outs, unrelated to this step), not because today's Y_S still matches any of it.
 # re-floorplan: LSHUNT_OUT's long rf_out return lead needs a clear east-west channel south of both its own and
 # L1's keep-outs (L1 south edge -318, LSHUNT_OUT's own ~-326 at its new site) -- see LSH_CHANNEL_Y below.
 # main_pex: bumped from main_layout's ported 731 -- main_pex's own output series cap
@@ -205,16 +210,13 @@ YSL = (376.46, 386.46)  # L1 lead (CG source -> L1 port 1), runs east above LEQ.
 # that stretches to meet it regardless of the gap), so it moves with the rest of cg's bulk, not independently.
 VM2_Y = (357.0, 365.0)  # vm2 trace (CG drains -> LD4 port 2) north of C3, east under LSHUNT_OUT
 # coil placement: port edge position (the ports face the core) and centre on the other axis
-LEQ_PORT_X, LEQ_CY = 36.0, -57.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
-# LEQ_CY re-centred for LEQ_MAIN_RECT2's ry=252 (feasible range [-59, -55] -- see "LEQ does not fit" assert below;
-# narrow because LEQ's own Y-band is itself now tightly re-optimized for the X fit, not because of newly-added slop)
-L1_PORT_Y = 200.0  # L1 south (east of LEQ), ports north: port 1 (east) -> YSL lead, port 2 -> vss (lead L1_VSS_X
-# down to the south edge, narrowed to fit the smaller SP_KO gap -- see build_cg for why a north-reaching
-# grid-tap route doesn't work here)
-# L1_PORT_Y is UNCHANGED even though L1's own coil is reshaped: the port edge sits at L1_PORT_Y regardless of the
-# coil's rx/ry (ports are always `pe` in from the coil's own edge, and pe tracks rx under the rot=90 axis swap --
-# see build_cg's cy1 formula), so every lead/wire north of L1 (into YSL, the cg source bus, etc.) needed no changes
-# at all -- only the coil's own south-ward bulk (down to Y_S) grew, which is exactly the Y-budget cost above.
+LEQ_PORT_X, LEQ_CY = 36.0, -60.0  # LEQ south-west, ports west: port 1 -> rf_in lead column, port 2 -> west ring
+# Step 4 (coil resize): LEQ_coil.gds is now rx=139.0/ry=218.5 (N=2/W=26/S=2, outer_half_x=100.0 pushed near this
+# family's own floor, outer_half_y=202.5 solved for the 1.3723nH target -- see good_tries/LEQ_RECT2_X100.0_Y202.5).
+# LEQ_CY feasible range given the new ry: [Y_S+RING+ry+RING, YSL[0]-ry-RING_KO] = [-70.5, 154.96] -- wide open
+# (LEQ's own height, 437, is well short of L1/LSHUNT_OUT's full 660 at this low an inductance target -- see the
+# EM campaign's own findings), picked close to the south edge (10.5um of real margin) to leave the large freed
+# band above LEQ (up to y~155) for generic supply tiles / other fill, same as any other open floorplan area.
 LD4_PORT_Y = 330.0  # LD4 south-east (east of L1), ports north: port 2 (west) -> vm2 trace, port 1 -> vdd
 LD2_PORT_X, LD2_CY = 340.0, 595.0  # LD2 north-west, ports east: port 2 -> vx column, port 1 -> vdd (north)
 # Tried reshaping LD2 rectangular (LD2_RECT_coil.gds, rx 108.5 -> 146.2 / ry 108.5 -> 76.0, same 4.30nH target,
@@ -234,11 +236,13 @@ LD2_PORT_X, LD2_CY = 340.0, 595.0  # LD2 north-west, ports east: port 2 -> vx co
 # see build_cs). Back to the original square LD2_coil.gds.
 # LSH_PORT_X/LSH_CY/LSH_VSS_X (old north-east-of-rf_out-lead site) and LD2_VDD_X (old north-west-of-core site)
 # removed with those coils' own re-floorplan relocations (see LD2_NE_CX/CY in build_cs and LSH_SE_CX/CY below).
-LSH_SE_CX, LSH_SE_CY = 935.0, -30.0  # LSHUNT_OUT relocated SE: east of L1 (east edge 779 + SP_KO margin), roughly
-# at L1's own y level -- "due east" of it.
-LSH_CHANNEL_Y = -350.0  # east-west return channel for LSHUNT_OUT's long rf_out lead, south of both L1's own
-# keep-out (south edge -318) and LSHUNT_OUT's own (south edge ~-326), with real SP_KO clearance from each -- see
-# Y_S's own comment above for why Y_S had to grow to fit this
+LSH_SE_CX, LSH_SE_CY = 935.0, 54.5  # LSHUNT_OUT relocated SE: east of L1 (east edge ~572, clears it with a wide
+# margin regardless of the exact value), at the SAME world-Y band as L1 (Step 4 coil resize: both now rx=330.0,
+# pushed to the top of the shared feasible window [32.0, 54.86] -- see L1's own cy1 comment in build_cg for the
+# full derivation; both coils share this value since they're the same family/target and sit in the same band).
+LSH_CHANNEL_Y = -297.0  # east-west return channel for LSHUNT_OUT's rf_out lead: Y_S+RING+4 (close to the south
+# edge, inside LSHUNT_OUT's own [Y_S+RING, cy-rx-RING_KO] = [-301.0, -278.5] window). Step 4's resize moved L1 far
+# enough that this channel no longer needs to clear L1's own keep-out too (see build_output_match's own comment).
 GCG_X = 41.0  # g_cg lead to the west edge (Metal4 from the gate join, Metal3 from x = GCG_X). The Y band itself
 # (formerly a fixed GCG_Y constant) is now derived from R3's own gate-join height (yr) inside build_cg -- step 3
 # moved R3 close enough to LD4's ring (488) and to vbias_cg's own jog (479.78) that a fixed literal would need
@@ -448,11 +452,9 @@ def build_output_match(ly):
     tr = top.place(c, x0, y0 + w, rot=270)  # tab (bottom plate) west -> north
     pt, bt = tbox(tr, t["top"]), tbox(tr, t["bot"])
     assert abs(yc - g((pt[1] + pt[3]) / 2)) < 1e-6
-    # output_cs lead (OM_IN_X -> C1's own top plate): dip to Metal3 (not Metal4 -- that's xe's own column dip
-    # layer just below, and this horizontal lead crosses xe's vertical one at x=456, y~498; using the same
-    # intermediate layer for both merged output_cs into rf_out_pad there, confirmed live via LVS) across
-    # lna_core_cg's own LD4 ring (world x=[113,577], y=[491,709]) -- this lead's own y (yc +-5 = 493.3..503.3)
-    # sits inside the ring's y-range for its entire x-span now that C1 moved east of it.
+    # output_cs lead (OM_IN_X -> C1's own top plate): dip to Metal3 across lna_core_cg's own LD4 ring (world
+    # x=[113,577], y=[491,709]) -- this lead's own y (yc +-5 = 493.3..503.3) sits inside the ring's y-range for
+    # its entire x-span now that C1 moved east of it.
     xb0 = OM_IN_X + 3.0  # short Metal5 buffer so the "output_cs" label (OM_IN_X+1) stays clearly on Metal5
     xd0, xd1 = 578.0, 580.0  # 1-3um margin east of LD4's ring (577)
     top.box("m5", OM_IN_X, yc - 5, xb0, yc + 5)
@@ -482,16 +484,19 @@ def build_output_match(ly):
     # rotation. q1 (rf_out, port1) lands east of q2 (vss, port2).
     geo = coil_geom(P, "LSHUNT_OUT")
     cx, cy = LSH_SE_CX, LSH_SE_CY
-    L1_EAST = 779.0  # lna_core_cg's own L1 east edge (build_cg, unchanged by this re-floorplan -- L1 itself did
-    # not move); cross-block constant since LSHUNT_OUT's new site must clear L1's own keep-out
-    # RING_KO (coil_guard_ring, Phase 2) replaces SP_KO here -- see LEQ's own comment for the full rationale.
-    # LSH_SE_CX/CY are fixed constants (not derived from SP_KO like L1's cx1 was), so this only relaxes the
-    # fit-check -- LSHUNT_OUT itself does not move.
+    # Step 4 (coil resize): LSHUNT_OUT_RECT_coil.gds is now rx=330.0/ry=123.8 (N=2/W=26/S=2, outer_half_x=314.0
+    # locked to the exact uniform 660.0 height target, outer_half_y=107.8 solved for the 2.5041nH target -- see
+    # good_tries/LSHUNT_OUT_RECT_CAND5_X314.0_Y107.8). L1_EAST tracks L1's own real new east edge (cx1+ry=571.6,
+    # see build_cg) with real margin -- LSH_SE_CX=935 clears it by a wide margin regardless, same as before.
+    L1_EAST = 572.0
     assert cx - geo["ry"] - RING_KO >= L1_EAST, "LSHUNT_OUT (SE) does not clear L1's own keep-out"  # rot=270:
     # world-X extent is local ry
     assert cx + geo["ry"] + RING_KO + RING <= MACRO_W, "LSHUNT_OUT (SE) does not fit against the east edge"
     assert cy - geo["rx"] - RING_KO >= Y_S + RING, "LSHUNT_OUT (SE) does not fit against the south edge"  # world-Y
     # extent is local rx
+    assert cy + geo["rx"] + RING_KO + 10 <= 398.46, "LSHUNT_OUT (SE) does not clear the cg/cs bulk row floor"
+    # 398.46 = lna_core_cg's own yl (C3 row floor, build_cg) -- a cross-block literal since yl isn't a global
+    # constant; must be kept in lockstep if cg's own bulk row ever moves again.
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=270)
     ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=270, w=RING_W, sp=RING_SP)
     assert q1[0] > q2[0], "q1 (rf_out) must be the eastern port, q2 (vss) the western one"
@@ -504,8 +509,8 @@ def build_output_match(ly):
     # relocation). Fixed properly: drop q2 to Metal4 just above the channel and cross under it on M4 -- a
     # different layer, so no via means no connection even where the two geometrically overlap -- then continue
     # on M4 the rest of the way into the ring (which is M4=vss anyway, so this needs no further transition).
-    assert Y_S + RING <= LSH_CHANNEL_Y <= min(cy - geo["rx"] - SP_KO, -318.0 - SP_KO), \
-        "LSH_CHANNEL_Y must clear both L1's and LSHUNT_OUT's own keep-outs, and stay inside the south edge"
+    assert Y_S + RING <= LSH_CHANNEL_Y <= cy - geo["rx"] - RING_KO, \
+        "LSH_CHANNEL_Y must clear LSHUNT_OUT's own keep-out and stay inside the south edge"
     # y_m4 must leave a real gap above the channel's own top (LSH_CHANNEL_Y+6) for the stack()'s own M5 portion --
     # same-layer shapes that only touch still merge into one polygon (same net), reproducing the same mismatch.
     y_m4 = g(LSH_CHANNEL_Y + 6 + 5)
@@ -513,45 +518,17 @@ def build_output_match(ly):
     top.stack(q2[0], y_m4 - 2, q2[2], y_m4, 4, 5)
     top.box("m4", q2[0], Y_S + 2, q2[2], y_m4)
     top.label(4, "vss", (q2[0] + q2[2]) / 2, Y_S + 3)
-    # rf_out (q1): jog south below both LSHUNT_OUT's and L1's own keep-outs (LSH_CHANNEL_Y, asserted above), west
-    # all the way to a point east of pt (output_cs's own top plate -- bt sits only ~1um above pt at the same
-    # x-range, so a straight run up to bt[1] inside pt's own x-range would short rf_out to output_cs, confirmed
-    # by a real LVS mismatch from the first attempt), then north clear of pt, then a final jog west to meet bt.
-    # xe nudged from pt[2]+6 to 456.0: the straight run up to bt was found (via NetTracer) to cross
-    # lna_core_cg's own L1 coil at several points along its winding -- not a uniform block, but real metal on
-    # every turn at x 449..453 for most of L1's own height. x=456..460 threads between turns for most of that
-    # span (confirmed empirically, not assumed), leaving only the 6 narrow bands below where L1 (or its own
-    # port leads) still has metal -- Cell.dipped_column() crosses each on Metal4 with real clearance on both
-    # sides, same technique as every other cross-block crossing fixed in this re-floorplan.
-    xe = 456.0
-    # xe used to need to clear C1's own plate from the WEST (pt[2]+6<=xe); C1 moved east past LD4's new ring (see
-    # C_OUT_PLATE), so the relationship flips -- xe now needs to stay clear of the plate from the EAST instead.
-    assert xe + 6 <= pt[0], "xe must still clear output_cs's own top plate (pt)"
-    top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
-    top.box("m5", xe, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
-    # Previously (254.78, 286) merged three bands into one: the Metal5-only vbias/YSL bus and the CS-guard-ring
-    # -> C3 bottom-plate-bar vss strap (both tracking cg's bulk), plus L1's own unmoved winding-gap bands at
-    # 258..264 and 272..286. Step 3 (cg/cs bulk consolidation) moved YSL/C3_VSS_BAR up to 376.46../390.46.. --
-    # both now sit well above this column's own range (LSH_CHANNEL_Y..288), so neither needs a dip band here any
-    # more; only L1's own two original, unmoved bands remain (L1 itself doesn't move in this phase).
-    # The column ends right after L1's own last band (y=288, +2um margin) instead of continuing straight up
-    # through lna_core_cg's own LD4 ring (user request: never route rf_out under LD4 at all, not even via a
-    # layer dip -- a previous version of this code threaded x=456 all the way up through LD4's y-range on a
-    # Metal3/Metal4 dip, which is exactly the pattern being removed here). From here the path jogs EAST to clear
-    # LD4's ring (east edge ~580) while still well south of it (y~288-290, LD4 starts at y=488), then runs
-    # straight north at that x, entirely outside LD4's footprint, to meet bt directly.
-    ye0 = 288.0
-    top.dipped_column(xe, LSH_CHANNEL_Y, ye0,
-                       dip_bands=[(-318, -312), (197, 213), (258, 264), (272, 286)])
-    # jog east, clearing BOTH LD4's ring (east edge ~580) and pt (output_cs's own top plate, x=585..639,
-    # y=466..530.61) -- a straight run up at any x inside pt's own range would cut through it and short it to
-    # rf_out, confirmed by a real LVS mismatch the first time this exact mistake was made in this file. Going
-    # all the way to xg=645 (6um east of pt) avoids threading the tight ~5um gap between LD4 and pt altogether;
-    # the run north at xg stays clear of pt for its whole height since xg > pt[2]=639, then a short final jog
-    # west at bt's own height (above pt entirely) reaches into bt.
+    # rf_out (q1): jog south to the channel, then WEST only as far as a point east of pt (output_cs's own top
+    # plate), then north to bt. Step 4's coil resize moved L1 entirely west of C1/pt (L1's own east edge 571.6
+    # vs pt's own west edge ~585), so -- unlike the pre-resize layout -- this path no longer needs to detour
+    # through L1's winding gaps at all: stopping the westward jog at xg (east of pt, same margin convention as
+    # before) clears L1 by construction (xg > L1_EAST) while also clearing LD4's ring (east edge ~580, xg > 580).
+    # Confirm via the real deck, not just by this reasoning, per this project's own standing rule.
     xg = pt[2] + 6.0
-    top.box("m5", xe, ye0, xg + 1, ye0 + 2)
-    top.box("m5", xg - 1, ye0, xg + 1, bt[1])
+    assert xg > L1_EAST and xg > 580.0, "xg must clear both L1's new east edge and LD4's ring"
+    top.box("m5", q1[0], LSH_CHANNEL_Y, q1[2], q1[1])
+    top.box("m5", xg - 1, LSH_CHANNEL_Y, q1[2], LSH_CHANNEL_Y + 6)
+    top.box("m5", xg - 1, LSH_CHANNEL_Y, xg + 1, bt[1])
     top.box("m5", bt[0], bt[1], xg + 1, bt[3])
     # bt's own north-reaching column to the pad is the separate, direct run below (rf_out_pad / RFO_X=725).
     INFO[P] = {**cap_info, "output_cs_lead_y": yc,
@@ -855,93 +832,60 @@ def build_cg(ly):
     g1 = coil_geom(P, "L1")
     leq = coil_geom("lna_core_input_match", "LEQ")
     leq_east = LEQ_PORT_X + leq["pe"] + leq["rx"]  # LEQ: rot=180, no axis swap
-    L1_VSS_X = (g(leq_east + 1.0), g(leq_east + 6.0))  # centred in the SP_KO=8 gap between LEQ and L1: narrow
-    # (5um wide, 1um margin each side) to fit the smaller gap. A north-reaching grid-tap route (like LD2/LD4's
-    # vdd leads) was tried first and reverted: l1v sits inside the X-span of the horizontal "source" bus (xs ->
-    # l1p, CG source -> L1 port 1, drawn at y=YSL=(222,232) all the way from x=84 to l1p[2]), so ANY lead
-    # reaching north from l1v merges with that bus on M5 regardless of which layer the via transition itself
-    # uses -- confirmed via LVS (vss shorted straight to source/input_match). South, through this narrow gap
-    # and down to the south ring, stays clear of that bus's X/Y footprint entirely.
-    # L1: rot=90 swaps axes -- its world-space X-extent is its local ry, world-space Y-extent is its local rx
-    # cx1 keeps the SP_KO-based formula (not RING_KO) deliberately: L1_VSS_X's own vss lead already lives in
-    # this exact gap (leq_east+1..leq_east+6, tuned against the CURRENT cx1), and L1's own downstream routing
-    # (YSL crossing dip-bands, output_match's xe column threading L1's spiral gaps) was hand-tuned against L1's
-    # CURRENT position -- moving cx1 west would shift all of that and need the same re-verification cascade as
-    # last session's LVS-short hunting. Phase 2 adds L1's ring at its current site (real DRC/LVS safety win,
-    # same as LEQ/LD2) without yet reclaiming this gap's area; revisit only as a deliberate, separate follow-up.
-    cx1, cy1 = g(leq_east + SP_KO + g1["ry"]), g(L1_PORT_Y - g1["pe"])
+    # Step 4 (coil resize): L1_RECT_coil.gds is now rx=330.0/ry=123.8 (N=2/W=26/S=2, outer_half_x=314.0 locked to
+    # the exact uniform 660.0 height target, outer_half_y=107.8 solved for the 2.5041nH target -- see
+    # good_tries/L1_RECT5_X314.0_Y107.8). L1: rot=90 swaps axes -- world-X = local ry, world-Y = local rx.
+    # cx1: L1's own west edge (cx1-ry) sits SP_KO=10 east of LEQ's own east edge (leq_east), same gap convention
+    # as before, just re-derived for the new geometry.
+    cx1 = g(leq_east + SP_KO + g1["ry"])
+    L1_VSS_X = (g(leq_east + 2.5), g(leq_east + 7.5))  # centred in the now-10um-wide SP_KO gap between LEQ and
+    # L1 (leq_east..cx1-ry), 2.5um margin each side for a 5um-wide lead -- same "narrow lead through the LEQ/L1
+    # gap" technique as before (a north-reaching grid-tap route doesn't work here: l1v sits inside the X-span of
+    # the horizontal "source" bus (xs -> l1p, CG source -> L1 port 1), so any lead reaching north from l1v merges
+    # with that bus on M5 regardless of layer -- confirmed via LVS last time this was tried). South, down to the
+    # south ring, stays clear of that bus's X/Y footprint entirely.
+    # cy1: pushed to the TOP of this family's own feasible window [Y_S+RING+rx+RING_KO, bulk_floor-10-rx-RING_KO]
+    # = [32.0, 54.86] -- maximizes the real routing corridor between the coil's own south edge and the south
+    # tile band (22.5um instead of the 11um a middle-of-window pick would give), while keeping the margin to the
+    # newly-consolidated cg/cs bulk row (yl=398.46) at exactly this project's own 10um floor. RING_KO (not RING)
+    # on the south side: L1 now carries its own coil_guard_ring() (Phase 2 ring rollout), matching LSHUNT_OUT's
+    # own, more recently-written south-fit convention -- the bare RING margin this assert used to require
+    # predates that rollout and is no longer the binding electrical requirement.
+    cy1 = 54.5
     assert leq_east + 1 <= L1_VSS_X[0] and L1_VSS_X[1] + 1 <= cx1 - g1["ry"]
-    assert cy1 - g1["rx"] - RING >= Y_S + RING, "L1 does not fit"
+    assert cy1 - g1["rx"] - RING_KO >= Y_S + RING, "L1 does not fit against the south edge"
+    assert cy1 + g1["rx"] + RING_KO + 10 <= yl, "L1 does not clear the cg/cs bulk row floor"
     (l1p, l1v), _, _ = place_coil(ly, top, P, "L1", cx1, cy1, rot=90, mirror=True)
-    # avoid: output_match's own rf_out_pad crossing (build_output_match's xe=456 dipped_column, dip_bands
-    # [(-318,-312),(197,213),(220,244),(258,264),(272,286)], each with its own +-2um transition margin) tunnels
-    # through M3/M4 at x=456..458 to get past L1 at several points. Checked every band's own margin-extended
-    # range against BOTH ring walls it could reach (south wall y -321..-319, north wall y 204..206) -- exactly
-    # two overlaps, confirmed via LVS (the first found live, as a real "rf_out_pad merges with vss" short; the
-    # second found by the same overlap check before it could cause one): (197,213)+-2 = 195..215 hits the north
-    # wall; (-318,-312)+-2 = -320..-310 hits the south wall (only 1um of actual overlap, -320..-319, but real
-    # overlap all the same). The other 3 bands (all y>=220) don't reach either wall.
-    ring_in, ring_out = lib.coil_guard_ring(top, cx1, cy1, g1, rot=90, w=RING_W, sp=RING_SP,
-                                             avoid=[(454.0, 195.0, 460.0, 215.0), (454.0, -322.0, 460.0, -308.0)])
+    # L1's own winding gaps changed completely with this resize (previously-tuned "avoid" bands for
+    # output_match's own rf_out crossing no longer apply -- see build_output_match, whose own rf_out path no
+    # longer runs anywhere near L1's new site at all, so no avoid-bands are needed here any more).
+    ring_in, ring_out = lib.coil_guard_ring(top, cx1, cy1, g1, rot=90, w=RING_W, sp=RING_SP)
     assert l1v[2] < l1p[0], "vss port must be the western one"
-    ysl = YSL
-    assert l1v[3] + 9.5 + 5 <= ysl[0]
-    top.box("m5", xs[0], ysl[0], xs[1], y_s + 5)
-    # YSL bus (CG source -> L1 port 1) crosses lna_core_output_match's own rf_out return lead on the same layer:
-    # a tall Metal5 column at x 451..453 running almost the full macro height (LSHUNT_OUT's rf_out detour around
-    # its own C1 cap, routed independently and unaware of this bus). Confirmed via NetTracer as the actual bridge
-    # behind the "input_cg merges with vdd/vss" LVS mismatch found after the re-floorplan (the rf_out lead itself
-    # ties further up into the vdd rail construction). Drop to Metal4 for just the crossing span, same fix
-    # pattern as LSHUNT_OUT's own vss-under-rf_out crossing.
-    # Single dip zone 446..466 covering both obstructions at once -- L1's own west-edge area and
-    # lna_core_output_match's own rf_out return column (x 456..460, moved there to thread L1's winding gaps --
-    # see build_output_match), close enough together to share one crossing. Confirmed via NetTracer as the
-    # actual bridge behind the "input_cg merges with vdd/vss" LVS mismatch found after the re-floorplan.
-    # Crosses on Metal3, not Metal4: output_match's own column dips to Metal4 at this exact same y-band (same
-    # dip_bands list, same underlying L1 feature) at x 456..460 -- using Metal4 here too would merge the two
-    # independent dips with each other on that shared layer (confirmed: that was the actual bug behind this
-    # crossing still merging after Metal4 was first tried). The transition stacks (3..5, so Metal4 appears only
-    # narrowly at their own 2um width, outside 456..460) must clear the column with real margin, not just end
-    # at its edge -- confirmed empirically that stopping a run exactly at another same-layer shape's edge still
-    # merges them (KLayout: touching, zero gap or not, is still one net). Metal3 confirmed clear here by direct
-    # GDS inspection.
-    xo0, xo1 = 446.0, 466.0
-    assert xs[0] < xo0 and xo1 < l1p[2]
-    top.box("m5", xs[0], ysl[0], xo0, ysl[1])
-    top.stack(xo0, ysl[0], xo0 + 2, ysl[1], 3, 5)
-    top.box("m3", xo0 + 2, ysl[0], xo1 - 2, ysl[1])
-    top.stack(xo1 - 2, ysl[0], xo1, ysl[1], 3, 5)
-    top.box("m5", xo1, ysl[0], l1p[2], ysl[1])
+    # YSL bus (CG source -> L1 port 1): with L1 this tall, both its ports (l1p east/source, l1v west/vss) land
+    # at the SAME world-Y (confirmed via direct probe: both y=381.5..385.0, only 2um of X gap between them) --
+    # the module-level YSL constant (376.46..386.46, sized for the OLD L1's much lower, well-separated ports)
+    # would have a single horizontal run pass directly over l1v too, shorting source to vss. Route this run
+    # ABOVE both ports instead, in the real clear band confirmed between l1v's own top (385.0) and C3_VSS_BAR's
+    # own bottom (390.46): y=386.0..388.0 (1.0um margin below, 2.46um above), dropping into l1p specifically
+    # only within l1p's own x-range (east of l1v's by 1um -- clear by construction, re-verified via the deck).
+    yc0, yc1 = 386.0, 388.0
+    assert l1v[3] + 1.0 <= yc0 and yc1 + 2.46 <= yl, "L1's YSL connector band collides with l1v or C3_VSS_BAR"
+    assert l1v[2] + 1.0 <= l1p[0] - 1.0, "L1's YSL connector drop needs a real X gap from l1v"
+    top.box("m5", xs[0], yc0, xs[1], y_s + 5)
+    top.box("m5", xs[0], yc0, l1p[0] - 1, yc1)
+    top.box("m5", l1p[0] - 1, l1p[1], l1p[2], yc1)
     top.box("m5", *l1p)
-    top.box("m5", l1p[0], l1p[3] - 0.5, l1p[2], ysl[1])
     top.box("m5", *l1v)
-    # L1's own vss lead (reaching east to its own port, l1v[2]) crosses lna_core_output_match's own rf_out_pad
-    # "xe" column (Metal5, x 451..453) on the same layer -- a third instance of the same cross-block M5 crossing
-    # class (confirmed via NetTracer as the bridge behind the residual "rf_out_pad merges with vss" LVS
-    # mismatch, after the first two crossings -- YSL bus and q2 -- were fixed above). No nearby via content
-    # here (confirmed by direct inspection, unlike q2's crossing next to LD4's own dense edge array), so dip
-    # cleanly: Metal4 for the crossing span, real clearance on both approaches.
-    # dip on Metal3, not Metal4: output_match's own column dips to Metal4 across this entire y-band too (same
-    # underlying L1 feature, its own dip_band (197, 213) with its own +-2um transition margin, so its Metal4
-    # usage really runs 197..213 and its own Metal4<->Metal5 transition stacks sit right at 197..199 and
-    # 211..213) -- Metal4 here would merge the two independent dips with each other, and a plain Metal5 strip
-    # anywhere in 211..213 would land squarely on output_match's own transition's Metal5 portion there, same
-    # lesson as the YSL-bus fix above, just discovered one layer later. So this dip's own upper edge is pinned
-    # to y_hi (no "above the dip" plain run at all) to swallow output_match's entire 197..213 Metal4 range;
-    # below, it starts clear of a separate, unrelated multi-layer (M1/M2/M3) feature at y 200..203.
-    y_lo, y_hi = l1v[3] - 0.5, l1v[3] + 9.5
-    yd0 = 204.0
-    xv0, xv1 = 446.0, 466.0  # clear of output_match's own column (456..460) with real margin on both sides
-    assert L1_VSS_X[0] < xv0 and xv1 < l1v[2] and y_lo < yd0 < y_hi
-    top.box("m5", L1_VSS_X[0], y_lo, l1v[2], yd0)
-    top.box("m5", L1_VSS_X[0], yd0, xv0, y_hi)
-    top.stack(xv0, yd0, xv0 + 2, y_hi, 3, 5)
-    top.box("m3", xv0 + 2, yd0, xv1 - 2, y_hi)
-    top.stack(xv1 - 2, yd0, xv1, y_hi, 3, 5)
-    top.box("m5", xv1, yd0, l1v[2], y_hi)
-    # Metal5 down to just above the south ring band (vdd rail there), Metal4 into the band (vss)
+    # L1's own vss lead (port 2, west side) -> south ring band. Same destination/technique as before (Metal5 down
+    # to just above the south ring, Metal4 into the band), no cross-block crossing to dip around any more (see
+    # above). Kept narrow (just L1_VSS_X's own 5um column) for almost its whole ~680um length, widening to reach
+    # l1v only over l1v's own short height span (3.5um) at the very top -- a single box spanning the full
+    # L1_VSS_X..l1v[2] width (130um) for the whole length triggered a real DRC violation (MSLOT5.1: max 30um
+    # metal width without slotting) once L1's own resize pushed l1v this far east of L1_VSS_X.
     yb = Y_S + RING + 4
-    top.box("m5", L1_VSS_X[0], yb, L1_VSS_X[1], l1v[3] + 9.5)
+    assert l1v[3] + 1.0 <= yc0, "L1's vss lead box must not reach into the YSL connector band"
+    top.box("m5", L1_VSS_X[0], yb, L1_VSS_X[1], l1v[1])
+    top.box("m5", L1_VSS_X[0], l1v[1], l1v[2], l1v[3])
     top.stack(L1_VSS_X[0], yb, L1_VSS_X[1], yb + 6, 4, 5)
     top.box("m4", L1_VSS_X[0], Y_S + 2, L1_VSS_X[1], yb + 6)
     top.label(4, "vss", (L1_VSS_X[0] + L1_VSS_X[1]) / 2, Y_S + 3)
@@ -1008,8 +952,9 @@ def build_cg(ly):
     # Site: NW corner (user's explicit instruction -- "bring it to the left, fit to the NW edge, not under LD2"),
     # not the first candidate tried (far east, in the LSHUNT_OUT/LD2 Y-gap). At cx4=345, cy4=600, world-X=[113,577]
     # clears cg's own vbias_cg/vbias_cs columns (x=59..61 / 74..76, both reaching north to Y_N) with 22um real
-    # margin, and world-Y=[491,709] stays well clear of every south-side cg structure (LEQ/L1/C3 all y<=300ish)
-    # and well under Y_N=751 with RING_KO+RING margin. Confirmed empirically (probe_ld4_nw.py / begin_shapes_rec
+    # margin, and world-Y=[491,709] stays well clear of every south-side cg structure (LEQ/C3 well under y=300;
+    # L1, post-Step-4 resize, now reaches up to y~=387 but still clears LD4's own ring south edge, 488, by a
+    # comfortable 100um) and well under Y_N=751 with RING_KO+RING margin. Confirmed empirically (probe_ld4_nw.py / begin_shapes_rec
     # on the regenerated GDS) that this patch of cg is genuinely open on its own -- the only real obstacle is
     # output_match's own rf_out_pad column (x=410..420, world y up to 714), which lands dead centre of this new
     # footprint; see the detour added in build_output_match below, not fixed here (cross-block).
