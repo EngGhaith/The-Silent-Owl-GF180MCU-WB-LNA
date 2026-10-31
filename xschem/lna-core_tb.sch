@@ -147,10 +147,6 @@ N 400 -1040 400 -1000 {lab=vdd
 }
 N 550 -950 580 -950 {lab=rf_out_pad
 }
-N 220 -910 250 -910 {lab=g_cg
-}
-N -60 -730 -60 -700 {lab=#net3}
-N -60 -830 -60 -790 {lab=g_cg}
 C {lna_core.sym} 960 -1300 0 0 {name=x1
 spice_ignore=true}
 C {vsource.sym} -200 -510 0 0 {name=VDD value=\{VDD\} savecurrent=false}
@@ -934,10 +930,4 @@ C {lab_pin.sym} 400 -780 3 0 {name=p20 sig_type=std_logic lab=vss
 C {lab_pin.sym} 400 -1040 1 0 {name=p23 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 580 -950 2 0 {name=p26 sig_type=std_logic lab=rf_out_pad
-}
-C {lab_pin.sym} 220 -910 0 0 {name=p28 sig_type=std_logic lab=g_cg
-}
-C {vsource.sym} -60 -760 0 0 {name=V3 value=1 savecurrent=false}
-C {lab_pin.sym} -60 -698.75 3 0 {name=p29 sig_type=std_logic lab=vss}
-C {lab_pin.sym} -60 -830 0 0 {name=p30 sig_type=std_logic lab=g_cg
 }

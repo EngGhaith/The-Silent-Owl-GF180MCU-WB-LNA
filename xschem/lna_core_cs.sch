@@ -19,6 +19,8 @@ N 290 -410 290 -400 {
 lab=vm1}
 N 230 -440 250 -440 {
 lab=vbias_cas}
+N 130 -530 130 -550 {lab=vbias_cas}
+N 130 -470 130 -450 {lab=vss}
 N 290 -400 290 -360 {
 lab=vm1}
 N 290 -230 290 -220 {
@@ -119,6 +121,14 @@ spiceprefix=X
 }
 C {lab_pin.sym} 410 -270 0 0 {name=pM1D_g sig_type=std_logic lab=vss}
 C {lab_pin.sym} 470 -270 2 0 {name=pM1D_b sig_type=std_logic lab=vss}
+C {symbols/cap_mim_2f0fF.sym} 130 -500 2 1 {name=C1
+W=49.8865u
+L=49.8865u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=4}
+C {lab_pin.sym} 130 -550 0 0 {name=pC1_cas sig_type=std_logic lab=vbias_cas}
+C {lab_pin.sym} 130 -450 3 0 {name=pC1_vss sig_type=std_logic lab=vss}
 C {symbols/nfet_05v0.sym} 450 -390 0 0 {name=M4D
 L=0.6u
 W=7u

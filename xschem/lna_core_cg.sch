@@ -13,8 +13,8 @@ N 460 -530 460 -490 {
 lab=vss}
 N 410 -720 440 -720 {lab=vss}
 N 460 -630 460 -590 {lab=g_cg}
-N 250 -630 610 -630 {lab=g_cg}
 N 460 -690 460 -630 {lab=g_cg}
+N 460 -630 610 -630 {lab=g_cg}
 N 670 -630 690 -630 {
 lab=vss}
 N 670 -420 670 -410 {
@@ -150,7 +150,6 @@ C {iopin.sym} 940 -940 3 0 {name=p59 lab=vbias_cs
 C {lab_pin.sym} 890 -890 2 1 {name=p31 sig_type=std_logic lab=vss}
 C {ipin.sym} 560 -380 0 0 {name=p5 lab=input_match}
 C {opin.sym} 1000 -740 0 0 {name=p2 lab=output_cs}
-C {iopin.sym} 250 -630 2 0 {name=p6 lab=g_cg}
 C {iopin.sym} 190 -820 2 0 {name=p4 lab=vdd}
 C {iopin.sym} 190 -790 2 0 {name=p7 lab=vss}
 C {lab_pin.sym} 230 -820 2 0 {name=p8 sig_type=std_logic lab=vdd
