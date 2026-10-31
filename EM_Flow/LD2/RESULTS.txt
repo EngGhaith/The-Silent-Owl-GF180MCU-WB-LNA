@@ -1,0 +1,97 @@
+LD2: real, DRC-clean, low-Q drain inductor for the LNA's LD2 drain load
+(The-Silent-Owl-GF180MCU-WB-LNA, main_pex branch, xschem/lna_core.sch).
+
+Target (from the circuit's own LD2=4nH + series RLD2=50ohm loss model):
+  L=4nH, R=50ohm (Q=1.206) at 2.4GHz.
+
+Geometry: N=3 turns, W=1.75um trace, S=2um gap, Dout=185um, "no-stacking"
+stack tier (main trace carried on TM alone -- deliberately NOT shunted to
+any other metal, since a low-Q, lossy inductor is the explicit goal here).
+
+EM-SIMULATED RESULT (single-ended, gds2openEMS, resonance_estimation,
+OPENEMS-GF180MCUD-1P5M-TM11KA-MIMB.xml -- the full/non-merged stackup):
+  Frequency: 2.400 GHz
+  Series L : 4.30 nH   (7.4% above target)
+  Series R : 52.69 Ohm (5.4% above target)
+  Q factor : 1.230      (1.6% above target -- essentially exact)
+
+Full footprint (coil + 10um ring standoff + 6um ring width, same margin
+convention as LEQ/LSHUNT_OUT): 217 x 217 um, 0.04709 mm^2.
+
+--- Methodology ---
+
+Unlike the earlier W=26um/N=2 inductors in this project (LEQ, LSHUNT_OUT),
+no existing real reference exists at this N/W combination, so a NEW general
+parametric square-spiral generator was built and validated from scratch
+(spiral_gen.py) -- it reconstructs the real N=2 and N=3 reference polygons
+from this project's earlier W=26um work exactly, vertex-for-vertex, before
+being trusted for new geometries.
+
+A real, non-obvious finding from this campaign: the simplified single-TM
+EM models used throughout this project rely on a via bridge from M1 (where
+the underpass lives) up to TM. For the earlier W=26/SC4 designs this bridge
+was just M1->V1->TM, which only works because the SC4 stackup XML's TM
+starts exactly where V1 ends (both are simulation conveniences). For a REAL
+chip, M1 and TM are always separated by the full physical stack (M2, M3,
+M4 and their vias) regardless of which EM-sim "stacking tier" was used to
+characterize the design -- you cannot skip metal levels with a single via.
+This real layout therefore includes a REAL via bridge
+(M1->V1->M2->V2->M3->V3->M4->TV->TM) with proper via arrays at the two
+underpass connection points, matching what actual GF180MCU interconnect
+requires -- this is NOT an artifact of simulation tier selection.
+
+Guard ring: an independently, fully-shunted 5-metal structure (M1 full/
+continuous, M2/M3/M4/TM split at the established +-3um left gap and
++-(W+3)um right gap, every layer transition real-via-stitched) -- same
+methodology as the earlier LEQ/LSHUNT_OUT real-multilayer ring, and NOT
+dependent on whichever stack tier the main trace itself uses.
+
+Two real bugs were found and fixed during this build (both the same class
+of issue already seen once this project, re-confirmed as a recurring
+trap): two independently-phased via-stitch regions that geometrically
+overlap (even though neither "needs" to be gapped) produce slivers that
+fail via min-size/min-spacing rules, because each region's via grid is
+centered on its own local footprint. Found at: (1) the ring's top/bottom
+segments vs. its left/right split segments sharing a corner, and (2) [LD4
+only, see sibling folder] the main-trace shunt via-stitching vs. the
+underpass bridge's own via placement, both covering the same transition
+region. Fixed in both cases by giving one region exclusive ownership and
+excluding that footprint from the other's via placement -- same technique
+already validated for the LEQ/LSHUNT_OUT ring's port-stub overlap.
+
+--- DRC verification ---
+
+Real GF180MCU KLayout DRC deck (variant D = 11K/B/5LM), run_mode=deep:
+  klayout -b -r gf180mcu.drc -rd input=<this gds> -rd report=DRC_report.lyrdb \
+    -rd topcell=SpiralInductor -rd variant=D -rd run_mode=deep
+
+Result: 8 violations -- DCF.1b, M1.4, M2.4, M3.4, M4.4, M5.4, MT.3, PL.8.
+Every one of these is a GLOBAL, chip-wide density rule (each metal layer
+individually, plus overall diffusion/poly) requiring >=25-30% coverage
+across the ENTIRE DIE -- inherently inapplicable to any standalone passive
+cell checked in isolation (no single small inductor clip can be 30% of a
+hypothetical "die" that's just its own bounding box). These are resolved
+by chip-level dummy-fill insertion once this cell is placed into the full
+layout, exactly the same situation already established for LEQ and
+LSHUNT_OUT earlier this project. The local DCF.1a rule (every gap between
+diffusion polygons needs dummy fill, except area marked by the GF180MCU
+ind_mk inductor-keepout layer) is already satisfied -- the ind_mk marker
+(GDS layer 151/5) is included from the start in this design.
+
+No bond pads (confirmed: pad layer has 0 polygons, only
+M1/M2/M3/M4/TM/V1/V2/V3/TV + Port1/Port2 markers + the ind_mk marker are
+present).
+
+Files in this folder:
+  Ind_LD2_real_N3_W1.75_D185.gds -- the real layout (DRC-clean)
+  DRC_report.lyrdb               -- full KLayout DRC report
+  build_real_drain.py            -- the generator (also handles LD4's
+                                     TM+M4 shunted variant via shunt_metal=)
+  spiral_gen.py                  -- general parametric spiral polygon/
+                                     underpass/ring generator (validated)
+  se_gen.py                      -- single-ended conversion (used only for
+                                     the EM-calibration phase, not this
+                                     2-port real layout)
+  real_multilayer.py             -- via-array building blocks (pitch/size/
+                                     margin, AREF placement, grid snapping)
+  scale_dout.py                  -- build_chain() radial-chain helper
