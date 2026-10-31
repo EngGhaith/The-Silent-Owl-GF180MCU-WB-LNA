@@ -22,6 +22,8 @@ N 210 -370 210 -360 {
 lab=vm1}
 N 150 -400 170 -400 {
 lab=vbias_cas}
+N 50 -490 50 -510 {lab=vbias_cas}
+N 50 -430 50 -410 {lab=vss}
 N 210 -360 210 -320 {
 lab=vm1}
 N 210 -190 210 -180 {
@@ -128,3 +130,11 @@ C {LD2_model.sym} 370 -690 0 1 {name=XLD2}
 C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }
+C {symbols/cap_mim_2f0fF.sym} 50 -460 2 1 {name=C1
+W=49.8865u
+L=49.8865u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=4}
+C {lab_pin.sym} 50 -510 0 0 {name=pC1_cas sig_type=std_logic lab=vbias_cas}
+C {lab_pin.sym} 50 -410 3 0 {name=pC1_vss sig_type=std_logic lab=vss}
