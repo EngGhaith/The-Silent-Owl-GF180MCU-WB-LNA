@@ -286,10 +286,22 @@ def build_supply(ly, top):
         d2 = ((sx - ld2_c[0]) ** 2 + (sy - ld2_c[1]) ** 2) ** 0.5 - ld2_r
         return min(d4, d2)
 
+    def ring_flush(site):
+        """True if this 20x20 site's own edge sits flush (zero gap) against the macro's perimeter ring band --
+        confirmed via direct DRC/GDS probing as a real MIMTM.1 cause: a PG_MIM tile is DRC-clean in isolation
+        (its own 1.2um bottom-plate halo stays inside its 20x20 footprint), but the grid places tiles flush
+        against the ring with NO additional gap, and the ring's own M4 (vss) counts as "routing metal" for
+        MIMTM.1 even though it's the same net -- so a MIM tile in the outermost row/column always violates it.
+        PG_PLAIN/PG_PLAIN_10 there are unaffected (plain M4-to-M4 contact isn't a MIMTM rule at all)."""
+        x0, y0 = site
+        return (x0 <= GX0 + 0.01 or x0 + PITCH >= W - RING - 0.01
+                or y0 <= Y0 + RING + 0.01 or y0 + PITCH >= H - RING - 0.01)
+
     RING_BAND = 2 * PITCH  # tier 1: tiles within ~2 pitches of LD2 / LD4's keep-out edge
-    near = sorted((s for s in sites if prox(s) <= RING_BAND), key=prox)[:N_MIM_MAX]
+    mim_eligible = [s for s in sites if not ring_flush(s)]
+    near = sorted((s for s in mim_eligible if prox(s) <= RING_BAND), key=prox)[:N_MIM_MAX]
     near_set = set(near)
-    far = [s for s in sites if s not in near_set]
+    far = [s for s in mim_eligible if s not in near_set]
     budget = N_MIM_MAX - len(near)
     spread = set()
     if budget > 0 and far:
@@ -315,6 +327,17 @@ def build_supply(ly, top):
         kind = "PG_MIM" if (x0, y0) in mim_sites else "PG_PLAIN"
         S.place(cells[kind], x0 + PITCH / 2, y0 + PITCH / 2)
     n_mim = len(mim_sites)
+    # MIM tile footprints, enlarged by a real margin beyond MIMTM.1's own 1.2um floor -- used below to keep the
+    # 10x10 half-pitch fill from landing directly against a PG_MIM tile's own MIM caps. This never mattered
+    # before (tiles_10x10 was always 0, a separate bug fixed this same step), so a 10x10 filler tile landing
+    # flush against an existing PG_MIM tile's edge -- something the 20x20 grid alone never produces, since two
+    # 20x20 tiles are either the same type by construction here or separated by this same adjacency guard -- is
+    # a genuinely new situation, confirmed via a real DRC run (MIMTM.1 at exactly these new 10x10/PG_MIM
+    # boundaries) and direct GDS probing (four PG_PLAIN_10 tiles meeting right at a PG_MIM tile's own edge).
+    mim_region = pya.Region()
+    for x0, y0 in mim_sites:
+        mim_region.insert(dbox((x0, y0, x0 + PITCH, y0 + PITCH)))
+    mim_region_margin = mim_region.sized(um(2.0))
 
     # (old "group B" explicit vdd/vss strap removed here -- see the comment at keep=[...] above for why)
 
@@ -360,6 +383,8 @@ def build_supply(ly, top):
             # reach the touches_rail() check below -- confirmed via direct per-site debugging.
             if not pya.Region(b).sized(-1).interacting(placed).is_empty():
                 continue  # already covered by a 20x20 tile / ring / strap
+            if not pya.Region(b).interacting(mim_region_margin).is_empty():
+                continue  # too close to a PG_MIM tile's own MIM caps (MIMTM.1) -- see mim_region_margin above
             sites10.add((x0, y0))
     comps10 = groups(sites10, step=HALF)
     kept10 = []
