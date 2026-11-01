@@ -7,7 +7,7 @@
 project:
   title: "The Silent Owl: GF180MCU Wide-Band LNA"
   team: "A38 The Silent Owl"
-  discord: ""  # Optional: enter a confirmed team Discord username
+  discord: "ghaithalsabagh"
   description: "GF180MCU low-noise amplifier with RF input matching, common-gate/common-source gain stages, and external analog bias controls."
   lvs_config: "lvs_config.json"  
   gf_def_ready: false           # Set true only after GF padframe/DEF preparation is verified
@@ -17,7 +17,6 @@ project:
 
 # Intended seven-pin interface for the current active schematic:
 # 2 RF ports + 3 external analog biases + power + ground.
-# The last ctrl[7:0] is dedicated for adjustable components in the circuit. Considered right now as spare bits. Have to be buffered when used.
 
 pins:
   - name: vss
@@ -41,6 +40,4 @@ pins:
   - name: vdd
     io_type: power
 
-  - name: ctrl[7:0]
-    io_type: digital
 
