@@ -11,11 +11,11 @@ N 410 -380 420 -380 {lab=vss}
 N 210 -290 230 -290 {
 lab=vss}
 N 210 -260 210 -250 {
-lab=#net1}
+lab=vss}
 N 150 -290 170 -290 {
 lab=input_cg}
 N 210 -250 210 -190 {
-lab=#net1}
+lab=vss}
 N 210 -400 230 -400 {
 lab=vss}
 N 210 -370 210 -360 {
@@ -25,7 +25,7 @@ lab=vbias_cas}
 N 210 -360 210 -320 {
 lab=vm1}
 N 210 -190 210 -180 {
-lab=#net1}
+lab=vss}
 N 210 -120 210 -110 {
 lab=vss}
 N 210 -110 210 -90 {
@@ -33,10 +33,10 @@ lab=vss}
 N 210 -480 280 -480 {
 lab=output_match}
 N 210 -490 210 -430 {lab=output_match}
-N 210 -200 390 -200 {lab=#net1}
-N 390 -260 410 -260 {lab=#net1}
-N 410 -260 410 -200 {lab=#net1}
-N 390 -200 410 -200 {lab=#net1}
+N 210 -200 390 -200 {lab=vss}
+N 390 -260 410 -260 {lab=vss}
+N 410 -260 410 -200 {lab=vss}
+N 390 -200 410 -200 {lab=vss}
 N 330 -230 350 -230 {lab=vss}
 N 460 -330 530 -330 {lab=vm1}
 N 530 -430 530 -330 {lab=vm1}
@@ -49,6 +49,7 @@ N 470 -690 520 -690 {lab=vdd}
 N 50 -400 150 -400 {lab=vbias_cas}
 N 50 -400 50 -370 {lab=vbias_cas}
 N 50 -310 50 -280 {lab=vss}
+N 210 -180 210 -120 {lab=vss}
 C {ipin.sym} 150 -290 0 0 {name=p1 lab=input_cg}
 C {opin.sym} 280 -480 0 0 {name=p2 lab=output_match}
 C {iopin.sym} 60 -530 0 1 {name=p3 lab=vdd}
@@ -81,12 +82,6 @@ nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
 model=nfet_05v0
 spiceprefix=X
-}
-C {res.sym} 210 -150 0 0 {name=RS_EQ1
-value=0.05
-footprint=1206
-device=resistor
-m=1
 }
 C {symbols/nfet_03v3.sym} 190 -290 0 0 {name=M3
 L=0.28u
