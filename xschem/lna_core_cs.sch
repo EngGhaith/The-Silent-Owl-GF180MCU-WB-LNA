@@ -46,6 +46,9 @@ N 210 -690 270 -690 {lab=output_match}
 N 60 -530 100 -530 {lab=vdd}
 N 210 -690 210 -490 {lab=output_match}
 N 470 -690 520 -690 {lab=vdd}
+N 50 -400 150 -400 {lab=vbias_cas}
+N 50 -400 50 -370 {lab=vbias_cas}
+N 50 -310 50 -280 {lab=vss}
 C {ipin.sym} 150 -290 0 0 {name=p1 lab=input_cg}
 C {opin.sym} 280 -480 0 0 {name=p2 lab=output_match}
 C {iopin.sym} 60 -530 0 1 {name=p3 lab=vdd}
@@ -128,3 +131,10 @@ C {LD2_model.sym} 370 -690 0 1 {name=XLD2}
 C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }
+C {symbols/cap_mim_2f0fF.sym} 50 -340 2 1 {name=C_CAS
+W=49.8865u
+L=49.8865u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=4}
+C {lab_pin.sym} 50 -280 3 0 {name=p30 sig_type=std_logic lab=vss}

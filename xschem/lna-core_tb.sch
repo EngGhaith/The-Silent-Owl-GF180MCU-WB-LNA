@@ -140,9 +140,6 @@ N 260 -850 290 -850 {lab=vbias_cg
 }
 N 260 -810 290 -810 {lab=vbias_cas
 }
-N 260 -870 290 -870 {lab=g_cg
-}
-N 50 -890 50 -860 {lab=g_cg}
 N 440 -780 440 -740 {lab=vss
 }
 C {lna_core.sym} 980 -1170 0 0 {name=x1
@@ -1281,12 +1278,6 @@ C {lab_pin.sym} 260 -830 0 0 {name=p19 sig_type=std_logic lab=vbias_cs
 C {lab_pin.sym} 260 -850 0 0 {name=p20 sig_type=std_logic lab=vbias_cg
 }
 C {lab_pin.sym} 260 -810 0 0 {name=p23 sig_type=std_logic lab=vbias_cas
-}
-C {lab_pin.sym} 260 -870 0 0 {name=p26 sig_type=std_logic lab=g_cg
-}
-C {vsource.sym} 50 -830 0 0 {name=V3 value=1 savecurrent=false}
-C {gnd.sym} 50 -800 0 0 {name=l2 lab=GND}
-C {lab_pin.sym} 50 -890 0 0 {name=p28 sig_type=std_logic lab=g_cg
 }
 C {lab_pin.sym} 440 -740 3 0 {name=p29 sig_type=std_logic lab=vss
 }
