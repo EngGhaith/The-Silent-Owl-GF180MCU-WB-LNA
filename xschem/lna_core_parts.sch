@@ -11,7 +11,7 @@ N 610 -340 640 -340 {lab=vbias_cs}
 N 610 -320 640 -320 {lab=vbias_cg}
 N 970 -390 1070 -390 {lab=#net2}
 N 1030 -300 1070 -300 {lab=vbias_cas}
-N 1370 -390 1480 -390 {lab=output_cs}
+N 1370 -390 1480 -390 {lab=#net3}
 N 1760 -390 1810 -390 {lab=rf_out_pad}
 N 190 -390 230 -390 {lab=rf_in_pad}
 N 1220 -460 1220 -430 {lab=vdd}
@@ -26,7 +26,6 @@ N 190 -580 235 -580 {lab=vbias_cs}
 N 235 -580 240 -580 {lab=vbias_cs}
 N 190 -545 240 -545 {lab=vbias_cas}
 N 940 -390 970 -390 {lab=#net2}
-N 1620 -230 1620 -205 {lab=vss}
 C {lna_core_output_match.sym} 1620 -250 0 0 {name=x1}
 C {lna_core_input_match.sym} 610 -240 0 1 {name=x2}
 C {lna_core_cg.sym} 790 -290 0 0 {name=x3}
@@ -65,6 +64,3 @@ C {lab_pin.sym} 790 -460 1 0 {name=p15 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 1220 -460 1 0 {name=p16 sig_type=std_logic lab=vdd
 }
-C {lab_pin.sym} 1620 -205 3 0 {name=p7 sig_type=std_logic lab=vss
-}
-C {lab_pin.sym} 1420 -390 0 0 {name=p62 sig_type=std_logic lab=output_cs}

@@ -5,71 +5,54 @@ V {}
 S {}
 F {}
 E {}
-N 460 -430 460 -410 {lab=vm1}
-N 460 -350 460 -330 {lab=vm1}
-N 410 -380 420 -380 {lab=vss}
-N 210 -290 230 -290 {
+N 290 -330 310 -330 {
 lab=vss}
-N 210 -260 210 -250 {
-lab=vss}
-N 150 -290 170 -290 {
+N 290 -300 290 -290 {
+lab=#net1}
+N 230 -330 250 -330 {
 lab=input_cg}
-N 210 -250 210 -190 {
+N 290 -290 290 -230 {
+lab=#net1}
+N 290 -440 310 -440 {
 lab=vss}
-N 210 -400 230 -400 {
-lab=vss}
-N 210 -370 210 -360 {
+N 290 -410 290 -400 {
 lab=vm1}
-N 150 -400 170 -400 {
+N 230 -440 250 -440 {
 lab=vbias_cas}
-N 210 -360 210 -320 {
+N 130 -530 130 -550 {lab=vbias_cas}
+N 130 -470 130 -450 {lab=vss}
+N 290 -400 290 -360 {
 lab=vm1}
-N 210 -190 210 -180 {
+N 290 -230 290 -220 {
+lab=#net1}
+N 290 -160 290 -150 {
 lab=vss}
-N 210 -120 210 -110 {
+N 290 -150 290 -130 {
 lab=vss}
-N 210 -110 210 -90 {
-lab=vss}
-N 210 -480 280 -480 {
-lab=output_match}
-N 210 -490 210 -430 {lab=output_match}
-N 210 -200 390 -200 {lab=vss}
-N 390 -260 410 -260 {lab=vss}
-N 410 -260 410 -200 {lab=vss}
-N 390 -200 410 -200 {lab=vss}
-N 330 -230 350 -230 {lab=vss}
-N 460 -330 530 -330 {lab=vm1}
-N 530 -430 530 -330 {lab=vm1}
-N 460 -430 530 -430 {lab=vm1}
-N 60 -560 100 -560 {lab=vss}
-N 210 -690 270 -690 {lab=output_match}
-N 60 -530 100 -530 {lab=vdd}
-N 210 -690 210 -490 {lab=output_match}
-N 470 -690 520 -690 {lab=vdd}
-N 50 -400 150 -400 {lab=vbias_cas}
-N 50 -400 50 -370 {lab=vbias_cas}
-N 50 -310 50 -280 {lab=vss}
-N 210 -180 210 -120 {lab=vss}
-C {ipin.sym} 150 -290 0 0 {name=p1 lab=input_cg}
-C {opin.sym} 280 -480 0 0 {name=p2 lab=output_match}
-C {iopin.sym} 60 -530 0 1 {name=p3 lab=vdd}
-C {symbols/nfet_05v0.sym} 440 -380 0 0 {name=M4D
-L=0.6u
-W=7u
-nf=2
-m=2
-ad="'int((nf+1)/2) * W/nf * 0.18u'"
-pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
-as="'int((nf+2)/2) * W/nf * 0.18u'"
-ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
-nrd="'0.18u / W'" nrs="'0.18u / W'"
-sa=0 sb=0 sd=0
-model=nfet_05v0
-spiceprefix=X
-}
-C {lab_pin.sym} 410 -380 0 0 {name=pM4D_g sig_type=std_logic lab=vss}
-C {lab_pin.sym} 460 -380 2 0 {name=pM4D_b sig_type=std_logic lab=vss}
-C {symbols/nfet_05v0.sym} 190 -400 0 0 {name=M2
+N 290 -520 360 -520 {
+lab=vx}
+N 290 -710 290 -690 {lab=vdd}
+N 190 -610 190 -690 {lab=vdd}
+N 190 -690 290 -690 {lab=vdd}
+N 390 -610 390 -530 {lab=vx}
+N 290 -530 390 -530 {lab=vx}
+N 290 -550 290 -530 {lab=vx}
+N 290 -790 290 -730 {lab=vdd}
+N 290 -530 290 -470 {lab=vx}
+N 290 -725 290 -710 {lab=vdd}
+N 290 -730 290 -725 {lab=vdd}
+N 150 -330 230 -330 {lab=input_cg}
+N 360 -520 410 -520 {lab=vx}
+N 290 -240 470 -240 {lab=#net1}
+N 470 -300 490 -300 {lab=#net1}
+N 490 -300 490 -240 {lab=#net1}
+N 470 -240 490 -240 {lab=#net1}
+N 410 -270 430 -270 {lab=vss}
+N 470 -440 470 -420 {lab=vm1}
+N 470 -360 470 -340 {lab=vm1}
+N 470 -390 540 -390 {lab=vss}
+N 420 -390 430 -390 {lab=vss}
+C {symbols/nfet_05v0.sym} 270 -440 0 0 {name=M4
 L=0.6u
 W=35u
 nf=10
@@ -83,7 +66,13 @@ sa=0 sb=0 sd=0
 model=nfet_05v0
 spiceprefix=X
 }
-C {symbols/nfet_03v3.sym} 190 -290 0 0 {name=M3
+C {res.sym} 290 -190 0 0 {name=RS_EQ
+value=0.05
+footprint=1206
+device=resistor
+m=1
+}
+C {symbols/nfet_03v3.sym} 270 -330 0 0 {name=M1
 L=0.28u
 W=20u
 nf=10
@@ -97,12 +86,18 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {lab_pin.sym} 210 -348.75 0 0 {name=p6 sig_type=std_logic lab=vm1}
-C {iopin.sym} 150 -400 0 1 {name=p7 lab=vbias_cas}
-C {lab_pin.sym} 210 -90 3 0 {name=p8 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 230 -400 2 0 {name=p9 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 230 -290 2 0 {name=p10 sig_type=std_logic lab=vss}
-C {symbols/nfet_03v3.sym} 370 -230 0 0 {name=M5
+C {lab_pin.sym} 290 -510 0 0 {name=p36 sig_type=std_logic lab=output_match
+}
+C {lab_pin.sym} 290 -388.75 0 0 {name=p72 sig_type=std_logic lab=vm1}
+C {LD2_model.sym} 290 -610 0 0 {name=XLD2}
+C {iopin.sym} 230 -440 0 1 {name=p61 lab=vbias_cas}
+C {lab_pin.sym} 310 -440 2 0 {name=p41 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 310 -330 2 0 {name=p42 sig_type=std_logic lab=vss}
+C {ipin.sym} 150 -330 0 0 {name=p1 lab=input_cg}
+C {opin.sym} 410 -520 0 0 {name=p2 lab=output_match}
+C {iopin.sym} 290 -790 1 1 {name=p3 lab=vdd}
+C {iopin.sym} 290 -130 3 1 {name=p4 lab=vss}
+C {symbols/nfet_03v3.sym} 450 -270 0 0 {name=M1D
 L=0.28u
 W=4u
 nf=2
@@ -116,20 +111,31 @@ sa=0 sb=0 sd=0
 model=nfet_03v3
 spiceprefix=X
 }
-C {lab_pin.sym} 330 -230 0 0 {name=pM1 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 390 -230 2 0 {name=pM2 sig_type=std_logic lab=vss}
-C {lab_pin.sym} 460 -330 0 0 {name=p5 sig_type=std_logic lab=vm1}
-C {iopin.sym} 60 -560 2 0 {name=p11 lab=vss}
-C {lab_pin.sym} 100 -560 2 0 {name=p13 sig_type=std_logic lab=vss
-}
-C {LD2_model.sym} 370 -690 0 1 {name=XLD2}
-C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
-C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
-}
-C {symbols/cap_mim_2f0fF.sym} 50 -340 2 1 {name=C_CAS
+C {lab_pin.sym} 410 -270 0 0 {name=pM1D_g sig_type=std_logic lab=vss}
+C {lab_pin.sym} 470 -270 2 0 {name=pM1D_b sig_type=std_logic lab=vss}
+C {symbols/cap_mim_2f0fF.sym} 130 -500 2 1 {name=C1
 W=49.8865u
 L=49.8865u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=4}
-C {lab_pin.sym} 50 -280 3 0 {name=p30 sig_type=std_logic lab=vss}
+C {lab_pin.sym} 130 -550 0 0 {name=pC1_cas sig_type=std_logic lab=vbias_cas}
+C {lab_pin.sym} 130 -450 3 0 {name=pC1_vss sig_type=std_logic lab=vss}
+C {symbols/nfet_05v0.sym} 450 -390 0 0 {name=M4D
+L=0.6u
+W=7u
+nf=2
+m=2
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=nfet_05v0
+spiceprefix=X
+}
+C {lab_pin.sym} 470 -440 2 0 {name=pM4D_d sig_type=std_logic lab=vm1}
+C {lab_pin.sym} 470 -340 2 0 {name=pM4D_s sig_type=std_logic lab=vm1}
+C {lab_pin.sym} 420 -390 0 0 {name=pM4D_g sig_type=std_logic lab=vss}
+C {lab_pin.sym} 540 -390 2 0 {name=pM4D_b sig_type=std_logic lab=vss}
