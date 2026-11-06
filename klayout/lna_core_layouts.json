@@ -19,7 +19,7 @@
    37.0
   ],
   "pins": {
-   "rf_in_pad": "Metal5 west edge y=295",
+   "rf_in_pad": "Metal5 west edge y=286.5",
    "input_cg": "Metal5 east edge x=82.0 y=295",
    "vss": "Metal5 west edge (LEQ port 2)"
   }
@@ -55,8 +55,8 @@
   "LD4": {
    "coil": "LD4_coil.gds",
    "centre": [
-    990.84,
-    164.5
+    190.0,
+    661.0
    ],
    "ports": "north"
   },
@@ -117,9 +117,9 @@
    370.0
   ],
   "ld4_vdd_lead": [
-   1166.0,
-   333.0,
-   1176.0,
+   362.0,
+   474.0,
+   370.0,
    851
   ],
   "vm2_column_x": [
@@ -134,9 +134,9 @@
     274.0,
     405.5
    ],
-   "g_cg": "Metal3 west edge y=(430.0, 434.0)",
-   "vbias_cg": "Metal3 north edge x=60.00",
-   "vbias_cs": "Metal3 north edge x=75.00",
+   "g_cg": "Metal3 west edge y=(384.5, 388.5)",
+   "vbias_cg": "Metal3 west edge y=486.50",
+   "vbias_cs": "Metal3 west edge y=586.50",
    "vdd": "Metal5 north edge",
    "vss": "guard ring, C3 straps, L1 port 2 (south edge)"
   }
@@ -166,20 +166,20 @@
   "LD2": {
    "coil": "LD2_coil.gds",
    "centre": [
-    232.0,
-    600.0
+    497.5,
+    683.5
    ],
    "ports": "east"
   },
   "ld2_vdd_lead": [
-   350.0,
-   601.0,
-   360.0,
+   362.0,
+   684.5,
+   370.0,
    851
   ],
   "vx_column_x": [
-   377.0,
-   387.0
+   380.0,
+   384.0
   ],
   "pins": {
    "input_cg": [
@@ -188,9 +188,9 @@
     274.0,
     405.5
    ],
-   "vbias_cas": "Metal3 north edge x=90.0",
+   "vbias_cas": "Metal3 west edge y=686.5",
    "vdd": "Metal5 north edge",
-   "output_match": "Metal5 column x=(377.0, 387.0)",
+   "output_match": "Metal5 column x=(380.0, 384.0)",
    "vss": "guard ring"
   }
  },
@@ -209,31 +209,35 @@
   ],
   "output_cs_lead_y": 498.305,
   "rf_out_x": [
-   410.0,
-   420.0
+   559.5,
+   569.5
+  ],
+  "rf_out_lane_x": [
+   620.0,
+   630.0
   ],
   "LSHUNT_OUT": {
    "coil": "LSHUNT_OUT_coil.gds",
    "centre": [
-    665.795,
-    602.0
+    864.295,
+    615.0
    ],
    "ports": "west"
   },
   "macro": [
-   1204,
+   1104,
    1104
   ],
   "frame": [
    0,
    -253,
-   1204,
+   1104,
    851
   ],
   "pins": {
    "output_cs": "Metal5 x=380.0 y=498.305",
-   "rf_out_pad": "Metal5 north edge x=415.0",
-   "vss": "Metal4 north edge x=440.0..450.0"
+   "rf_out_pad": "Metal5 north edge x=564.5",
+   "vss": "Metal4 north edge x=635.0..645.0"
   }
  }
 }

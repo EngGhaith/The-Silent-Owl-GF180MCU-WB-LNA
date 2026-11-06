@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  <Stackup schemaVersion="2.0">
+    <Materials>
+      <Material Name="M1" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="20202020.20" Color="eddd07"/>
+      <Material Name="M2" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="20202020.20" Color="ccf338"/>
+      <Material Name="M3" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="20202020.20" Color="97b91b"/>
+      <Material Name="M4" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="20202020.20" Color="80317c"/>
+      <Material Name="TM" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="20964360.58" Color="cdc16b"/>
+      <Material Name="MIMM" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="14724504.52" Color="ffe6bf"/>
+	  <Material Name="V1" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="1972386.58" Color="f5e7f1"/>
+	  <Material Name="V2" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="1972386.58" Color="e1d8ca"/>
+	  <Material Name="V3" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="1972386.58" Color="53e2e8"/>
+      <Material Name="TV" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="2958579.88" Color="a7b1d1"/>
+      <Material Name="MIMV" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="1660092.04" Color="ffe6bf"/>  
+      <Material Name="NITR" Type="Dielectric" Permittivity="7.0" DielectricLossTangent="0.0" Conductivity="0.0" Color="a0a0f0"/>
+      <Material Name="SIO2" Type="Dielectric" Permittivity="4.0" DielectricLossTangent="0.0" Conductivity="0.0" Color="fffcad"/>
+      <Material Name="LOWLOSS" Type="Conductor" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="1e8" Color="808080"/>
+      <Material Name="AIR" Type="Dielectric" Permittivity="1.0" DielectricLossTangent="0.0" Conductivity="0.0" Color="d0d0d0"/>
+	<Material Name="Substrate" Type="Semiconductor" Permittivity="11.9" DielectricLossTangent="0" Conductivity="2.0" Color="01e0ff"/>
+	<Material Name="MIM_equiv" Type="Dielectric" Permittivity="4" DielectricLossTangent="0.0" Conductivity="0" Color="ff0000"/>
+	</Materials>
+	
+    <ELayers LengthUnit="um">
+      <Dielectrics>
+        <Dielectric Name="AIR" Material="AIR" Thickness="300.0000" />
+        <Dielectric Name="NITRPASS" Material="NITR" Thickness="0.3" />
+		<!-- MIDOX = ILD + IMD + OXPASS + NITRLN + STI -->
+		<Dielectric Name="MIDOX" Material="SIO2" Thickness="8.5225" />
+	<Dielectric Name="Substrate" Material="Substrate" Thickness="191.4775" />
+      </Dielectrics>
+	  
+      <Layers>
+        <Substrate Offset="191.4775"/>
+        <Layer Name="SUBGND" Type="conductor" Zmin="-2.0" Zmax="0" Material="LOWLOSS" Layer="210" />
+        <Layer Name="M1" Type="conductor" Zmin="1.23" Zmax="1.78" Material="M1" Layer="34" />
+		<Layer Name="V1" Type="via" Zmin="1.78" Zmax="2.38" Material="V1" Layer="35" />
+        <Layer Name="M2" Type="conductor" Zmin="2.38" Zmax="2.93" Material="M2" Layer="36" />
+		<Layer Name="V2" Type="via" Zmin="2.93" Zmax="3.53" Material="V2" Layer="38" />
+        <Layer Name="M3" Type="conductor" Zmin="3.53" Zmax="4.08" Material="M3" Layer="42" />
+		<Layer Name="V3" Type="via" Zmin="4.08" Zmax="4.68" Material="V3" Layer="40" />
+        <Layer Name="M4" Type="conductor" Zmin="4.68" Zmax="5.23" Material="M4" Layer="46" />
+		<Layer Name="MIM_DK" Type="conductor" Zmin="5.23" Zmax="5.2477" Material="MIM_equiv" Layer="75"/>
+        <Layer Name="TPMIM" Type="conductor" Zmin="5.2477" Zmax="5.625" Material="MIMM" Layer="75" />
+        <Layer Name="VMIM" Type="via" Zmin="5.625" Zmax="6.13" Material="MIMV" Layer="1041" />
+		<Layer Name="TV" Type="via" Zmin="5.23" Zmax="6.13" Material="TV" Layer="41" />
+        <Layer Name="TM" Type="conductor" Zmin="6.13" Zmax="7.3225" Material="TM" Layer="81" />
+      </Layers>
+    </ELayers>
+  </Stackup>
+
