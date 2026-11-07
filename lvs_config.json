@@ -21,7 +21,7 @@
 		""
 	],
 	"LVS_SPICE_FILES": [
-		"$UPRJ_ROOT/klayout/lvs/lna_core_parts_lvs.spice"
+		"$UPRJ_ROOT/xschem/lna_core_parts_lvs.spice"
 	],
 	"LVS_VERILOG_FILES": [
 		""
