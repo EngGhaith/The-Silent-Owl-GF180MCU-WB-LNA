@@ -58,10 +58,10 @@
    "ports": "north"
   },
   "LD4": {
-   "coil": "LD4_RECT_coil.gds",
+   "coil": "LD4_SC4_N4W6_X190_Y80_coil.gds",
    "centre": [
-    898.0,
-    101.0
+    885.0,
+    127.0
    ],
    "ports": "north"
   },
@@ -122,9 +122,9 @@
    441.0
   ],
   "ld4_vdd_lead": [
-   899.0,
+   886.0,
    330.0,
-   901.0,
+   892.0,
    345.5
   ],
   "vm2_column_x": [
@@ -169,9 +169,9 @@
    426.98
   ],
   "LD2": {
-   "coil": "LD2_coil.gds",
+   "coil": "LD2_M3RING_N5_X84p5_Y89p5_coil.gds",
    "centre": [
-    232.0,
+    250.0,
     595.0
    ],
    "ports": "east"
@@ -180,7 +180,7 @@
    350.0,
    596.0,
    360.0,
-   725.5
+   713.5
   ],
   "vx_column_x": [
    377.0,

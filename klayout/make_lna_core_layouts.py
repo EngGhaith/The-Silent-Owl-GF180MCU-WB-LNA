@@ -87,7 +87,7 @@ def pf(v):
 # floorplan: coils, macro edges (core coordinates, see module doc)
 SP_KO = 10.0  # keep-out around every inductor
 COILS = {("lna_core_input_match", "LEQ"): "LEQ_MAIN_RECT2_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
-         ("lna_core_cg", "LD4"): "LD4_RECT_coil.gds", ("lna_core_cs", "LD2"): "LD2_coil.gds",
+         ("lna_core_cg", "LD4"): "LD4_SC4_N4W6_X190_Y80_coil.gds", ("lna_core_cs", "LD2"): "LD2_M3RING_N5_X84p5_Y89p5_coil.gds",
          ("lna_core_output_match", "LSHUNT_OUT"): "LSHUNT_OUT_RECT_coil.gds"}
 # MACRO_W history: 1204 (original) -> 1434 (commit cc900b6, LEQ_MAIN_RECT's reshape pushed the chain further east)
 # -> 1186 (L1_RECT + LEQ_MAIN_RECT2 jointly reshaped, see commit 76a36b3) -> 1070, the full 1070x1070 budget, via
