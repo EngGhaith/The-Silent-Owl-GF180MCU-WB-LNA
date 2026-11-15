@@ -68,3 +68,33 @@ C {lab_pin.sym} 1220 -460 1 0 {name=p16 sig_type=std_logic lab=vdd
 C {lab_pin.sym} 1620 -205 3 0 {name=p7 sig_type=std_logic lab=vss
 }
 C {lab_pin.sym} 1420 -390 0 0 {name=p62 sig_type=std_logic lab=output_cs}
+C {DEEMB_O.sym} 630 -760 0 0 {name=x5}
+C {DEEMB_S.sym} 630 -600 0 0 {name=x6}
+C {DEEMB_R.sym} 1300 -760 0 1 {name=x7}
+C {DEEMB_2R.sym} 1300 -600 0 1 {name=x8}
+C {DEEMB_0P5R.sym} 1300 -680 0 1 {name=x9}
+C {lab_pin.sym} 1150 -580 0 0 {name=p17 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 1150 -620 0 0 {name=p18 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 1150 -660 0 0 {name=p19 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 1150 -700 0 0 {name=p20 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 1150 -740 0 0 {name=p21 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 1150 -780 0 0 {name=p22 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 780 -780 0 1 {name=p23 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 780 -740 0 1 {name=p24 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 780 -620 0 1 {name=p25 sig_type=std_logic lab=vss
+}
+C {lab_pin.sym} 780 -580 0 1 {name=p26 sig_type=std_logic lab=vss
+}
+C {iopin.sym} 780 -760 2 1 {name=p27 lab=deemb_o}
+C {iopin.sym} 780 -600 2 1 {name=p28 lab=deemb_s}
+C {iopin.sym} 1150 -600 2 0 {name=p29 lab=deemb_2r}
+C {iopin.sym} 1150 -680 2 0 {name=p30 lab=deemb_0p5r}
+C {iopin.sym} 1150 -760 2 0 {name=p31 lab=deemb_r}
