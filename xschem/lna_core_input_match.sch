@@ -28,9 +28,9 @@ C {opin.sym} 1130 -260 0 0 {name=p3 lab=input_cg}
 C {LEQ_model.sym} 710 -120 0 0 {name=XLEQ}
 C {lab_pin.sym} 850 -120 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
 C {iopin.sym} 410 -260 0 1 {name=p6 lab=rf_in_pad}
-C {capa.sym} 860 -260 3 0 {name=C15
-m=1
-value=1.25p
-footprint=1206
-device="ceramic capacitor"
-}
+C {symbols/cap_mim_2f0fF.sym} 860 -260 3 0 {name=C15
+W=24.82u
+L=24.82u
+model=cap_mim_2f0_m4m5_noshield
+spiceprefix=X
+m=1}
