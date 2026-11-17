@@ -246,6 +246,28 @@ def guard_ring(cell, x0, y0, x1, y1, w=0.8, m2=True):
             cell.cuts("v1", *bx, enc=0.15)
 
 
+def _ring_stitch(cell, lay, x0, y0, x1, y1, sz, enc=0.15, pitch=20.0):
+    """sparse cut stitching along a long thin box's major axis -- one `sz`x`sz` cut roughly every `pitch`, not
+    a dense fill: no DRC rule requires via/contact density beyond each cut's own min size/spacing (only a
+    minimum, never a maximum), and a coil-scale ring (hundreds of um long) densely filled makes DRC/LVS on the
+    full macro assembly impractically slow (confirmed: a single dense-filled coil ring alone pushed a routine
+    check past a 580s timeout) for no electrical benefit over sparse stitching on a shield/keep-out ring.
+    `enc` insets the cut range from the box edge (same role as cuts()'s own `enc`) -- a cut flush with the
+    enclosing metal's own edge has zero overlap margin and fails the real deck's M#.3b/CO.4/CO.6-style overlap
+    rules at the two endpoints."""
+    w_box, h_box = x1 - x0 - 2 * enc, y1 - y0 - 2 * enc
+    horiz = w_box >= h_box
+    length = w_box if horiz else h_box
+    n = max(1, round(length / pitch))
+    for i in range(n + 1):
+        t = i / n if n else 0.5
+        if horiz:
+            cx_, cy_ = x0 + enc + sz / 2 + t * (w_box - sz), (y0 + y1) / 2
+        else:
+            cx_, cy_ = (x0 + x1) / 2, y0 + enc + sz / 2 + t * (h_box - sz)
+        cell.box(lay, cx_ - sz / 2, cy_ - sz / 2, cx_ + sz / 2, cy_ + sz / 2)
+
+
 def _carve(box, avoid, margin=0.5):
     """`box` (x0,y0,x1,y1) minus each (x0,y0,x1,y1) in `avoid`, with real clearance `margin` added around every
     avoid box (never a zero-gap cut -- same lesson as everywhere else in this project: KLayout merges touching
@@ -277,58 +299,24 @@ def _carve(box, avoid, margin=0.5):
     return pieces
 
 
-RING_ISL = 1.0  # stepping-stone island half-size (2x2um islands) -- smaller than the real
-# vss_m1m2m4_vdd_m3m5_10x10/20x20.gds supply tiles' own COL_HALF=2.0 (4x4um), by request: a 2x2um island at
-# enc=0.15 (below) holds a 3x3 via/contact array (Cell.cuts()'s own VIA=0.26/VIA_SP=0.36, CO=0.22/CO_SP=0.28
-# defaults), not that tile's own 6x6.
-RING_GAP = 2.0  # same-layer isolation: an island vs. the ring's own continuous plane on that layer, AND the
-# real clearance between one group's island and the next (alternating type) group's island -- by request, a
-# generous real distance, not just the bare M#.2a minimum (0.23-0.28um) the real supply tile's own GAP used.
-RING_PITCH = 2 * RING_ISL + RING_GAP  # centre-to-centre spacing between adjacent groups at this GAP -- the
-# densest packing the GAP allows, filling the whole perimeter continuously (by request: every group immediately
-# followed by the next, not the old sparse ~20um-pitch stitch)
-RING_GAP_FIT = 0.3  # same-layer isolation CROSSWISE (island vs. the ring's own plane to either side, across the
-# wall's own thickness w) -- unlike RING_GAP, this one is not a requested design distance, just the ordinary
-# M#.2a min-space (0.28um) + a hair of margin, since nothing requires extra real room in this direction (the
-# island only needs to clear the wall's own inner/outer edge by a DRC-legal amount, not RING_GAP's own 2um)
+def coil_guard_ring(cell, cx, cy, geo, rot=0, w=2.0, sp=1.0, avoid=()):
+    """grid-compliant vss ring directly around a coil: a full Metal1-Metal2-Metal3-Metal4 stack (Via1 M1<->M2,
+    Via2 M2<->M3, Via3 M3<->M4 -- GF180's via numbering connects ViaN to MetalN<->Metal(N+1), so M3 must be
+    present even though only M1/M2/M4 carry vss in the tile convention below), with SPARSE cut stitching (one
+    cut every ~20um per layer, not a dense fill -- see _ring_stitch's own docstring for why) -- i.e. vss on
+    exactly the layers the 20x20/10x10 supply tiles use for vss (M4/M2/M1, per make_lna_core_parts.py's own
+    documented convention), so a tile can abut this ring as a legitimate, intentional same-net merge instead of
+    needing a bare empty keep-out gap. No COMP/PPLUS substrate tap: unlike guard_ring() (used around active
+    transistor rows, where local substrate biasing matters for noise/latch-up), a passive coil has no nearby
+    active silicon needing one -- M1 can be plain floating-net metal with no COMP underneath, and skipping the
+    device-recognition layers here avoids a large, measured DRC-runtime cost (COMP triggers many extra rule
+    categories -- NW/DN/ESD/LVS_BJT/etc -- across the ring's hundreds-of-um perimeter for no benefit).
 
-
-def _dreg(ly, b):
-    """pya.Region of exactly box b=(x0,y0,x1,y1) [um], DBU-exact"""
-    return pya.Region(pya.DBox(*b).to_itype(ly.dbu))
-
-
-def coil_guard_ring(cell, cx, cy, geo, rot=0, w=6.0, sp=1.0, avoid=(), outer_half=None):
-    """grid-compliant vss+vdd ring directly around a coil, mimicking the real, DRC-clean
-    vss_m1m2m4_vdd_m3m5_10x10/20x20.gds supply tiles' own stepping-stone recipe (layout/floorplan/cells/
-    make_pg_plain_10x10.py) rather than instantiating them: M1, M2 and M5 are solid continuous planes around the
-    full ring (M1/M2 = vss, M5 = vdd); M3 (main plane = vdd) and M4 (main plane = vss) are each the same solid
-    ring with small holes punched wherever the OTHER polarity needs a stepping-stone island through them -- a
-    hole drawn ON TOP of a solid plane on the SAME layer just re-merges into it (no separate net), so the hole
-    must be a real Region subtraction, sized up by RING_GAP past the island on every side, exactly like the
-    real tile.
-
-    Every RING_PITCH um around the full perimeter (continuing across every side and every avoid-carved piece,
-    so the whole ring is one continuous OOO-XXX-OOO-XXX... sequence, never per-side independent, and never a
-    sparse stitch -- groups pack back to back at the tightest spacing RING_GAP allows), one alternating group:
-      - vss group ("O"): a 2x2um Metal3 island (disjoint from the main Metal3=vdd plane) with Via1 (M1<->M2),
-        Via2 (M2<->island) and Via3 (island<->M4 main), each a 3x3 array -- stitches M1-M2-M4 (vss) straight
-        through the vdd plane without ever touching it -- plus a COMP+PPLUS substrate tap (3x3 contact array
-        -> M1) at the same 2x2um footprint, same layer convention as the supply tiles' own west/east columns.
-      - vdd group ("X"): a 2x2um Metal4 island (disjoint from the main Metal4=vss plane) with Via3 (M3 main
-        <->island) and Via4 (island<->M5 main), each a 3x3 array -- stitches M3-M5 (vdd) through the vss plane.
-    A piece too short for even one group (less than one island's own footprint + clearance on both ends) is
-    left as plain unbroken metal on every layer -- no DRC rule requires stitching density beyond each cut's
-    own minimum, this only skips the *extra* redundancy, never the ring's own base conductivity (every layer
-    is still a continuous plane end to end regardless of how many groups land on it).
-
-    `w` is the ring's own wall thickness -- must be wide enough for a centred 2x2um island with real clearance
-    to the ring's own inner/outer edge (checked below); 6.0 is this project's own wall thickness for this ring.
     `sp` is a small REAL clearance (GF180 M#.2a min-space is 0.23-0.28um; this project's old SP_KO/SPIRAL_KO=10
     was a self-imposed empirical margin against generic-tile proximity, not a PDK floor -- see make_lna_core_
     layouts.py's own SPIRAL_KO bisection comment) from the coil's own true extent (geo["rx"]/["ry"], which
     already accounts for its winding + inner-port M3/M4 underpass + port pads, per coil_geom()'s docstring) to
-    the ring's own inner edge.
+    the ring's own inner edge. `w` is the ring's own wall thickness (wide enough for a real via-cut row).
 
     rot must match the coil's own place_coil() rotation (mirror doesn't affect axis mapping, only a +-90
     rotation swaps which of rx/ry is the world-X vs world-Y half-extent -- same convention as every fit-assert
@@ -342,111 +330,34 @@ def coil_guard_ring(cell, cx, cy, geo, rot=0, w=6.0, sp=1.0, avoid=(), outer_hal
     existed.
 
     Returns (clear, outer): each (x0, y0, x1, y1) in world coords. `clear` is the coil's own real keep-out
-    boundary (nothing but this ring's own metal may enter clear..outer); `outer` is the ring's own outer edge --
+    boundary (nothing but this ring's own vss may enter clear..outer); `outer` is the ring's own outer edge --
     what make_lna_core_parts.py should let tile sites touch directly (not stay SPIRAL_KO away from)."""
-    assert w >= 2 * RING_ISL + 2 * RING_GAP_FIT, f"ring wall w={w} too thin for a {2 * RING_ISL}um island + clearance"
     rx, ry = geo["rx"], geo["ry"]
     wx, wy = (ry, rx) if round(rot / 90) % 2 == 1 else (rx, ry)
     # `clear`: boundary between the coil's own true extent (+ small real gap `sp`) and the ring's own metal --
     # nothing may occupy clear..outer except this ring.
     clear = (cx - wx - sp, cy - wy - sp, cx + wx + sp, cy + wy + sp)
-    if outer_half is not None:
-        # pin the ring's own OUTER edge directly to the real, EM-simulated outer dimension (local half-extents,
-        # same rot-swap convention as geo["rx"]/["ry"]) instead of deriving it from sp -- the coil's own small
-        # via-landing pads (inter-layer stitches inside the winding) can poke slightly past the generic sp
-        # clearance in a few spots without changing the ring's own real outer footprint; those spots need an
-        # `avoid` notch (see module doc), not a bigger sp pushing the whole ring further out.
-        ox, oy = outer_half
-        owx, owy = (oy, ox) if round(rot / 90) % 2 == 1 else (ox, oy)
-        outer = (cx - owx, cy - owy, cx + owx, cy + owy)
-        # `clear` must track the PINNED outer (inset by the real wall thickness w), not the old rx+sp formula --
-        # otherwise it can numerically coincide with `outer` itself (confirmed: geo["rx"]+sp landed exactly on
-        # outer_half for 3 of 4 coils here), collapsing the reported ring_inner/ring_outer to the same box and
-        # silently zeroing out any ring-band-region computation downstream (e.g. the lna_top2.gds surgical
-        # replacement script, which lost its whole insert region for exactly this reason).
-        clear = (outer[0] + w, outer[1] + w, outer[2] - w, outer[3] - w)
-    else:
-        outer = (clear[0] - w, clear[1] - w, clear[2] + w, clear[3] + w)
+    outer = (clear[0] - w, clear[1] - w, clear[2] + w, clear[3] + w)
     x0, y0, x1, y1 = outer
     sides = [(x0, y0, x1, y0 + w), (x0, y1 - w, x1, y1), (x0, y0 + w, x0 + w, y1 - w), (x1 - w, y0 + w, x1, y1 - w)]
-    min_piece = 0.3  # drop a carved sliver this thin or thinner -- not wide enough for a real group anyway
-    min_fit = 2 * RING_ISL + 2 * RING_GAP  # shortest piece that can hold even one centred group
-    min_sep = 2 * RING_ISL + RING_GAP  # shortest safe centre-to-centre spacing between adjacent groups
-    ly = cell.ly
-    gap_dbu = int(round(RING_GAP / ly.dbu))  # along-ring: the requested 2um inter-group distance
-    fit_dbu = int(round(RING_GAP_FIT / ly.dbu))  # crosswise: plain DRC-legal clearance, not a design distance
-    pe = 0.2  # PPLUS enclosure of COMP, same as guard_ring()'s own pe
-    grp_idx = 0  # global alternation counter -- continues across every side/piece so the whole perimeter is
-    # one single OOO-XXX-OOO-XXX... sequence, never reset per side
+    min_piece = 0.3  # drop a carved sliver this thin or thinner -- not wide enough for a real stitched cut anyway
     for i, b in enumerate(sides):
         for p in (_carve(b, avoid) if avoid else [b]):
             if p[2] - p[0] <= min_piece or p[3] - p[1] <= min_piece:
                 continue  # carved down to nothing (or a sliver) by an `avoid` box -- leave the gap bare
             cell.box("m1", *p)
             cell.box("m2", *p)
-            cell.box("m5", *p)
-            horiz = (p[2] - p[0]) >= (p[3] - p[1])
-            cross_mid = (p[1] + p[3]) / 2 if horiz else (p[0] + p[2]) / 2
-            # Group PLACEMENT range: only a horizontal (bottom/top) side owns the ring's 4 true outer corners
-            # (its own box spans the full outer width, corners included -- a vertical side's box already starts
-            # /ends short of them, see `sides` above), so only a horizontal side's own TRUE ends (not an
-            # avoid-carved piece's inner cut edge) get trimmed back by one full wall thickness `w`: that leaves
-            # every w x w corner square solid/unholed on every layer, on both sides of the corner, so whatever
-            # pattern the adjoining vertical side draws right next to it always meets a plain straight edge
-            # there instead of a jagged, DRC-illegal notch (confirmed real, not hypothetical: an earlier version
-            # without this trim produced real M3.1/M3.2a/M4.1/M4.2a violations at all 4 corners of every ring).
-            if horiz:
-                lo = p[0] + w if abs(p[0] - b[0]) < 1e-6 else p[0]
-                hi = p[2] - w if abs(p[2] - b[2]) < 1e-6 else p[2]
-            else:
-                lo, hi = p[1], p[3]
-            length = hi - lo
-            a_boxes, b_boxes = [], []
-            if length >= min_fit:
-                avail = length - 2 * RING_ISL  # room for a group centre to range over
-                # floor, not round: guarantees the n+1 evenly-spread centres below are >= min_sep apart by
-                # construction (avail/n >= min_sep whenever n <= avail/min_sep) -- RING_PITCH itself sits
-                # exactly AT min_sep (densest packing), so round()-ing length/RING_PITCH was landing on the
-                # wrong side of that threshold from floating-point noise alone, collapsing every long piece to
-                # a single centred group instead of packing it densely.
-                n = max(1, int(avail / min_sep + 1e-9))
-                ts = [0.5] if n == 1 else [k / n for k in range(n + 1)]
-                for t in ts:
-                    ctr = lo + RING_ISL + t * avail
-                    if horiz:
-                        gbox = (ctr - RING_ISL, cross_mid - RING_ISL, ctr + RING_ISL, cross_mid + RING_ISL)
-                    else:
-                        gbox = (cross_mid - RING_ISL, ctr - RING_ISL, cross_mid + RING_ISL, ctr + RING_ISL)
-                    (a_boxes if grp_idx % 2 == 0 else b_boxes).append(gbox)
-                    grp_idx += 1
-            else:
-                grp_idx += 1  # keep the OOO-XXX phase consistent even where no group fits this piece
-            # hole oversize is axis-aware: RING_GAP (the requested 2um) along the ring's own long axis, where a
-            # hole's enlargement eats into the SAME continuous plane the next group's hole also eats into --
-            # RING_GAP_FIT (plain DRC clearance) crosswise, where it only has to clear the wall's own edge.
-            ax, ay = (gap_dbu, fit_dbu) if horiz else (fit_dbu, gap_dbu)
-            base = _dreg(ly, p)
-            holes_a, holes_b = pya.Region(), pya.Region()
-            for gb in a_boxes:
-                holes_a += _dreg(ly, gb).sized(ax, ay)
-            for gb in b_boxes:
-                holes_b += _dreg(ly, gb).sized(ax, ay)
-            cell.c.shapes(cell.li("m3")).insert(base - holes_a)
-            cell.c.shapes(cell.li("m4")).insert(base - holes_b)
-            for gb in a_boxes:  # vss stepping stone: M2 <-> M4 through an isolated M3 island, + substrate tap
-                cell.box("m3", *gb)
-                cell.cuts("v1", *gb, enc=0.15)
-                cell.cuts("v2", *gb, enc=0.15)
-                cell.cuts("v3", *gb, enc=0.15)
-                cell.box("comp", *gb)
-                cell.cuts("cont", *gb, enc=0.15, sz=CO, sp=CO_SP)
-                cell.box("pplus", gb[0] - pe, gb[1] - pe, gb[2] + pe, gb[3] + pe)
-            for gb in b_boxes:  # vdd stepping stone: M3 <-> M5 through an isolated M4 island
-                cell.box("m4", *gb)
-                cell.cuts("v3", *gb, enc=0.15)
-                cell.cuts("v4", *gb, enc=0.15)
+            cell.box("m3", *p)  # Via2 connects M2<->M3, Via3 connects M3<->M4 (GF180 numbering) -- M3 must be
+            cell.box("m4", *p)  # present as a stepping stone even though only M1/M2/M4 carry vss in the tile
+            # convention above
+            # sparse cut stitching, vertical sides without the corners (as guard_ring())
+            bx = p if i < 2 else (p[0], p[1] + 0.3, p[2], p[3] - 0.3)
+            if bx[2] - bx[0] <= 0 or bx[3] - bx[1] <= 0:
+                continue  # corner trim ate the whole (carved) piece -- metal above is still fine with no cuts
+            _ring_stitch(cell, "v1", *bx, sz=VIA)
+            _ring_stitch(cell, "v2", *bx, sz=VIA)
+            _ring_stitch(cell, "v3", *bx, sz=VIA)
     cell.label(1, "vss", (x0 + x1) / 2, y0 + w / 2)
-    cell.label(3, "vdd", (x0 + x1) / 2, y1 - w / 2)
     return clear, outer
 
 

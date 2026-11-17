@@ -86,16 +86,12 @@ def pf(v):
 
 # floorplan: coils, macro edges (core coordinates, see module doc)
 SP_KO = 10.0  # keep-out around every inductor not yet converted to a coil_guard_ring() (see RING_SP/RING_W)
-RING_SP, RING_W = 1.0, 6.0  # coil_guard_ring()'s own DEFAULT clearance + wall thickness -- only actually used
-# for sizing by LD2 (the one coil still on the old formula-based outer=rx+sp+w; left alone, see LD2's own call
-# site) and as the generic SP_KO-replacement margin in fit-asserts elsewhere. The other 4 coils (L1, LD4, LEQ,
-# LSHUNT_OUT) now pin coil_guard_ring()'s own `outer_half` directly to their real, EM-simulated outer
-# dimension instead (see each call site's own comment) -- RING_SP/RING_KO no longer size THEIR rings at all;
-# the EM-measured clearance for those (coil-to-ring-inner-edge, on a clean port-free side) is 10.0um uniformly
-# across all 4 -- LD4 west/south/north, L1 south, LEQ south+west -- confirmed by direct measurement, not
-# derived from this constant. w=6.0 is required to centre a real 4x4um stepping-stone island (RING_ISL in
-# lna_lib.py, same size as the real 20x20/10x10 supply tiles' own islands) with real clearance to both the
-# ring's own inner and outer edge -- see coil_guard_ring()'s own assert and docstring.
+RING_SP, RING_W = 1.0, 2.0  # coil_guard_ring()'s own real clearance + wall thickness (pilot: LEQ only, see
+# build_input_match) -- replaces SP_KO's empirical 10um margin with a real, grid-compliant vss ring a supply
+# tile can directly abut (zero-gap, same net) instead of an empty keep-out. sp=1.0 is comfortably above the
+# GF180 deck's own M#.2a min-space (0.23-0.28um per layer) with margin for the coil's own underpass bracket;
+# w=2.0 is wide enough for a real Via2/Via3 cut row. Both numbers are provisional until verified against the
+# real DRC/LVS deck (see check_lna_core_layouts.py) -- bisect upward, never assume.
 RING_KO = RING_SP + RING_W  # total effective keep-out once a coil has its own ring (replaces SP_KO in that
 # coil's own fit-assert)
 COILS = {("lna_core_input_match", "LEQ"): "LEQ_coil.gds", ("lna_core_cg", "L1"): "L1_RECT_coil.gds",
@@ -240,11 +236,10 @@ LD2_PORT_X, LD2_CY = 340.0, 595.0  # LD2 north-west, ports east: port 2 -> vx co
 # see build_cs). Back to the original square LD2_coil.gds.
 # LSH_PORT_X/LSH_CY/LSH_VSS_X (old north-east-of-rf_out-lead site) and LD2_VDD_X (old north-west-of-core site)
 # removed with those coils' own re-floorplan relocations (see LD2_NE_CX/CY in build_cs and LSH_SE_CX/CY below).
-LSH_SE_CX, LSH_SE_CY = 935.0, 51.0  # LSHUNT_OUT relocated SE: east of L1 (east edge ~572, clears it with a wide
+LSH_SE_CX, LSH_SE_CY = 935.0, 54.5  # LSHUNT_OUT relocated SE: east of L1 (east edge ~572, clears it with a wide
 # margin regardless of the exact value), at the SAME world-Y band as L1 (Step 4 coil resize: both now rx=330.0,
-# pushed to the top of the shared feasible window -- see L1's own cy1 comment in build_cg for the full
-# derivation; both coils share this value since they're the same family/target and sit in the same band.
-# RING_W grew 2.0 -> 6.0, shrinking the window to [36.0, 51.46] -- see cy1's own comment).
+# pushed to the top of the shared feasible window [32.0, 54.86] -- see L1's own cy1 comment in build_cg for the
+# full derivation; both coils share this value since they're the same family/target and sit in the same band).
 LSH_CHANNEL_Y = -297.0  # east-west return channel for LSHUNT_OUT's rf_out lead: Y_S+RING+4 (close to the south
 # edge, inside LSHUNT_OUT's own [Y_S+RING, cy-rx-RING_KO] = [-301.0, -278.5] window). Step 4's resize moved L1 far
 # enough that this channel no longer needs to clear L1's own keep-out too (see build_output_match's own comment).
@@ -339,10 +334,7 @@ def build_input_match(ly):
     # a generic supply tile needs to keep from it; see RING_SP/RING_W/RING_KO's own comment above.
     assert cy + geo["ry"] + RING_KO <= YSL[0] and cy - geo["ry"] - RING >= Y_S + RING, "LEQ does not fit"
     (q1, q2), _, _ = place_coil(ly, top, P, "LEQ", cx, cy, rot=180, mirror=True)
-    # outer_half: the real, EM-simulated outer footprint (local half-extents, pre-strip LEQ_coil.gds's own
-    # ring-inclusive bbox was (-116,-218.5)..(139,218.5) -- max-based half-extents 139/218.5, same convention
-    # _coil_read() already uses for rx/ry) -- see coil_guard_ring()'s own outer_half docstring.
-    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=180, w=RING_W, sp=RING_SP, outer_half=(139.0, 218.5))
+    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=180, w=RING_W, sp=RING_SP)
     lead_x = 25.0  # rf_in lead column (centre)
     rf_y = 449.46  # shifted +DY_CG_BULK2=119.68 from 329.78: same net as cg's own y_s (build_cg draws the
     # matching "input_match"/"input_cg" box at the identical height) -- step 3 bulk consolidation, must co-shift.
@@ -506,14 +498,7 @@ def build_output_match(ly):
     # 398.46 = lna_core_cg's own yl (C3 row floor, build_cg) -- a cross-block literal since yl isn't a global
     # constant; must be kept in lockstep if cg's own bulk row ever moves again.
     (q1, q2), _, _ = place_coil(ly, top, P, "LSHUNT_OUT", cx, cy, rot=270)
-    # outer_half: real, EM-simulated outer footprint (LSHUNT_OUT_RECT_coil.gds's own pre-strip bbox was
-    # (-330,-123.8)..(330,123.8)) -- see coil_guard_ring()'s own outer_half docstring.
-    # avoid: same family/winding as L1 -- 4 inter-layer via-landing pads poke past outer_half here too,
-    # confirmed via a real DRC run at these exact 4 world spots (V1.1/V2.1/V3.1, M3.2a/b, M4.2a/b).
-    LSHUNT_RING_AVOID = ((904.0, -278.0, 911.0, -272.0), (959.0, -279.0, 965.0, -272.0),
-                          (321.0, 24.0, 330.0, 30.0), (321.0, -31.0, 330.0, -24.0))
-    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=270, w=RING_W, sp=RING_SP,
-                                             outer_half=(330.0, 123.8), avoid=LSHUNT_RING_AVOID)
+    ring_in, ring_out = lib.coil_guard_ring(top, cx, cy, geo, rot=270, w=RING_W, sp=RING_SP)
     assert q1[0] > q2[0], "q1 (rf_out) must be the eastern port, q2 (vss) the western one"
     top.box("m5", *q1)
     top.box("m5", *q2)
@@ -859,33 +844,22 @@ def build_cg(ly):
     # the horizontal "source" bus (xs -> l1p, CG source -> L1 port 1), so any lead reaching north from l1v merges
     # with that bus on M5 regardless of layer -- confirmed via LVS last time this was tried). South, down to the
     # south ring, stays clear of that bus's X/Y footprint entirely.
-    # cy1: pushed toward the top of this family's own feasible window [Y_S+RING+L1_RING_HALF_Y,
-    # bulk_floor-10-L1_RING_HALF_Y]. L1_RING_HALF_Y (below) is the coil_guard_ring() outer_half world-Y
-    # half-extent pinned to L1_RECT_coil.gds's own real, EM-simulated outer dimension (123.8/330.0 local,
-    # 330.0 world-Y after the rot=90 swap) -- NOT g1["rx"]+RING_KO: g1["rx"] is the real winding's own measured
-    # half-extent (coil_guard_ring()'s sp/w no longer size the ring outward from it, see outer_half), and using
-    # the generic RING_KO margin here would be both wrong (the real footprint is the fixed, pinned one) and
-    # needlessly tight (the pinned footprint leaves far more real margin than rx+RING_KO would suggest).
-    L1_RING_HALF_Y = 330.0
-    cy1 = 51.0
+    # cy1: pushed to the TOP of this family's own feasible window [Y_S+RING+rx+RING_KO, bulk_floor-10-rx-RING_KO]
+    # = [32.0, 54.86] -- maximizes the real routing corridor between the coil's own south edge and the south
+    # tile band (22.5um instead of the 11um a middle-of-window pick would give), while keeping the margin to the
+    # newly-consolidated cg/cs bulk row (yl=398.46) at exactly this project's own 10um floor. RING_KO (not RING)
+    # on the south side: L1 now carries its own coil_guard_ring() (Phase 2 ring rollout), matching LSHUNT_OUT's
+    # own, more recently-written south-fit convention -- the bare RING margin this assert used to require
+    # predates that rollout and is no longer the binding electrical requirement.
+    cy1 = 54.5
     assert leq_east + 1 <= L1_VSS_X[0] and L1_VSS_X[1] + 1 <= cx1 - g1["ry"]
-    assert cy1 - L1_RING_HALF_Y >= Y_S + RING, "L1 does not fit against the south edge"
-    assert cy1 + L1_RING_HALF_Y + 10 <= yl, "L1 does not clear the cg/cs bulk row floor"
+    assert cy1 - g1["rx"] - RING_KO >= Y_S + RING, "L1 does not fit against the south edge"
+    assert cy1 + g1["rx"] + RING_KO + 10 <= yl, "L1 does not clear the cg/cs bulk row floor"
     (l1p, l1v), _, _ = place_coil(ly, top, P, "L1", cx1, cy1, rot=90, mirror=True)
     # L1's own winding gaps changed completely with this resize (previously-tuned "avoid" bands for
     # output_match's own rf_out crossing no longer apply -- see build_output_match, whose own rf_out path no
     # longer runs anywhere near L1's new site at all, so no avoid-bands are needed here any more).
-    # outer_half: real, EM-simulated outer footprint (L1_RECT_coil.gds's own pre-strip bbox was
-    # (-330,-123.8)..(330,123.8)) -- see coil_guard_ring()'s own outer_half docstring.
-    # avoid: L1_RECT_coil.gds's own winding has 4 small inter-layer via-landing pads (M3/M4, part of the real
-    # winding, not the ring) that poke slightly past the outer_half footprint pinned above -- confirmed via a
-    # real DRC run (M3.2a/b, M4.2a/b, V3.1, V4.1 at exactly these 4 world spots) once that pinning put them
-    # that close to the ring. Real clearance notches here, not a bigger/smaller outer_half everywhere.
-    L1_RING_AVOID = ((416.0, 374.0, 422.0, 380.0), (471.0, 373.0, 477.0, 380.0),
-                      (321.0, 24.0, 330.0, 30.0), (321.0, -31.0, 330.0, -24.0),
-                      (321.0, 44.0, 330.0, 54.0), (-6.0, -125.0, 6.0, -117.0))
-    ring_in, ring_out = lib.coil_guard_ring(top, cx1, cy1, g1, rot=90, w=RING_W, sp=RING_SP,
-                                             outer_half=(330.0, 123.8), avoid=L1_RING_AVOID)
+    ring_in, ring_out = lib.coil_guard_ring(top, cx1, cy1, g1, rot=90, w=RING_W, sp=RING_SP)
     assert l1v[2] < l1p[0], "vss port must be the western one"
     # YSL bus (CG source -> L1 port 1): with L1 this tall, both its ports (l1p east/source, l1v west/vss) land
     # at the SAME world-Y (confirmed via direct probe: both y=381.5..385.0, only 2um of X gap between them) --
@@ -989,9 +963,7 @@ def build_cg(ly):
     assert cx4 - geo["rx"] - RING_KO >= 91.0 + 3.0, "LD4 (NW) does not clear the vbias_cg/cs/cas columns (x<=91)"
     assert cy4 + geo["ry"] + RING_KO + RING <= Y_N, "LD4 (NW) does not fit against the north edge"
     (q1, q2), _, _ = place_coil(ly, top, P, "LD4", cx4, cy4, rot=180)
-    # outer_half: real, EM-simulated outer footprint (LD4_RECT_coil.gds's own pre-strip bbox was
-    # (-232,-109)..(232,109)) -- see coil_guard_ring()'s own outer_half docstring.
-    ring_in4, ring_out4 = lib.coil_guard_ring(top, cx4, cy4, geo, rot=180, w=RING_W, sp=RING_SP, outer_half=(232.0, 109.0))
+    ring_in4, ring_out4 = lib.coil_guard_ring(top, cx4, cy4, geo, rot=180, w=RING_W, sp=RING_SP)
     # ports: both face WEST here (confirmed by direct probe), stacked close in Y (q1 south, q2 north, ~4um apart)
     # but never turn toward each other -- q1 (vdd) only needs a short local stub, q2 (vm2) runs a short way east
     # to "dc" at its own, different Y the whole way, so the two paths stay parallel and never cross.
