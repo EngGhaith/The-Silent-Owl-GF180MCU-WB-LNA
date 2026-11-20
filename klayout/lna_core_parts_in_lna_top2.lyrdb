@@ -20,6 +20,12 @@
    </categories>
   </category>
   <category>
+   <name>V1.3c</name>
+   <description>V1.3c : metal1 (&lt; 0.34um) end-of-line overlap of via1: 0.06µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>V1.4b</name>
    <description>V1.4b : metal2 (&lt; 0.34um) end-of-line overlap of via1 : 0.06µm</description>
    <categories>
@@ -32,20 +38,8 @@
    </categories>
   </category>
   <category>
-   <name>V1.3c</name>
-   <description>V1.3c : metal1 (&lt; 0.34um) end-of-line overlap of via1: 0.06µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>V2.2a</name>
    <description>V2.2a : min. via2 spacing : 0.26µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>V2.1</name>
-   <description>V2.1 : Min/max via2 size . : 0.26µm</description>
    <categories>
    </categories>
   </category>
@@ -58,6 +52,12 @@
   <category>
    <name>V1.4a</name>
    <description>V1.4a : metal2 overlap of via1 &gt;= 0.01 upper_metal</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>V2.1</name>
+   <description>V2.1 : Min/max via2 size . : 0.26µm</description>
    <categories>
    </categories>
   </category>
@@ -98,26 +98,26 @@
    </categories>
   </category>
   <category>
-   <name>V3.1</name>
-   <description>V3.1 : Min/max via3 size . : 0.26µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>V2.4a</name>
    <description>V2.4a : metal3 overlap of via2 &gt;= 0.01 upper_metal</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V2.3d</name>
-   <description>V2.3d : If metal2 overlap via2 by &lt; 0.04um on one side, adjacent metal2 edges overlap. : 0.06µm</description>
+   <name>V2.2b</name>
+   <description>V2.2b : Space in 4x4 or larger via2 array : 0.36µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V2.2b</name>
-   <description>V2.2b : Space in 4x4 or larger via2 array : 0.36µm</description>
+   <name>V3.1</name>
+   <description>V3.1 : Min/max via3 size . : 0.26µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>V2.3d</name>
+   <description>V2.3d : If metal2 overlap via2 by &lt; 0.04um on one side, adjacent metal2 edges overlap. : 0.06µm</description>
    <categories>
    </categories>
   </category>
@@ -140,14 +140,14 @@
    </categories>
   </category>
   <category>
-   <name>V3.3b</name>
-   <description>V3.3b : metal3 overlap of via3 &gt;= 0.01</description>
+   <name>V4.2a</name>
+   <description>V4.2a : min. via4 spacing : 0.26µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V4.2a</name>
-   <description>V4.2a : min. via4 spacing : 0.26µm</description>
+   <name>V3.3b</name>
+   <description>V3.3b : metal3 overlap of via3 &gt;= 0.01</description>
    <categories>
    </categories>
   </category>
@@ -230,14 +230,14 @@
    </categories>
   </category>
   <category>
-   <name>V4.2b</name>
-   <description>V4.2b : Space in 4x4 or larger via4 array : 0.36µm</description>
+   <name>V4.4c</name>
+   <description>V4.4c : If metal5 overlap via4 by &lt; 0.04um on one side, adjacent metal5 edges overlap. : 0.06µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V4.4c</name>
-   <description>V4.4c : If metal5 overlap via4 by &lt; 0.04um on one side, adjacent metal5 edges overlap. : 0.06µm</description>
+   <name>V4.2b</name>
+   <description>V4.2b : Space in 4x4 or larger via4 array : 0.36µm</description>
    <categories>
    </categories>
   </category>
@@ -280,18 +280,6 @@
   <category>
    <name>ANT.16_ii_ANT.4</name>
    <description>ANT.16_ii_ANT.4: Maximum ratio of Metal3 perimeter area to related thick gate oxide area: 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_i_ANT.10</name>
-   <description>ANT.16_i_ANT.10: Maximum ratio of Via2 area to related thin gate oxide area: 20</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_ii_ANT.10</name>
-   <description>ANT.16_ii_ANT.10: Maximum ratio of Via2 area to related thick gate oxide area: 20</description>
    <categories>
    </categories>
   </category>
@@ -584,6 +572,18 @@
    </categories>
   </category>
   <category>
+   <name>ANT.16_i_ANT.10</name>
+   <description>ANT.16_i_ANT.10: Maximum ratio of Via2 area to related thin gate oxide area: 20</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ANT.16_ii_ANT.10</name>
+   <description>ANT.16_ii_ANT.10: Maximum ratio of Via2 area to related thick gate oxide area: 20</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>ANT.16_i_ANT.5</name>
    <description>ANT.16_i_ANT.5: Maximum ratio of Metal4 perimeter area to related gate oxide area: 400</description>
    <categories>
@@ -670,6 +670,78 @@
   <category>
    <name>metal3_res_ACUTE</name>
    <description>ACUTE : non 45 degree angle metal3_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_ACUTE</name>
+   <description>ACUTE : non 45 degree angle via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_dummy_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal4_dummy</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_dummy_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal4_dummy</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_label_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal4_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_label_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal4_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_blk_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal4_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_blk_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal4_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_res_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal4_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_res_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal4_res</description>
    <categories>
    </categories>
   </category>
@@ -1088,78 +1160,6 @@
    </categories>
   </category>
   <category>
-   <name>via3_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on via3</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>via3_ACUTE</name>
-   <description>ACUTE : non 45 degree angle via3</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal4</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal4</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_dummy_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal4_dummy</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_dummy_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal4_dummy</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_label_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal4_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_label_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal4_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_blk_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal4_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_blk_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal4_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_res_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal4_res</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal4_res_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal4_res</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>contact_OFFGRID</name>
    <description>OFFGRID : OFFGRID vertex on contact</description>
    <categories>
@@ -1388,6 +1388,12 @@
    </categories>
   </category>
   <category>
+   <name>CO.2a</name>
+   <description>CO.2a : min. contact spacing : 0.25µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>via4_OFFGRID</name>
    <description>OFFGRID : OFFGRID vertex on via4</description>
    <categories>
@@ -1460,26 +1466,20 @@
    </categories>
   </category>
   <category>
-   <name>CO.2a</name>
-   <description>CO.2a : min. contact spacing : 0.25µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>CO.1</name>
    <description>CO.1 : Min/max contact size. : 0.22µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>CO.5a</name>
-   <description>CO.5a : Nplus overlap of contact on COMP (butted N+/P+) : 0.1µm</description>
+   <name>CO.3</name>
+   <description>CO.3 : Poly2 overlap of contact. : 0.07µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>CO.3</name>
-   <description>CO.3 : Poly2 overlap of contact. : 0.07µm</description>
+   <name>CO.5a</name>
+   <description>CO.5a : Nplus overlap of contact on COMP (butted N+/P+) : 0.1µm</description>
    <categories>
    </categories>
   </category>
@@ -1556,18 +1556,6 @@
    </categories>
   </category>
   <category>
-   <name>CUP.2</name>
-   <description>CUP.2 : Minimum width of Metal5 line used for bond pads: 1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CUP.3</name>
-   <description>CUP.3 : Minimum space of Metal5 line used for bond pads (slots): 1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>CO.9</name>
    <description>CO.9 : Contact must not straddle NCOMP/PCOMP butting edge</description>
    <categories>
@@ -1580,6 +1568,24 @@
    </categories>
   </category>
   <category>
+   <name>CUP.2</name>
+   <description>CUP.2 : Minimum width of Metal5 line used for bond pads: 1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CUP.3</name>
+   <description>CUP.3 : Minimum space of Metal5 line used for bond pads (slots): 1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.6b</name>
+   <description>CO.6b : Adjacent metal1 edge overlap : 0.06µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.10</name>
    <description>DF.10 : Min. field area (um2). : 0.26µm²</description>
    <categories>
@@ -1588,12 +1594,6 @@
   <category>
    <name>DF.11</name>
    <description>DF.11 : Min. Length of butting COMP edge. : 0.3µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CO.6b</name>
-   <description>CO.6b : Adjacent metal1 edge overlap : 0.06µm</description>
    <categories>
    </categories>
   </category>
@@ -1628,6 +1628,12 @@
    </categories>
   </category>
   <category>
+   <name>DF.18</name>
+   <description>DF.18 : Min. DNWELL space to (PCOMP outside Nwell and DNWELL). : 2.5µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.16_MV</name>
    <description>DF.16_MV : Min. space from (Nwell outside DNWELL) to (NCOMP outside Nwell and DNWELL). : 0.6µm</description>
    <categories>
@@ -1636,12 +1642,6 @@
   <category>
    <name>DF.16_LV</name>
    <description>DF.16_LV : Min. space from (Nwell outside DNWELL) to (NCOMP outside Nwell and DNWELL). : 0.43µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.18</name>
-   <description>DF.18 : Min. DNWELL space to (PCOMP outside Nwell and DNWELL). : 2.5µm</description>
    <categories>
    </categories>
   </category>
@@ -1658,6 +1658,12 @@
    </categories>
   </category>
   <category>
+   <name>DF.19_LV</name>
+   <description>DF.19_LV : Min. DNWELL space to (NCOMP outside Nwell and DNWELL). : 3.2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.19_MV</name>
    <description>DF.19_MV : Min. DNWELL space to (NCOMP outside Nwell and DNWELL). : 3.28µm</description>
    <categories>
@@ -1666,12 +1672,6 @@
   <category>
    <name>DF.1a_LV</name>
    <description>DF.1a_LV : Min. COMP Width. : 0.22µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.19_LV</name>
-   <description>DF.19_LV : Min. DNWELL space to (NCOMP outside Nwell and DNWELL). : 3.2µm</description>
    <categories>
    </categories>
   </category>
@@ -1715,8 +1715,15 @@
    </categories>
   </category>
   <category>
-   <name>DF.2a_LV</name>
-   <description>DF.2a_LV : Min Channel Width. : 0.22µm</description>
+   <name>DF.3a_LV</name>
+   <description>DF.3a_LV : Min. COMP Space is : 0.28µm. [P-substrate tap (PCOMP outside NWELL and DNWELL)
+                  can be butted for different voltage devices as the potential is same]</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.3c_LV</name>
+   <description>DF.3c_LV : Min. COMP Space in BJT area (area marked by DRC_BJT layer). : 0.32µm</description>
    <categories>
    </categories>
   </category>
@@ -1727,21 +1734,14 @@
    </categories>
   </category>
   <category>
-   <name>DF.3a_LV</name>
-   <description>DF.3a_LV : Min. COMP Space is : 0.28µm. [P-substrate tap (PCOMP outside NWELL and DNWELL)
-                  can be butted for different voltage devices as the potential is same]</description>
+   <name>DF.2a_LV</name>
+   <description>DF.2a_LV : Min Channel Width. : 0.22µm</description>
    <categories>
    </categories>
   </category>
   <category>
    <name>DF.4a_LV</name>
    <description>DF.4a_LV : Min. (LVPWELL Space to NCOMP well tap) inside DNWELL. : 0.12µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.3c_LV</name>
-   <description>DF.3c_LV : Min. COMP Space in BJT area (area marked by DRC_BJT layer). : 0.32µm</description>
    <categories>
    </categories>
   </category>
@@ -1818,12 +1818,6 @@
    </categories>
   </category>
   <category>
-   <name>DF.6_MV</name>
-   <description>DF.6_MV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>DF.7_MV</name>
    <description>DF.7_MV : Min. (LVPWELL Spacer to PCOMP) inside DNWELL. : 0.6µm</description>
    <categories>
@@ -1832,6 +1826,12 @@
   <category>
    <name>DF.8_LV</name>
    <description>DF.8_LV : Min. (LVPWELL overlap of NCOMP) Inside DNWELL. : 0.43µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.6_MV</name>
+   <description>DF.6_MV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.4µm</description>
    <categories>
    </categories>
   </category>
@@ -2266,64 +2266,6 @@
    </categories>
   </category>
   <category>
-   <name>LRES.1</name>
-   <description>LRES.1 : Minimum width of Poly2 resistor: 0.8µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.2</name>
-   <description>LRES.2 : Minimum space between Poly2 resistors: 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.3</name>
-   <description>LRES.3 : Minimum space from Poly2 resistor to COMP: 0.6.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.4</name>
-   <description>LRES.4 : Minimum space from Poly2 resistor to unrelated Poly2: 0.6µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.5</name>
-   <description>LRES.5 : Minimum Nplus implant overlap of Poly2 resistor: 0.3µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.6</name>
-   <description>LRES.6 : Minimum salicide block overlap of Poly2 resistor in width direction: 0.28µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.7</name>
-   <description>LRES.7 : Minimum space from salicide block to contact on Poly2 resistor: 0.22.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.9a</name>
-   <description>LRES.9a : Nplus Poly2 resistor shall be covered by RES_MK marking.
-                    RES_MK length shall be coincide with resistor length (Defined by SAB length)
-                    and width covering the width of Poly2. </description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LRES.9b</name>
-   <description>LRES.9b : If the size of single RES_MK mark layer is greater than 15000um2
-                    and both side (X and Y) are greater than 80um.
-                    then the minimum spacing to adjacent RES_MK layer: 20µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>MC.1</name>
    <description>MC.1 : min. mcell width : 0.4µm</description>
    <categories>
@@ -2512,50 +2454,60 @@
    </categories>
   </category>
   <category>
-   <name>M3.1</name>
-   <description>M3.1 : min. metal3 width : 0.28µm</description>
+   <name>LRES.1</name>
+   <description>LRES.1 : Minimum width of Poly2 resistor: 0.8µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M3.2a</name>
-   <description>M3.2a : min. metal3 spacing : 0.28µm</description>
+   <name>LRES.2</name>
+   <description>LRES.2 : Minimum space between Poly2 resistors: 0.4µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M3.2b</name>
-   <description>M3.2b : Space to wide Metal3 (length &amp; width &gt; 10um) : 0.3µm</description>
+   <name>LRES.3</name>
+   <description>LRES.3 : Minimum space from Poly2 resistor to COMP: 0.6.um</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M3.3</name>
-   <description>M3.3 : Minimum metal3 area : 0.1444µm²</description>
+   <name>LRES.4</name>
+   <description>LRES.4 : Minimum space from Poly2 resistor to unrelated Poly2: 0.6µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M2.1</name>
-   <description>M2.1 : min. metal2 width : 0.28µm</description>
+   <name>LRES.5</name>
+   <description>LRES.5 : Minimum Nplus implant overlap of Poly2 resistor: 0.3µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M2.2a</name>
-   <description>M2.2a : min. metal2 spacing : 0.28µm</description>
+   <name>LRES.6</name>
+   <description>LRES.6 : Minimum salicide block overlap of Poly2 resistor in width direction: 0.28µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M2.2b</name>
-   <description>M2.2b : Space to wide Metal2 (length &amp; width &gt; 10um) : 0.3µm</description>
+   <name>LRES.7</name>
+   <description>LRES.7 : Minimum space from salicide block to contact on Poly2 resistor: 0.22.um</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>M2.3</name>
-   <description>M2.3 : Minimum metal2 area : 0.1444µm²</description>
+   <name>LRES.9a</name>
+   <description>LRES.9a : Nplus Poly2 resistor shall be covered by RES_MK marking.
+                    RES_MK length shall be coincide with resistor length (Defined by SAB length)
+                    and width covering the width of Poly2. </description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>LRES.9b</name>
+   <description>LRES.9b : If the size of single RES_MK mark layer is greater than 15000um2
+                    and both side (X and Y) are greater than 80um.
+                    then the minimum spacing to adjacent RES_MK layer: 20µm</description>
    <categories>
    </categories>
   </category>
@@ -2620,6 +2572,30 @@
    </categories>
   </category>
   <category>
+   <name>M2.1</name>
+   <description>M2.1 : min. metal2 width : 0.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M2.2a</name>
+   <description>M2.2a : min. metal2 spacing : 0.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M2.2b</name>
+   <description>M2.2b : Space to wide Metal2 (length &amp; width &gt; 10um) : 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M2.3</name>
+   <description>M2.3 : Minimum metal2 area : 0.1444µm²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>M1.1</name>
    <description>M1.1 : min. metal1 width : 0.23µm</description>
    <categories>
@@ -2640,6 +2616,30 @@
   <category>
    <name>M1.3</name>
    <description>M1.3 : Minimum metal1 area : 0.1444µm²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M3.1</name>
+   <description>M3.1 : min. metal3 width : 0.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M3.2a</name>
+   <description>M3.2a : min. metal3 spacing : 0.28µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M3.2b</name>
+   <description>M3.2b : Space to wide Metal3 (length &amp; width &gt; 10um) : 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>M3.3</name>
+   <description>M3.3 : Minimum metal3 area : 0.1444µm²</description>
    <categories>
    </categories>
   </category>
@@ -3904,6 +3904,44 @@
    </categories>
   </category>
   <category>
+   <name>S.DF.4c_LV</name>
+   <description>S.DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL: 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.DF.16_LV</name>
+   <description>S.DF.16_LV : Min. space from (Nwell outside DNWELL) to
+                     (NCOMP outside Nwell and DNWELL): 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.3_LV</name>
+   <description>S.CO.3_LV : Poly2 overlap of contact: 0.04µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.4_LV</name>
+   <description>S.CO.4_LV : COMP overlap of contact: 0.03µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.6_ii_LV</name>
+   <description>S.CO.6_ii_LV : (ii) If Metal1 overlaps contact
+                  by &lt; 0.04um on one side, adjacent metal1 edges overlap: 0.02.um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.M1.1_LV</name>
+   <description>S.M1.1_LV : min. metal1 width : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>S.DF.4c_MV</name>
    <description>S.DF.4c_MV : Min. (Nwell overlap of PCOMP) outside DNWELL: 0.45µm</description>
    <categories>
@@ -3949,44 +3987,6 @@
   <category>
    <name>S.CO.4_MV</name>
    <description>S.CO.4_MV : COMP overlap of contact: 0.04µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.DF.4c_LV</name>
-   <description>S.DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL: 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.DF.16_LV</name>
-   <description>S.DF.16_LV : Min. space from (Nwell outside DNWELL) to
-                     (NCOMP outside Nwell and DNWELL): 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.3_LV</name>
-   <description>S.CO.3_LV : Poly2 overlap of contact: 0.04µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.4_LV</name>
-   <description>S.CO.4_LV : COMP overlap of contact: 0.03µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.6_ii_LV</name>
-   <description>S.CO.6_ii_LV : (ii) If Metal1 overlaps contact
-                  by &lt; 0.04um on one side, adjacent metal1 edges overlap: 0.02.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.M1.1_LV</name>
-   <description>S.M1.1_LV : min. metal1 width : 0.22µm</description>
    <categories>
    </categories>
   </category>
@@ -4651,39 +4651,6 @@
    </references>
   </cell>
   <cell>
-   <name>Load_R</name>
-   <variant/>
-   <layout-name>Load_R</layout-name>
-   <references>
-    <ref>
-     <parent>lna_core_parts</parent>
-     <trans>r0 *1 -11.935,332</trans>
-    </ref>
-   </references>
-  </cell>
-  <cell>
-   <name>Load_2R</name>
-   <variant/>
-   <layout-name>Load_2R</layout-name>
-   <references>
-    <ref>
-     <parent>lna_core_parts</parent>
-     <trans>r0 *1 -11.935,132</trans>
-    </ref>
-   </references>
-  </cell>
-  <cell>
-   <name>Load_0p5R</name>
-   <variant/>
-   <layout-name>Load_0p5R</layout-name>
-   <references>
-    <ref>
-     <parent>lna_core_parts</parent>
-     <trans>r0 *1 -11.935,532</trans>
-    </ref>
-   </references>
-  </cell>
-  <cell>
    <name>lna_core_supply</name>
    <variant/>
    <layout-name>lna_core_supply</layout-name>
@@ -5222,1830 +5189,6 @@
    <image/>
    <values>
     <value>edge-pair: (47,1116.118;47,1116.118)/(47,1116.118;47,1116.118)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,329.721;-25.49,329.721)/(-25.49,329.721;-25.49,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,329.721;-24.78,329.721)/(-24.78,329.721;-24.78,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,329.721;-24.4,329.721)/(-24.4,329.721;-24.4,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,329.721;-13.84,329.721)/(-13.84,329.721;-13.84,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,329.721;-13.46,329.721)/(-13.46,329.721;-13.46,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,329.721;-12.75,329.721)/(-12.75,329.721;-12.75,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,329.721;-12.37,329.721)/(-12.37,329.721;-12.37,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,329.721;-11.5,329.721)/(-11.5,329.721;-11.5,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,329.721;-11.12,329.721)/(-11.12,329.721;-11.12,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,329.721;-10.41,329.721)/(-10.41,329.721;-10.41,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,329.721;-10.03,329.721)/(-10.03,329.721;-10.03,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-3.73,357.279;-3.73,357.279)/(-3.73,357.279;-3.73,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-4.11,357.279;-4.11,357.279)/(-4.11,357.279;-4.11,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.39,357.279;-5.39,357.279)/(-5.39,357.279;-5.39,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.77,357.279;-5.77,357.279)/(-5.77,357.279;-5.77,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,334.279;-10.03,334.279)/(-10.03,334.279;-10.03,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,334.279;-10.41,334.279)/(-10.41,334.279;-10.41,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,334.279;-11.12,334.279)/(-11.12,334.279;-11.12,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,334.279;-11.5,334.279)/(-11.5,334.279;-11.5,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,334.279;-12.37,334.279)/(-12.37,334.279;-12.37,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,334.279;-12.75,334.279)/(-12.75,334.279;-12.75,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,334.279;-13.46,334.279)/(-13.46,334.279;-13.46,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,334.279;-13.84,334.279)/(-13.84,334.279;-13.84,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.1,357.279;-18.1,357.279)/(-18.1,357.279;-18.1,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.48,357.279;-18.48,357.279)/(-18.48,357.279;-18.48,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-19.76,357.279;-19.76,357.279)/(-19.76,357.279;-19.76,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-20.14,357.279;-20.14,357.279)/(-20.14,357.279;-20.14,357.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,334.279;-24.4,334.279)/(-24.4,334.279;-24.4,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,334.279;-24.78,334.279)/(-24.78,334.279;-24.78,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,334.279;-25.49,334.279)/(-25.49,334.279;-25.49,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,529.721;-25.49,529.721)/(-25.49,529.721;-25.49,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,529.721;-24.78,529.721)/(-24.78,529.721;-24.78,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,529.721;-24.4,529.721)/(-24.4,529.721;-24.4,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,529.721;-13.84,529.721)/(-13.84,529.721;-13.84,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,529.721;-13.46,529.721)/(-13.46,529.721;-13.46,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,529.721;-12.75,529.721)/(-12.75,529.721;-12.75,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,529.721;-12.37,529.721)/(-12.37,529.721;-12.37,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,529.721;-11.5,529.721)/(-11.5,529.721;-11.5,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,529.721;-11.12,529.721)/(-11.12,529.721;-11.12,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,529.721;-10.41,529.721)/(-10.41,529.721;-10.41,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,529.721;-10.03,529.721)/(-10.03,529.721;-10.03,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,534.279;-10.03,534.279)/(-10.03,534.279;-10.03,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,534.279;-10.41,534.279)/(-10.41,534.279;-10.41,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,534.279;-11.12,534.279)/(-11.12,534.279;-11.12,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,534.279;-11.5,534.279)/(-11.5,534.279;-11.5,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,534.279;-12.37,534.279)/(-12.37,534.279;-12.37,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,534.279;-12.75,534.279)/(-12.75,534.279;-12.75,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,534.279;-13.46,534.279)/(-13.46,534.279;-13.46,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,534.279;-13.84,534.279)/(-13.84,534.279;-13.84,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,534.279;-24.4,534.279)/(-24.4,534.279;-24.4,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,534.279;-24.78,534.279)/(-24.78,534.279;-24.78,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,534.279;-25.49,534.279)/(-25.49,534.279;-25.49,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,334.279;-25.87,334.279)/(-25.87,334.279;-25.87,334.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,529.721;-25.87,529.721)/(-25.87,529.721;-25.87,529.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,329.721;-25.87,329.721)/(-25.87,329.721;-25.87,329.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,534.279;-25.87,534.279)/(-25.87,534.279;-25.87,534.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,129.721;-25.87,129.721)/(-25.87,129.721;-25.87,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.87,134.279;-25.87,134.279)/(-25.87,134.279;-25.87,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-4.11,306.721;-4.11,306.721)/(-4.11,306.721;-4.11,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-3.73,306.721;-3.73,306.721)/(-3.73,306.721;-3.73,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,129.721;-10.41,129.721)/(-10.41,129.721;-10.41,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,129.721;-10.03,129.721)/(-10.03,129.721;-10.03,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.77,118.221;-5.77,118.221)/(-5.77,118.221;-5.77,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.39,118.221;-5.39,118.221)/(-5.39,118.221;-5.39,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-4.11,118.221;-4.11,118.221)/(-4.11,118.221;-4.11,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-3.73,118.221;-3.73,118.221)/(-3.73,118.221;-3.73,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-3.73,145.779;-3.73,145.779)/(-3.73,145.779;-3.73,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-4.11,145.779;-4.11,145.779)/(-4.11,145.779;-4.11,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.39,145.779;-5.39,145.779)/(-5.39,145.779;-5.39,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.77,145.779;-5.77,145.779)/(-5.77,145.779;-5.77,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.03,134.279;-10.03,134.279)/(-10.03,134.279;-10.03,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-10.41,134.279;-10.41,134.279)/(-10.41,134.279;-10.41,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,134.279;-11.12,134.279)/(-11.12,134.279;-11.12,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,134.279;-11.5,134.279)/(-11.5,134.279;-11.5,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,134.279;-12.37,134.279)/(-12.37,134.279;-12.37,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,134.279;-12.75,134.279)/(-12.75,134.279;-12.75,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,134.279;-13.46,134.279)/(-13.46,134.279;-13.46,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,134.279;-13.84,134.279)/(-13.84,134.279;-13.84,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.1,145.779;-18.1,145.779)/(-18.1,145.779;-18.1,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.48,145.779;-18.48,145.779)/(-18.48,145.779;-18.48,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-19.76,145.779;-19.76,145.779)/(-19.76,145.779;-19.76,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-20.14,145.779;-20.14,145.779)/(-20.14,145.779;-20.14,145.779)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,134.279;-24.4,134.279)/(-24.4,134.279;-24.4,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,134.279;-24.78,134.279)/(-24.78,134.279;-24.78,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,134.279;-25.49,134.279)/(-25.49,134.279;-25.49,134.279)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-25.49,129.721;-25.49,129.721)/(-25.49,129.721;-25.49,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.78,129.721;-24.78,129.721)/(-24.78,129.721;-24.78,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-24.4,129.721;-24.4,129.721)/(-24.4,129.721;-24.4,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-20.14,118.221;-20.14,118.221)/(-20.14,118.221;-20.14,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-19.76,118.221;-19.76,118.221)/(-19.76,118.221;-19.76,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-20.14,306.721;-20.14,306.721)/(-20.14,306.721;-20.14,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-19.76,306.721;-19.76,306.721)/(-19.76,306.721;-19.76,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.48,306.721;-18.48,306.721)/(-18.48,306.721;-18.48,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.1,306.721;-18.1,306.721)/(-18.1,306.721;-18.1,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.48,118.221;-18.48,118.221)/(-18.48,118.221;-18.48,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-18.1,118.221;-18.1,118.221)/(-18.1,118.221;-18.1,118.221)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.84,129.721;-13.84,129.721)/(-13.84,129.721;-13.84,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-13.46,129.721;-13.46,129.721)/(-13.46,129.721;-13.46,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.75,129.721;-12.75,129.721)/(-12.75,129.721;-12.75,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-12.37,129.721;-12.37,129.721)/(-12.37,129.721;-12.37,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.5,129.721;-11.5,129.721)/(-11.5,129.721;-11.5,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-11.12,129.721;-11.12,129.721)/(-11.12,129.721;-11.12,129.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.77,306.721;-5.77,306.721)/(-5.77,306.721;-5.77,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>lna_core_parts</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-5.39,306.721;-5.39,306.721)/(-5.39,306.721;-5.39,306.721)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,-23.361;-8.205,-23.361)/(-8.205,-23.361;-8.205,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,23.361;-8.205,23.361)/(-8.205,23.361;-8.205,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,23.361;-7.825,23.361)/(-7.825,23.361;-7.825,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,23.361;-6.545,23.361)/(-6.545,23.361;-6.545,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,23.361;-6.165,23.361)/(-6.165,23.361;-6.165,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,23.361;6.165,23.361)/(6.165,23.361;6.165,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,23.361;6.545,23.361)/(6.545,23.361;6.545,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,23.361;7.825,23.361)/(7.825,23.361;7.825,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,23.361;8.205,23.361)/(8.205,23.361;8.205,23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,-23.361;8.205,-23.361)/(8.205,-23.361;8.205,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,-23.361;7.825,-23.361)/(7.825,-23.361;7.825,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,-23.361;6.545,-23.361)/(6.545,-23.361;6.545,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,-23.361;6.165,-23.361)/(6.165,-23.361;6.165,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,-23.361;-6.165,-23.361)/(-6.165,-23.361;-6.165,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,-23.361;-6.545,-23.361)/(-6.545,-23.361;-6.545,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,-23.361;-7.825,-23.361)/(-7.825,-23.361;-7.825,-23.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,-11.861;-8.205,-11.861)/(-8.205,-11.861;-8.205,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,11.861;-8.205,11.861)/(-8.205,11.861;-8.205,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,11.861;-7.825,11.861)/(-7.825,11.861;-7.825,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,11.861;-6.545,11.861)/(-6.545,11.861;-6.545,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,11.861;-6.165,11.861)/(-6.165,11.861;-6.165,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,11.861;6.165,11.861)/(6.165,11.861;6.165,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,11.861;6.545,11.861)/(6.545,11.861;6.545,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,11.861;7.825,11.861)/(7.825,11.861;7.825,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,11.861;8.205,11.861)/(8.205,11.861;8.205,11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,-11.861;8.205,-11.861)/(8.205,-11.861;8.205,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,-11.861;7.825,-11.861)/(7.825,-11.861;7.825,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,-11.861;6.545,-11.861)/(6.545,-11.861;6.545,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,-11.861;6.165,-11.861)/(6.165,-11.861;6.165,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,-11.861;-6.165,-11.861)/(-6.165,-11.861;-6.165,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,-11.861;-6.545,-11.861)/(-6.545,-11.861;-6.545,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_2R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,-11.861;-7.825,-11.861)/(-7.825,-11.861;-7.825,-11.861)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,-46.361;-8.205,-46.361)/(-8.205,-46.361;-8.205,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-8.205,46.361;-8.205,46.361)/(-8.205,46.361;-8.205,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,46.361;-7.825,46.361)/(-7.825,46.361;-7.825,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,46.361;-6.545,46.361)/(-6.545,46.361;-6.545,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,46.361;-6.165,46.361)/(-6.165,46.361;-6.165,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,46.361;6.165,46.361)/(6.165,46.361;6.165,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,46.361;6.545,46.361)/(6.545,46.361;6.545,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,46.361;7.825,46.361)/(7.825,46.361;7.825,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,46.361;8.205,46.361)/(8.205,46.361;8.205,46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (8.205,-46.361;8.205,-46.361)/(8.205,-46.361;8.205,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (7.825,-46.361;7.825,-46.361)/(7.825,-46.361;7.825,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.545,-46.361;6.545,-46.361)/(6.545,-46.361;6.545,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (6.165,-46.361;6.165,-46.361)/(6.165,-46.361;6.165,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.165,-46.361;-6.165,-46.361)/(-6.165,-46.361;-6.165,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-6.545,-46.361;-6.545,-46.361)/(-6.545,-46.361;-6.545,-46.361)</value>
-   </values>
-  </item>
-  <item>
-   <tags/>
-   <category>metal1_OFFGRID</category>
-   <cell>Load_0p5R</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment/>
-   <image/>
-   <values>
-    <value>edge-pair: (-7.825,-46.361;-7.825,-46.361)/(-7.825,-46.361;-7.825,-46.361)</value>
    </values>
   </item>
   <item>
