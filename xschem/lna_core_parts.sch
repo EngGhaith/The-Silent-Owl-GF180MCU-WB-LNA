@@ -98,3 +98,4 @@ C {iopin.sym} 780 -600 2 1 {name=p28 lab=deemb_s}
 C {iopin.sym} 1150 -600 2 0 {name=p29 lab=deemb_2r}
 C {iopin.sym} 1150 -680 2 0 {name=p30 lab=deemb_0p5r}
 C {iopin.sym} 1150 -760 2 0 {name=p31 lab=deemb_r}
+C {iopin.sym} 780 -720 2 1 {name=p32 lab=open_dummy_lvs}
