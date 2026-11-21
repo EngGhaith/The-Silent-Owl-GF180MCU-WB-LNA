@@ -25,7 +25,7 @@ C {iopin.sym} 270 -340 0 1 {name=p1 lab=vss}
 C {lab_pin.sym} 310 -340 2 0 {name=p2 sig_type=std_logic lab=vss
 }
 C {opin.sym} 1130 -260 0 0 {name=p3 lab=input_cg}
-C {LEQ_model.sym} 710 -120 0 0 {name=XLEQ}
+C {LEQ_model.sym} 710 -120 0 0 {name=XXLEQ}
 C {lab_pin.sym} 850 -120 1 0 {name=pRLEQ_T2 sig_type=std_logic lab=vss}
 C {iopin.sym} 410 -260 0 1 {name=p6 lab=rf_in_pad}
 C {symbols/cap_mim_2f0fF.sym} 860 -260 3 0 {name=C15

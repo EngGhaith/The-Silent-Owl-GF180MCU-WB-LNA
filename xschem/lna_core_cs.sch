@@ -122,7 +122,7 @@ C {lab_pin.sym} 460 -330 0 0 {name=p5 sig_type=std_logic lab=vm1}
 C {iopin.sym} 60 -560 2 0 {name=p11 lab=vss}
 C {lab_pin.sym} 100 -560 2 0 {name=p13 sig_type=std_logic lab=vss
 }
-C {LD2_model.sym} 370 -690 0 1 {name=XLD2}
+C {LD2_model.sym} 370 -690 0 1 {name=XXLD2}
 C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }

@@ -46,6 +46,22 @@ PDK_KL = "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
 CELLS = ["input_match", "cg", "cs", "output_match", "parts"]
 SHORTS = {"lna_core_cs": {"net1": "vss"}}  # RS_EQ1
 
+# gf180mcu.lvs's own spice reader can't handle a hyphenated, unquoted .lib path ("Expected a word or quoted
+# string here") -- this repo's own directory name (The-Silent-Owl-...) has hyphens, and the LVS_MODELS .lib
+# includes (see each schematic's own code block) resolve $::env(PWD) straight into the netlist text, verbatim
+# and unquoted, since neither xschem nor the PDK's spice converter resolve .lib themselves. A hyphen-free
+# symlink to XSCHEM sidesteps the parser limitation entirely without touching gf180mcu.lvs itself.
+XSCHEM_PWD_LINK = "/tmp/lna_xschem_nolink"
+
+
+def xschem_pwd():
+    target = os.path.realpath(XSCHEM)
+    if os.path.realpath(XSCHEM_PWD_LINK) != target:
+        if os.path.islink(XSCHEM_PWD_LINK) or os.path.exists(XSCHEM_PWD_LINK):
+            os.remove(XSCHEM_PWD_LINK)
+        os.symlink(target, XSCHEM_PWD_LINK)
+    return XSCHEM_PWD_LINK
+
 
 def snap(v_um):
     """MIM W/L as drawn (make_lna_core_layouts.um_grid): rounded to 10 nm"""
@@ -86,8 +102,10 @@ def ref_netlist(cell, out_dir):
     raw = os.path.join(out_dir, cell + "_xschem.spice")
     # $::env(PWD) (used by the LVS_MODELS .lib includes, see xschem/lna_core_parts.sch) reads the inherited PWD
     # environment variable, not the actual cwd set below -- subprocess's cwd= alone doesn't update it, so it has
-    # to be set explicitly here or xschem resolves those .lib paths against the caller's own cwd instead.
-    env = dict(os.environ, PWD=XSCHEM)
+    # to be set explicitly here or xschem resolves those .lib paths against the caller's own cwd instead. Uses
+    # the hyphen-free symlink (see xschem_pwd()) rather than XSCHEM itself, so the resulting .lib path text is
+    # safe for gf180mcu.lvs's own reader too, not just this function's own _flatten_libs().
+    env = dict(os.environ, PWD=xschem_pwd())
     subprocess.run(["xschem", "-q", "-x", "-n", "-s", "-o", out_dir, "--netlist_filename", os.path.basename(raw),
                     os.path.join(XSCHEM, cell + ".sch")], cwd=XSCHEM, env=env, check=True, capture_output=True)
     conv = os.path.join(out_dir, cell + "_conv.spice")
