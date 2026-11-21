@@ -52,16 +52,50 @@ def snap(v_um):
     return round(v_um, 2)
 
 
+def _lib_section_lines(path, section):
+    """lines of one named '.lib <section>' / '.endl <section>' block in an external library file"""
+    active = False
+    for raw in open(path):
+        s = raw.strip()
+        low = s.lower()
+        if low.startswith(".lib "):
+            active = s.split()[-1].lower() == section.lower()
+            continue
+        if low.startswith(".endl"):
+            active = False
+            continue
+        if active:
+            yield raw.rstrip("\n")
+
+
+def _flatten_libs(path):
+    """yield every line of `path`, inlining any top-level '.lib <file> <section>' directive in place --
+    neither xschem's netlister nor the PDK's spice converter resolve these themselves (both just pass the
+    line through verbatim, same as any other spice directive meant for whatever reads the netlist next), so
+    ref_netlist() has to do it before its own .subckt/.ends scan below can see what a .lib include resolves to"""
+    for raw in open(path):
+        s = raw.strip()
+        if s.lower().startswith(".lib "):
+            tok = s.split()
+            yield from _lib_section_lines(tok[1], tok[2])
+        else:
+            yield raw.rstrip("\n")
+
+
 def ref_netlist(cell, out_dir):
     raw = os.path.join(out_dir, cell + "_xschem.spice")
+    # $::env(PWD) (used by the LVS_MODELS .lib includes, see xschem/lna_core_parts.sch) reads the inherited PWD
+    # environment variable, not the actual cwd set below -- subprocess's cwd= alone doesn't update it, so it has
+    # to be set explicitly here or xschem resolves those .lib paths against the caller's own cwd instead.
+    env = dict(os.environ, PWD=XSCHEM)
     subprocess.run(["xschem", "-q", "-x", "-n", "-s", "-o", out_dir, "--netlist_filename", os.path.basename(raw),
-                    os.path.join(XSCHEM, cell + ".sch")], cwd=XSCHEM, check=True, capture_output=True)
+                    os.path.join(XSCHEM, cell + ".sch")], cwd=XSCHEM, env=env, check=True, capture_output=True)
     conv = os.path.join(out_dir, cell + "_conv.spice")
     subprocess.run(["python3", os.path.join(PDK_KL, "lvs", "gf180_xschem_klayout_spice_convert.py"), raw, "-o", conv],
                    check=True, capture_output=True)
     # sub-circuits: the netlisted schematic ("**.subckt" comment header) and, for lna_core_parts, its blocks
     subs, cur = {}, None
-    for ln in (ln.strip() for ln in open(conv)):
+    for ln in (l.strip() for l in _flatten_libs(conv)):
         if ln.lstrip("*").lower().startswith(".subckt"):
             tok = ln.lstrip("*").split()
             cur = tok[1]
@@ -83,8 +117,14 @@ def ref_netlist(cell, out_dir):
 
 def map_subckt(cell, pins, body):
     """schematic -> drawn devices (see module doc); returns (pins, element lines)"""
-    # inductors (ideal L or EM coil models *_model) + ideal resistors in series with them (loss models): drop
-    is_ind = lambda tok: tok[0][0] in "Ll" or tok[-1].lower().endswith("_model")
+    # bare ideal inductors (no PDK device to compare against): drop. These parse as exactly 4 tokens with a
+    # numeric (with unit suffix) value, e.g. "L1 p1 p2 1.37n". *_model calls (LEQ_MODEL etc.) are NOT dropped
+    # here even though the PDK's spice converter strips their leading "X" too (so "XLEQ ... LEQ_model" becomes
+    # "LEQ ... LEQ_model", also starting with "L") -- the LVS-only "lvsrm" .lib selection (see each schematic's
+    # LVS_MODELS code block) always resolves them to a real PDK metal-resistor subckt by the time this runs,
+    # so they must pass through normally; the numeric-value check is what tells the two apart.
+    _numeric_value = re.compile(r"^[\d.]+[a-zA-Z]*$")
+    is_ind = lambda tok: tok[0][0] in "Ll" and len(tok) == 4 and bool(_numeric_value.match(tok[3]))
     ind_nets = set()
     for ln in body:
         if is_ind(ln.split()):
@@ -105,6 +145,14 @@ def map_subckt(cell, pins, body):
         if "cap_mim_2f0_m4m5_noshield" in tok:
             tok = ["cap_mim_2f0fF" if t == "cap_mim_2f0_m4m5_noshield" else t for t in tok]
             tok = [re.sub(r"^([WL])=([\d.]+)u$", lambda m_: f"{m_.group(1)}={snap(float(m_.group(2)))}u", t) for t in tok]
+        if tok[-1].lower().endswith("_model") and tok[0][0] not in "Xx":
+            # the PDK's spice converter unconditionally strips the leading "X" off every instance (see
+            # SpicePrefixRemovalRule in gf180_xschem_klayout_spice_convert.py) -- fine for this PDK's own
+            # M../R..-style primitives, but a *_model subcircuit call whose remaining name happens to start
+            # with another SPICE-reserved letter (L for an inductor, same issue hit with O/B at the lna_top
+            # level for OTA/bandgap/bias) gets misread by gf180mcu.lvs's own reader as that primitive device
+            # instead of a subcircuit reference. Restoring the "X" is what the line actually needs to parse.
+            tok[0] = "X" + tok[0]
         out.append(" ".join(tok))
     pins = [short.get(p, p) for p in pins]
     return list(dict.fromkeys(pins)), out

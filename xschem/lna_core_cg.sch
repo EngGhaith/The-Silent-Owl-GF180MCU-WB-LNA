@@ -128,5 +128,12 @@ C {opin.sym} 1010 -760 0 0 {name=p26 lab=output_cs}
 C {LD4_model.sym} 650 -960 0 0 {name=XLD4}
 C {lab_pin.sym} 520 -960 1 0 {name=pRLD4_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 800 -960 1 0 {name=pRLD4_T2 sig_type=std_logic lab=vm2}
-C {LSHUNT_OUT_model.sym} 920 -180 0 0 {name=XL1}
+C {L1_model.sym} 920 -180 0 0 {name=XL1}
 C {lab_pin.sym} 1050 -180 1 0 {name=pRL1_T2 sig_type=std_logic lab=vss}
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection, see lna_core_parts.sch for details.
+.lib $::env(PWD)/L1_model.lib lvsrm
+.lib $::env(PWD)/LD4_model.lib lvsrm
+"}

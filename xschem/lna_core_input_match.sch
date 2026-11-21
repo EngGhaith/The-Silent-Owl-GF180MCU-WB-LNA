@@ -34,3 +34,9 @@ L=24.82u
 model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=1}
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection, see lna_core_parts.sch for details.
+.lib $::env(PWD)/LEQ_model.lib lvsrm
+"}

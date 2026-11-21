@@ -26,3 +26,9 @@ C {lab_pin.sym} 210 -380 2 0 {name=p4 sig_type=std_logic lab=vss
 C {opin.sym} 470 -300 0 0 {name=p5 lab=rf_out_pad}
 C {LSHUNT_OUT_model.sym} 580 -120 0 0 {name=XLSHUNT_OUT}
 C {lab_pin.sym} 730 -120 2 0 {name=pRLSHUNT_OUT_T2 sig_type=std_logic lab=vss}
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection, see lna_core_parts.sch for details.
+.lib $::env(PWD)/LSHUNT_OUT_model.lib lvsrm
+"}

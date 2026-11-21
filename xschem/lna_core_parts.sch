@@ -99,3 +99,17 @@ C {iopin.sym} 1150 -600 2 0 {name=p29 lab=deemb_2r}
 C {iopin.sym} 1150 -680 2 0 {name=p30 lab=deemb_0p5r}
 C {iopin.sym} 1150 -760 2 0 {name=p31 lab=deemb_r}
 C {iopin.sym} 780 -720 2 1 {name=p32 lab=open_dummy_lvs}
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection -- every coil in this hierarchy becomes
+* a PDK metal resistor device instead of an inductor, so the official
+* gf180mcu.lvs engine has something comparable to match against the
+* layout's resistor-marker geometry (see xschem/*_model.lib for the other
+* ideal/rl/snp2le simulation variants, untouched by this selection).
+.lib $::env(PWD)/LEQ_model.lib lvsrm
+.lib $::env(PWD)/L1_model.lib lvsrm
+.lib $::env(PWD)/LSHUNT_OUT_model.lib lvsrm
+.lib $::env(PWD)/LD2_model.lib lvsrm
+.lib $::env(PWD)/LD4_model.lib lvsrm
+"}

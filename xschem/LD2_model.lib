@@ -86,3 +86,18 @@ Gdcp_y1_1 p1 0 dcp_d1 0 -0.9259557146208686
 Vp2gnd p2 0 0  ; port 2 shorted to the guard ring (ground) -- single-ended EM sim, port 1 only
 .ENDS LD2_MODEL
 .endl snp2le
+
+.lib lvsrm
+.SUBCKT LD2_MODEL p1 p2
+* LVS-only: PDK metal4 resistor standing in for the coil -- not an
+* electrical fit, purely a structural device for LVS (see user's spec).
+R1 p1 p2 rm4 W=7u L=1u
+.ENDS LD2_MODEL
+.endl lvsrm
+
+.lib lvssc
+.SUBCKT LD2_MODEL p1 p2
+* LVS-only diagnostic: p1/p2 deliberately shorted together, see LEQ_model.lib.
+R1 p1 p2 0
+.ENDS LD2_MODEL
+.endl lvssc

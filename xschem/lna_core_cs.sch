@@ -133,3 +133,9 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=4}
 C {lab_pin.sym} 50 -280 3 0 {name=p30 sig_type=std_logic lab=vss}
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection, see lna_core_parts.sch for details.
+.lib $::env(PWD)/LD2_model.lib lvsrm
+"}
