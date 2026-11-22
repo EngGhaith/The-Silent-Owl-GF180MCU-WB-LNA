@@ -17,9 +17,16 @@ DRC: gf180mcu.drc (invoked directly via klayout -b -r, same as gf180mcu.lvs belo
   an artifact of checking "lna_core_parts" in isolation from the padframe. Do not chase this one; if the exact
   rule names or count ever change, that is worth a fresh look, but this specific set is a known baseline.
 LVS: reference = xschem netlist of xschem/<cell>.sch (netlisted here, then PDK spice converter) with
-  - inductors and their ideal loss resistors removed (no inductor device in the PDK LVS deck); the spiral / coil
-    cells (<cell>__L*, coils with their sub cells) are removed from the layout copy as well, so both inductor
-    terminals stay separate nets
+  - bare ideal inductors and their ideal loss resistors removed; the coils themselves (*_model, "lvsrm" .lib
+    section) are compared as PDK metal resistors: the layout carries a metal*_res marker (110/1x) across each
+    coil's feed line, and the coil cells STAY in the layout copy (they are the metal that connects the resistor
+    to the coil's other port -- removing them, as an older version of this script did, left every coil
+    resistor with one floating terminal)
+  - ppolyf resistors with m=<k>: expanded to W*k (KLayout's spice reader ignores m on resistors, the layout's
+    parallel fingers are combined into one device of summed W)
+  - deck: klayout/lvs_deck_gf180mcuD (PDK deck + one connect() patch, see its README_PATCH.md -- without it
+    every tm11k terminal is floating); NB the 5LM deck has no rm4 device at all, so coil stand-ins must use
+    rm2 / rm3 / tm11k
   - RS_EQ1 (0.05 ohm M3 source model) shorted: net1 -> vss
   - MIM W/L rounded to 10 nm like the layout, cap_mim_2f0_m4m5_noshield -> cap_mim_2f0fF
   - ideal capa.sym capacitors (C1 of the input / output match) -> cap_mim_2f0fF with the drawn W/L
@@ -43,7 +50,15 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 XSCHEM = os.path.join(HERE, "..", "xschem")
 PDK_KL = "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
+LVS_DECK = os.path.join(HERE, "lvs_deck_gf180mcuD", "gf180mcu.lvs")  # locally patched copy, see README_PATCH.md
 CELLS = ["input_match", "cg", "cs", "output_match", "parts"]
+# layout file per cell (default <cell>.gds): the current lna_core_parts layout is lna_top2.gds (top cell
+# lna_core_parts); the standalone lna_core_parts.gds is an older snapshot
+LAYOUT_GDS = {"lna_core_parts": "lna_top2.gds"}
+
+
+def gds_of(cell):
+    return os.path.join(HERE, LAYOUT_GDS.get(cell, cell + ".gds"))
 SHORTS = {"lna_core_cs": {"net1": "vss"}}  # RS_EQ1
 
 # gf180mcu.lvs's own spice reader can't handle a hyphenated, unquoted .lib path ("Expected a word or quoted
@@ -160,6 +175,13 @@ def map_subckt(cell, pins, body):
         if tok[0][0] in "Cc" and len(tok) == 4:  # ideal C: name n1 n2 value -> MIM as drawn
             mim = json.load(open(os.path.join(HERE, "lna_core_layouts.json")))[cell][tok[0]]
             tok = tok[:3] + ["cap_mim_2f0fF", f"W={mim['W']}u", f"L={mim['L']}u"]
+        if any(t.lower().startswith("ppolyf") for t in tok):
+            mult = [t for t in tok if t.lower().startswith("m=")]
+            if mult and float(mult[0][2:]) != 1:
+                k = float(mult[0][2:])
+                tok = [t for t in tok if t not in mult]
+                tok = [re.sub(r"^W=([\d.eE+-]+)(u?)$", lambda m_: f"W={float(m_.group(1)) * k:g}{m_.group(2)}", t)
+                       for t in tok]
         if "cap_mim_2f0_m4m5_noshield" in tok:
             tok = ["cap_mim_2f0fF" if t == "cap_mim_2f0_m4m5_noshield" else t for t in tok]
             tok = [re.sub(r"^([WL])=([\d.]+)u$", lambda m_: f"{m_.group(1)}={snap(float(m_.group(2)))}u", t) for t in tok]
@@ -181,7 +203,7 @@ def decap_lines():
     vdd (top plate) and vss (bottom plate), multiplicity = number of plates found in the layout"""
     import klayout.db as kdb
     ly = kdb.Layout()
-    ly.read(os.path.join(HERE, "lna_core_parts.gds"))
+    ly.read(gds_of("lna_core_parts"))
     top = ly.cell("lna_core_parts")
     ft = kdb.Region(top.begin_shapes_rec(ly.layer(75, 0))).merged()  # FuseTop = MIM top plates
     blocks = kdb.Region()
@@ -197,15 +219,12 @@ def decap_lines():
 
 
 def lvs_layout(cell, out_dir):
-    """copy of the layout without the spiral inductor cells; lna_core_parts is flattened (strict top-level check:
+    """copy of the layout (coil cells kept, see module doc); lna_core_parts is flattened (strict top-level check:
     the blocks' vss / vdd pieces must be joined by real metal, see run_lvs)"""
-    gds = os.path.join(HERE, cell + ".gds")
+    gds = gds_of(cell)
     scr = os.path.join(out_dir, "strip.py")
     open(scr, "w").write(
         "import pya\nly = pya.Layout()\nly.read(src)\n"
-        "ind = [c.cell_index() for c in ly.each_cell() if '__' in c.name and c.name.split('__')[-1][:1] == 'L']\n"
-        "for ci in ind:\n"
-        "    ly.prune_cell(ci, -1)  # with the coil sub cells\n"
         "if flat == '1':\n"
         "    ly.top_cell().flatten(True)\n"
         "ly.write(dst)\n")
@@ -232,7 +251,7 @@ def run_drc(cell, run_dir):
     if os.path.exists(report):
         os.remove(report)
     r = subprocess.run(["klayout", "-b", "-r", os.path.join(PDK_KL, "drc", "gf180mcu.drc"),
-                        "-rd", f"input={os.path.join(HERE, cell + '.gds')}", "-rd", f"report={report}",
+                        "-rd", f"input={gds_of(cell)}", "-rd", f"report={report}",
                         "-rd", "variant=D", "-rd", "run_mode=deep", "-rd", "workers=8",
                         "-rd", "decks=all,-density,-dummy_comp"], capture_output=True, text=True)
     log = r.stdout + r.stderr
@@ -257,7 +276,7 @@ def run_lvs(cell, run_dir):
           "scale": "false", "schematic_simplify": "false", "net_only": "false", "top_lvl_pins": "true", "combine": "true",
           "purge": "false", "purge_nets": "false", "implicit_connect": "false" if cell == "lna_core_parts" else "true", "topcell": cell, "input": lay,
           "schematic": ref, "report": os.path.join(d, cell + ".lvsdb"), "target_netlist": os.path.join(d, cell + ".cir")}
-    cmd = ["klayout", "-b", "-r", os.path.join(PDK_KL, "lvs", "gf180mcu.lvs")]
+    cmd = ["klayout", "-b", "-r", LVS_DECK]
     for k, v in sw.items():
         cmd += ["-rd", f"{k}={v}"]
     r = subprocess.run(cmd, capture_output=True, text=True, cwd=d)
