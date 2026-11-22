@@ -32,12 +32,6 @@
    </categories>
   </category>
   <category>
-   <name>V1.3c</name>
-   <description>V1.3c : metal1 (&lt; 0.34um) end-of-line overlap of via1: 0.06µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>V1.4b</name>
    <description>V1.4b : metal2 (&lt; 0.34um) end-of-line overlap of via1 : 0.06µm</description>
    <categories>
@@ -46,6 +40,12 @@
   <category>
    <name>V2.2a</name>
    <description>V2.2a : min. via2 spacing : 0.26µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>V1.3c</name>
+   <description>V1.3c : metal1 (&lt; 0.34um) end-of-line overlap of via1: 0.06µm</description>
    <categories>
    </categories>
   </category>
@@ -68,14 +68,14 @@
    </categories>
   </category>
   <category>
-   <name>V2.3b</name>
-   <description>V2.3b : metal2 overlap of via2 &gt;= 0.01</description>
+   <name>V2.4a</name>
+   <description>V2.4a : metal3 overlap of via2 &gt;= 0.01 upper_metal</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V2.4a</name>
-   <description>V2.4a : metal3 overlap of via2 &gt;= 0.01 upper_metal</description>
+   <name>V2.3b</name>
+   <description>V2.3b : metal2 overlap of via2 &gt;= 0.01</description>
    <categories>
    </categories>
   </category>
@@ -86,14 +86,14 @@
    </categories>
   </category>
   <category>
-   <name>V2.3c</name>
-   <description>V2.3c : metal2 (&lt; 0.34um) end-of-line overlap of via2: 0.06µm</description>
+   <name>V2.2b</name>
+   <description>V2.2b : Space in 4x4 or larger via2 array : 0.36µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V2.2b</name>
-   <description>V2.2b : Space in 4x4 or larger via2 array : 0.36µm</description>
+   <name>V2.3c</name>
+   <description>V2.3c : metal2 (&lt; 0.34um) end-of-line overlap of via2: 0.06µm</description>
    <categories>
    </categories>
   </category>
@@ -104,14 +104,14 @@
    </categories>
   </category>
   <category>
-   <name>V2.3d</name>
-   <description>V2.3d : If metal2 overlap via2 by &lt; 0.04um on one side, adjacent metal2 edges overlap. : 0.06µm</description>
+   <name>V2.4b</name>
+   <description>V2.4b : metal3 (&lt; 0.34um) end-of-line overlap of via2 : 0.06µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V2.4b</name>
-   <description>V2.4b : metal3 (&lt; 0.34um) end-of-line overlap of via2 : 0.06µm</description>
+   <name>V2.3d</name>
+   <description>V2.3d : If metal2 overlap via2 by &lt; 0.04um on one side, adjacent metal2 edges overlap. : 0.06µm</description>
    <categories>
    </categories>
   </category>
@@ -128,14 +128,14 @@
    </categories>
   </category>
   <category>
-   <name>V3.4a</name>
-   <description>V3.4a : metal4 overlap of via3 &gt;= 0.01 upper_metal</description>
+   <name>V3.1</name>
+   <description>V3.1 : Min/max via3 size . : 0.26µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>V3.1</name>
-   <description>V3.1 : Min/max via3 size . : 0.26µm</description>
+   <name>V3.4a</name>
+   <description>V3.4a : metal4 overlap of via3 &gt;= 0.01 upper_metal</description>
    <categories>
    </categories>
   </category>
@@ -1052,24 +1052,6 @@
    </categories>
   </category>
   <category>
-   <name>ANT.16_i_ANT.5</name>
-   <description>ANT.16_i_ANT.5: Maximum ratio of Metal4 perimeter area to related gate oxide area: 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_ii_ANT.5</name>
-   <description>ANT.16_ii_ANT.5: Maximum ratio of Metal4 perimeter area to related gate oxide area: 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_iii_ANT.14_M4_MIMB</name>
-   <description>ANT.16_iii_ANT.14_M4_MIMB: Maximum ratio of Metal4 perimeter area to related MIM area is 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>via3_OFFGRID</name>
    <description>OFFGRID : OFFGRID vertex on via3</description>
    <categories>
@@ -1142,146 +1124,20 @@
    </categories>
   </category>
   <category>
-   <name>contact_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on contact</description>
+   <name>ANT.16_i_ANT.5</name>
+   <description>ANT.16_i_ANT.5: Maximum ratio of Metal4 perimeter area to related gate oxide area: 400</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>contact_ACUTE</name>
-   <description>ACUTE : non 45 degree angle contact</description>
+   <name>ANT.16_ii_ANT.5</name>
+   <description>ANT.16_ii_ANT.5: Maximum ratio of Metal4 perimeter area to related gate oxide area: 400</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>metal1_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_slot_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal1_slot</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_slot_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal1_slot</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_blk_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal1_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_blk_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal1_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_label_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal1_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_label_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal1_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_res_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal1_res</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal1_res_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal1_res</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>via1_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on via1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>via1_ACUTE</name>
-   <description>ACUTE : non 45 degree angle via1</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal2</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal2</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_label_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal2_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_label_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal2_label</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_slot_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal2_slot</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_slot_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal2_slot</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_blk_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal2_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_blk_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal2_blk</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_res_OFFGRID</name>
-   <description>OFFGRID : OFFGRID vertex on metal2_res</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>metal2_res_ACUTE</name>
-   <description>ACUTE : non 45 degree angle metal2_res</description>
+   <name>ANT.16_iii_ANT.14_M4_MIMB</name>
+   <description>ANT.16_iii_ANT.14_M4_MIMB: Maximum ratio of Metal4 perimeter area to related MIM area is 400</description>
    <categories>
    </categories>
   </category>
@@ -1430,6 +1286,150 @@
    </categories>
   </category>
   <category>
+   <name>contact_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on contact</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>contact_ACUTE</name>
+   <description>ACUTE : non 45 degree angle contact</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_slot_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal1_slot</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_slot_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal1_slot</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_blk_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal1_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_blk_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal1_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_label_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal1_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_label_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal1_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_res_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal1_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_res_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal1_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on via1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1_ACUTE</name>
+   <description>ACUTE : non 45 degree angle via1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_label_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal2_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_label_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal2_label</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_slot_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal2_slot</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_slot_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal2_slot</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_blk_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal2_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_blk_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal2_blk</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_res_OFFGRID</name>
+   <description>OFFGRID : OFFGRID vertex on metal2_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_res_ACUTE</name>
+   <description>ACUTE : non 45 degree angle metal2_res</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>CO.10</name>
    <description>CO.10 : Contact on Poly2 gate over COMP is forbidden</description>
    <categories>
@@ -1484,24 +1484,6 @@
    </categories>
   </category>
   <category>
-   <name>ANT.16_i_ANT.6</name>
-   <description>ANT.16_i_ANT.6: Maximum ratio of Metal5 perimeter area to related thin gate oxide area: 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_ii_ANT.6</name>
-   <description>ANT.16_ii_ANT.6: Maximum ratio of Metal5 perimeter area to related thick gate oxide area 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>ANT.16_iii_ANT.14_M5_MIMB</name>
-   <description>ANT.16_iii_ANT.14_M5_MIMB: Maximum ratio of Metal5 perimeter area to related MIM area is 400</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>ANT.16_i_ANT.12</name>
    <description>ANT.16_i_ANT.12: Maximum ratio of Via4 area to related thin gate oxide area: 20</description>
    <categories>
@@ -1520,8 +1502,32 @@
    </categories>
   </category>
   <category>
+   <name>ANT.16_i_ANT.6</name>
+   <description>ANT.16_i_ANT.6: Maximum ratio of Metal5 perimeter area to related thin gate oxide area: 400</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ANT.16_ii_ANT.6</name>
+   <description>ANT.16_ii_ANT.6: Maximum ratio of Metal5 perimeter area to related thick gate oxide area 400</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ANT.16_iii_ANT.14_M5_MIMB</name>
+   <description>ANT.16_iii_ANT.14_M5_MIMB: Maximum ratio of Metal5 perimeter area to related MIM area is 400</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>CO.1</name>
    <description>CO.1 : Min/max contact size. : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CO.6</name>
+   <description>CO.6 : Metal1 overlap of contact &gt;= 0.005 um</description>
    <categories>
    </categories>
   </category>
@@ -1538,8 +1544,8 @@
    </categories>
   </category>
   <category>
-   <name>CO.6</name>
-   <description>CO.6 : Metal1 overlap of contact &gt;= 0.005 um</description>
+   <name>CO.9</name>
+   <description>CO.9 : Contact must not straddle NCOMP/PCOMP butting edge</description>
    <categories>
    </categories>
   </category>
@@ -1550,8 +1556,14 @@
    </categories>
   </category>
   <category>
-   <name>CO.9</name>
-   <description>CO.9 : Contact must not straddle NCOMP/PCOMP butting edge</description>
+   <name>DF.11</name>
+   <description>DF.11 : Min. Length of butting COMP edge. : 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.10</name>
+   <description>DF.10 : Min. field area (um2). : 0.26µm²</description>
    <categories>
    </categories>
   </category>
@@ -1574,26 +1586,8 @@
    </categories>
   </category>
   <category>
-   <name>DF.10</name>
-   <description>DF.10 : Min. field area (um2). : 0.26µm²</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.11</name>
-   <description>DF.11 : Min. Length of butting COMP edge. : 0.3µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>DF.13_LV</name>
    <description>DF.13_LV : Max distance of Nwell tap (NCOMP inside Nwell) from (PCOMP inside Nwell): 20um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.13_MV</name>
-   <description>DF.13_MV : Max distance of Nwell tap (NCOMP inside Nwell) from (PCOMP inside Nwell): 15um</description>
    <categories>
    </categories>
   </category>
@@ -1604,8 +1598,8 @@
    </categories>
   </category>
   <category>
-   <name>DF.14_MV</name>
-   <description>DF.14_MV : Max distance of substrate tap (PCOMP outside Nwell) from (NCOMP outside Nwell): 15um</description>
+   <name>DF.13_MV</name>
+   <description>DF.13_MV : Max distance of Nwell tap (NCOMP inside Nwell) from (PCOMP inside Nwell): 15um</description>
    <categories>
    </categories>
   </category>
@@ -1616,20 +1610,14 @@
    </categories>
   </category>
   <category>
+   <name>DF.14_MV</name>
+   <description>DF.14_MV : Max distance of substrate tap (PCOMP outside Nwell) from (NCOMP outside Nwell): 15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.16_LV</name>
    <description>DF.16_LV : Min. space from (Nwell outside DNWELL) to (NCOMP outside Nwell and DNWELL). : 0.43µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CO.6a</name>
-   <description>CO.6a : Metal1 EOL overlap (&lt;0.34µm lines) : 0.06µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.17_MV</name>
-   <description>DF.17_MV : Min. space from (Nwell Outside DNWELL) to (PCOMP outside Nwell and DNWELL). : 0.16µm</description>
    <categories>
    </categories>
   </category>
@@ -1640,8 +1628,20 @@
    </categories>
   </category>
   <category>
+   <name>CO.6a</name>
+   <description>CO.6a : Metal1 EOL overlap (&lt;0.34µm lines) : 0.06µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.18</name>
    <description>DF.18 : Min. DNWELL space to (PCOMP outside Nwell and DNWELL). : 2.5µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DF.17_MV</name>
+   <description>DF.17_MV : Min. space from (Nwell Outside DNWELL) to (PCOMP outside Nwell and DNWELL). : 0.16µm</description>
    <categories>
    </categories>
   </category>
@@ -1670,14 +1670,14 @@
    </categories>
   </category>
   <category>
-   <name>DF.1a_MV</name>
-   <description>DF.1a_MV : Min. COMP Width. : 0.3µm</description>
+   <name>DF.1a_LV</name>
+   <description>DF.1a_LV : Min. COMP Width. : 0.22µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>DF.1a_LV</name>
-   <description>DF.1a_LV : Min. COMP Width. : 0.22µm</description>
+   <name>DF.1a_MV</name>
+   <description>DF.1a_MV : Min. COMP Width. : 0.3µm</description>
    <categories>
    </categories>
   </category>
@@ -1688,15 +1688,15 @@
    </categories>
   </category>
   <category>
-   <name>DF.2a_LV</name>
-   <description>DF.2a_LV : Min Channel Width. : 0.22µm</description>
+   <name>DF.2b</name>
+   <description>DF.2b : Max. COMP width for all cases except those used for capacitors,
+                  marked by 'MOS_CAP_MK' layer: 100um</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>DF.2b</name>
-   <description>DF.2b : Max. COMP width for all cases except those used for capacitors,
-                  marked by 'MOS_CAP_MK' layer: 100um</description>
+   <name>DF.2a_LV</name>
+   <description>DF.2a_LV : Min Channel Width. : 0.22µm</description>
    <categories>
    </categories>
   </category>
@@ -1715,15 +1715,15 @@
    </categories>
   </category>
   <category>
-   <name>DF.3b</name>
-   <description>DF.3b : Min./Max. NCOMP Space to PCOMP in the same well for butted COMP
-                  (MOSCAP butting is not allowed): 0 um</description>
+   <name>CO.6b</name>
+   <description>CO.6b : Adjacent metal1 edge overlap : 0.06µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>CO.6b</name>
-   <description>CO.6b : Adjacent metal1 edge overlap : 0.06µm</description>
+   <name>DF.3b</name>
+   <description>DF.3b : Min./Max. NCOMP Space to PCOMP in the same well for butted COMP
+                  (MOSCAP butting is not allowed): 0 um</description>
    <categories>
    </categories>
   </category>
@@ -1758,14 +1758,14 @@
    </categories>
   </category>
   <category>
-   <name>DF.4b_MV</name>
-   <description>DF.4b_MV : Min. DNWELL overlap of NCOMP well tap. : 0.66µm</description>
+   <name>DF.4c_LV</name>
+   <description>DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL. : 0.43µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>DF.4c_LV</name>
-   <description>DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL. : 0.43µm</description>
+   <name>DF.4b_MV</name>
+   <description>DF.4b_MV : Min. DNWELL overlap of NCOMP well tap. : 0.66µm</description>
    <categories>
    </categories>
   </category>
@@ -1782,14 +1782,14 @@
    </categories>
   </category>
   <category>
-   <name>DF.4e_MV</name>
-   <description>DF.4e_MV : Min. DNWELL overlap of PCOMP. : 1.1µm</description>
+   <name>DF.4d_LV</name>
+   <description>DF.4d_LV : Min. (Nwell overlap of NCOMP) outside DNWELL. : 0.12µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>DF.4d_LV</name>
-   <description>DF.4d_LV : Min. (Nwell overlap of NCOMP) outside DNWELL. : 0.12µm</description>
+   <name>DF.4e_MV</name>
+   <description>DF.4e_MV : Min. DNWELL overlap of PCOMP. : 1.1µm</description>
    <categories>
    </categories>
   </category>
@@ -1818,14 +1818,8 @@
    </categories>
   </category>
   <category>
-   <name>DF.6_LV</name>
-   <description>DF.6_LV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.24µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DF.7_MV</name>
-   <description>DF.7_MV : Min. (LVPWELL Spacer to PCOMP) inside DNWELL. : 0.6µm</description>
+   <name>DF.8_LV</name>
+   <description>DF.8_LV : Min. (LVPWELL overlap of NCOMP) Inside DNWELL. : 0.43µm</description>
    <categories>
    </categories>
   </category>
@@ -1836,8 +1830,8 @@
    </categories>
   </category>
   <category>
-   <name>DF.8_LV</name>
-   <description>DF.8_LV : Min. (LVPWELL overlap of NCOMP) Inside DNWELL. : 0.43µm</description>
+   <name>DF.7_MV</name>
+   <description>DF.7_MV : Min. (LVPWELL Spacer to PCOMP) inside DNWELL. : 0.6µm</description>
    <categories>
    </categories>
   </category>
@@ -1848,33 +1842,14 @@
    </categories>
   </category>
   <category>
+   <name>DF.6_LV</name>
+   <description>DF.6_LV : Min. COMP extend beyond gate (it also means source/drain overhang). : 0.24µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DF.9</name>
    <description>DF.9 : Min. COMP area (um2). : 0.2025µm²</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DN.1</name>
-   <description>DN.1 : Min. DNWELL Width : 1.7µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DN.2a</name>
-   <description>DN.2a : Min. DNWELL Space (Equi-potential), Merge if the space is less than : 2.5µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DN.2b</name>
-   <description>DN.2b : Min. DNWELL Space (Different potential) : 5.42µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DN.3</name>
-   <description>DN.3 : Each DNWELL shall be directly surrounded by PCOMP guard ring
-                tied to the P-substrate potential.</description>
    <categories>
    </categories>
   </category>
@@ -1916,6 +1891,31 @@
    </categories>
   </category>
   <category>
+   <name>DN.1</name>
+   <description>DN.1 : Min. DNWELL Width : 1.7µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DN.2a</name>
+   <description>DN.2a : Min. DNWELL Space (Equi-potential), Merge if the space is less than : 2.5µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DN.2b</name>
+   <description>DN.2b : Min. DNWELL Space (Different potential) : 5.42µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DN.3</name>
+   <description>DN.3 : Each DNWELL shall be directly surrounded by PCOMP guard ring
+                tied to the P-substrate potential.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DM1.2b</name>
    <description>DM1.2b : Min Dummy metal line space (for DRC): 0.98</description>
    <categories>
@@ -1930,24 +1930,6 @@
   <category>
    <name>DM1.8</name>
    <description>DM1.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM3.2b</name>
-   <description>DM3.2b : Min Dummy metal line space (for DRC): 0.98</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM3.3</name>
-   <description>DM3.3 : Minimum space between dummy metal and circuit Metal line: 2</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM3.8</name>
-   <description>DM3.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
    <categories>
    </categories>
   </category>
@@ -1970,6 +1952,24 @@
    </categories>
   </category>
   <category>
+   <name>DM3.2b</name>
+   <description>DM3.2b : Min Dummy metal line space (for DRC): 0.98</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DM3.3</name>
+   <description>DM3.3 : Minimum space between dummy metal and circuit Metal line: 2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DM3.8</name>
+   <description>DM3.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>DM4.2b</name>
    <description>DM4.2b : Min Dummy metal line space (for DRC): 0.98</description>
    <categories>
@@ -1984,24 +1984,6 @@
   <category>
    <name>DM4.8</name>
    <description>DM4.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM5.2b</name>
-   <description>DM5.2b : Min Dummy metal line space (for DRC): 0.98</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM5.3</name>
-   <description>DM5.3 : Minimum space between dummy metal and circuit Metal line: 2</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>DM5.8</name>
-   <description>DM5.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
    <categories>
    </categories>
   </category>
@@ -2050,6 +2032,24 @@
   <category>
    <name>DV.9</name>
    <description>DV.9 : 3.3V and 5V/6V PMOS cannot be sitting inside same NWELL.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DM5.2b</name>
+   <description>DM5.2b : Min Dummy metal line space (for DRC): 0.98</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DM5.3</name>
+   <description>DM5.3 : Minimum space between dummy metal and circuit Metal line: 2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>DM5.8</name>
+   <description>DM5.8 : Minimum space between dummy metal and FuseTop, POLYFUSE, FUSEWINDOW_D, PMNDMY, MTPMK, OTP_MK: 6</description>
    <categories>
    </categories>
   </category>
@@ -2138,6 +2138,12 @@
    </categories>
   </category>
   <category>
+   <name>GR.11</name>
+   <description>GR.11 : Pad opening on top of GUARD_RING_MK layer</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>GR.1</name>
    <description>GR.1 : Min/Max GUARD_RING_MK overlap of guard ring comp: 0</description>
    <categories>
@@ -2164,12 +2170,6 @@
   <category>
    <name>GR.6</name>
    <description>GR.6 : Min PCOMP width: 16</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>GR.11</name>
-   <description>GR.11 : Pad opening on top of GUARD_RING_MK layer</description>
    <categories>
    </categories>
   </category>
@@ -2796,82 +2796,6 @@
    </categories>
   </category>
   <category>
-   <name>HRES.1</name>
-   <description>HRES.1 : Minimum space: 0.4µm. Note: Merge if the spacing is less than 0.4 um.</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.2</name>
-   <description>HRES.2 : Minimum width of Poly2 resistor: 1µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.3</name>
-   <description>HRES.3 : Minimum space between Poly2 resistors: 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.4</name>
-   <description>HRES.4 : Minimum RESISTOR overlap of Poly2 resistor: 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.5</name>
-   <description>HRES.5 : Minimum RESISTOR space to unrelated Poly2: 0.3µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.6</name>
-   <description>HRES.6 : Minimum RESISTOR space to COMP: 0.3um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.7</name>
-   <description>HRES.7 : Minimum Pplus overlap of contact on Poly2 resistor: 0.2µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.8</name>
-   <description>HRES.8 : Minimum space from salicide block to contact on Poly2 resistor: 0.22.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.9</name>
-   <description>HRES.9 : Minimum salicide block overlap of Poly2 resistor in width direction: 0.28.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.10</name>
-   <description>HRES.10 : Minimum &amp; maximum Pplus overlap of SAB: 0.1.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.12a</name>
-   <description>HRES.12a : P type Poly2 resistor (high sheet rho) shall be covered by RES_MK marking.
-                     RES_MK length shall be coincide with resistor length (Defined by Pplus space)
-                     and width covering the width of Poly2. </description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>HRES.12b</name>
-   <description>HRES.12b : If the size of single RES_MK mark layer is greater than 15000 um2
-                     and both side (X and Y) are greater than 80 um.
-                     Then the minimum spacing to adjacent RES_MK layer: 20µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>MDP.1</name>
    <description>MDP.1 : Minimum transistor channel length. : 0.6µm</description>
    <categories>
@@ -3122,6 +3046,82 @@
    </categories>
   </category>
   <category>
+   <name>HRES.1</name>
+   <description>HRES.1 : Minimum space: 0.4µm. Note: Merge if the spacing is less than 0.4 um.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.2</name>
+   <description>HRES.2 : Minimum width of Poly2 resistor: 1µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.3</name>
+   <description>HRES.3 : Minimum space between Poly2 resistors: 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.4</name>
+   <description>HRES.4 : Minimum RESISTOR overlap of Poly2 resistor: 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.5</name>
+   <description>HRES.5 : Minimum RESISTOR space to unrelated Poly2: 0.3µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.6</name>
+   <description>HRES.6 : Minimum RESISTOR space to COMP: 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.7</name>
+   <description>HRES.7 : Minimum Pplus overlap of contact on Poly2 resistor: 0.2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.8</name>
+   <description>HRES.8 : Minimum space from salicide block to contact on Poly2 resistor: 0.22.um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.9</name>
+   <description>HRES.9 : Minimum salicide block overlap of Poly2 resistor in width direction: 0.28.um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.10</name>
+   <description>HRES.10 : Minimum &amp; maximum Pplus overlap of SAB: 0.1.um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.12a</name>
+   <description>HRES.12a : P type Poly2 resistor (high sheet rho) shall be covered by RES_MK marking.
+                     RES_MK length shall be coincide with resistor length (Defined by Pplus space)
+                     and width covering the width of Poly2. </description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>HRES.12b</name>
+   <description>HRES.12b : If the size of single RES_MK mark layer is greater than 15000 um2
+                     and both side (X and Y) are greater than 80 um.
+                     Then the minimum spacing to adjacent RES_MK layer: 20µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>M1.1</name>
    <description>M1.1 : min. metal1 width : 0.23µm</description>
    <categories>
@@ -3170,30 +3170,6 @@
    </categories>
   </category>
   <category>
-   <name>MT.1</name>
-   <description>MT.1 : min. metaltop width : 0.44µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MT.2a</name>
-   <description>MT.2a : min. metaltop spacing : 0.46µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MT.2b</name>
-   <description>MT.2b : Space to wide MetalTop (length &amp; width &gt; 10um) : 0.6µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MT.4</name>
-   <description>MT.4 : Minimum MetalTop area : 0.5625µm²</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
    <name>M3.1</name>
    <description>M3.1 : min. metal3 width : 0.28µm</description>
    <categories>
@@ -3214,6 +3190,30 @@
   <category>
    <name>M3.3</name>
    <description>M3.3 : Minimum metal3 area : 0.1444µm²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MT.1</name>
+   <description>MT.1 : min. metaltop width : 0.44µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MT.2a</name>
+   <description>MT.2a : min. metaltop spacing : 0.46µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MT.2b</name>
+   <description>MT.2b : Space to wide MetalTop (length &amp; width &gt; 10um) : 0.6µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MT.4</name>
+   <description>MT.4 : Minimum MetalTop area : 0.5625µm²</description>
    <categories>
    </categories>
   </category>
@@ -3319,6 +3319,60 @@
    </categories>
   </category>
   <category>
+   <name>MSLOT2.0</name>
+   <description>MSLOT2.0 : Slot is not a rectangle</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.1</name>
+   <description>MSLOT2.1 : Maximum metal width without slotting: 30µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.2</name>
+   <description>MSLOT2.2 : Minimum slot width (slot mark layers): 2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.3</name>
+   <description>MSLOT2.3 : Slot length (slot mark layers): min 10µm, max 250µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.4</name>
+   <description>MSLOT2.4 : Slot space (slot mark layers): min 10µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.5</name>
+   <description>MSLOT2.5 : Minimum slot (slot mark layers) to metal edge spacing: 10µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.7</name>
+   <description>MSLOT2.7 : Minimum space from via-n to metal-n slot: 0.2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.8</name>
+   <description>MSLOT2.8 : Minimum space from via-(n-1) / contact to metal-n slot: 0.2µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>MSLOT2.9</name>
+   <description>MSLOT2.9 : Minimum distance to these layers: 5µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>NW.1a_LV</name>
    <description>NW.1a_LV : Min. Nwell Width (This is only for litho purpose on the generated area): 0.86µm</description>
    <categories>
@@ -3395,60 +3449,6 @@
   <category>
    <name>NW.6</name>
    <description>NW.6 : Nwell resistors can only exist outside DNWELL.</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.0</name>
-   <description>MSLOT2.0 : Slot is not a rectangle</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.1</name>
-   <description>MSLOT2.1 : Maximum metal width without slotting: 30µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.2</name>
-   <description>MSLOT2.2 : Minimum slot width (slot mark layers): 2µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.3</name>
-   <description>MSLOT2.3 : Slot length (slot mark layers): min 10µm, max 250µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.4</name>
-   <description>MSLOT2.4 : Slot space (slot mark layers): min 10µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.5</name>
-   <description>MSLOT2.5 : Minimum slot (slot mark layers) to metal edge spacing: 10µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.7</name>
-   <description>MSLOT2.7 : Minimum space from via-n to metal-n slot: 0.2µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.8</name>
-   <description>MSLOT2.8 : Minimum space from via-(n-1) / contact to metal-n slot: 0.2µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>MSLOT2.9</name>
-   <description>MSLOT2.9 : Minimum distance to these layers: 5µm</description>
    <categories>
    </categories>
   </category>
@@ -3877,6 +3877,44 @@
    </categories>
   </category>
   <category>
+   <name>S.DF.4c_LV</name>
+   <description>S.DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL: 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.DF.16_LV</name>
+   <description>S.DF.16_LV : Min. space from (Nwell outside DNWELL) to
+                     (NCOMP outside Nwell and DNWELL): 0.4µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.3_LV</name>
+   <description>S.CO.3_LV : Poly2 overlap of contact: 0.04µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.4_LV</name>
+   <description>S.CO.4_LV : COMP overlap of contact: 0.03µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.CO.6_ii_LV</name>
+   <description>S.CO.6_ii_LV : (ii) If Metal1 overlaps contact
+                  by &lt; 0.04um on one side, adjacent metal1 edges overlap: 0.02.um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>S.M1.1_LV</name>
+   <description>S.M1.1_LV : min. metal1 width : 0.22µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
    <name>PRES.1</name>
    <description>PRES.1 : Minimum width of Poly2 resistor: 0.8µm</description>
    <categories>
@@ -3931,44 +3969,6 @@
    <description>PRES.9b : If the size of single RES_MK mark layer is greater than 15000um2
                     and both side (X and Y) are greater than 80um.
                     then the minimum spacing to adjacent RES_MK layer: 20µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.DF.4c_LV</name>
-   <description>S.DF.4c_LV : Min. (Nwell overlap of PCOMP) outside DNWELL: 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.DF.16_LV</name>
-   <description>S.DF.16_LV : Min. space from (Nwell outside DNWELL) to
-                     (NCOMP outside Nwell and DNWELL): 0.4µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.3_LV</name>
-   <description>S.CO.3_LV : Poly2 overlap of contact: 0.04µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.4_LV</name>
-   <description>S.CO.4_LV : COMP overlap of contact: 0.03µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.CO.6_ii_LV</name>
-   <description>S.CO.6_ii_LV : (ii) If Metal1 overlaps contact
-                  by &lt; 0.04um on one side, adjacent metal1 edges overlap: 0.02.um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>S.M1.1_LV</name>
-   <description>S.M1.1_LV : min. metal1 width : 0.22µm</description>
    <categories>
    </categories>
   </category>
