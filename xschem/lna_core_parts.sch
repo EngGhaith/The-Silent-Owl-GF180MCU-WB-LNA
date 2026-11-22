@@ -102,14 +102,11 @@ C {iopin.sym} 780 -720 2 1 {name=p32 lab=open_dummy_lvs}
 C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
-* LVS-only inductor model selection -- every coil in this hierarchy becomes
-* a PDK metal resistor device instead of an inductor, so the official
+* LVS-only: every coil in this hierarchy is flattened directly into its own
+* metal-resistor stand-in at the point of use (see lna_core_cg.sch,
+* lna_core_cs.sch, lna_core_input_match.sch, lna_core_output_match.sch) --
+* no subcircuit boundary, tied straight to the real nets, so the official
 * gf180mcu.lvs engine has something comparable to match against the
 * layout's resistor-marker geometry (see xschem/*_model.lib for the other
 * ideal/rl/snp2le simulation variants, untouched by this selection).
-.lib $::env(PWD)/LEQ_model.lib lvsrm
-.lib $::env(PWD)/L1_model.lib lvsrm
-.lib $::env(PWD)/LSHUNT_OUT_model.lib lvsrm
-.lib $::env(PWD)/LD2_model.lib lvsrm
-.lib $::env(PWD)/LD4_model.lib lvsrm
 "}
