@@ -42,8 +42,10 @@ N 460 -330 530 -330 {lab=vm1}
 N 530 -430 530 -330 {lab=vm1}
 N 460 -430 530 -430 {lab=vm1}
 N 60 -560 100 -560 {lab=vss}
+N 210 -690 270 -690 {lab=output_match}
 N 60 -530 100 -530 {lab=vdd}
 N 210 -690 210 -490 {lab=output_match}
+N 470 -690 520 -690 {lab=vdd}
 N 50 -400 150 -400 {lab=vbias_cas}
 N 50 -400 50 -370 {lab=vbias_cas}
 N 50 -310 50 -280 {lab=vss}
@@ -120,6 +122,8 @@ C {lab_pin.sym} 460 -330 0 0 {name=p5 sig_type=std_logic lab=vm1}
 C {iopin.sym} 60 -560 2 0 {name=p11 lab=vss}
 C {lab_pin.sym} 100 -560 2 0 {name=p13 sig_type=std_logic lab=vss
 }
+C {LD2_model.sym} 370 -690 0 1 {name=XXLD2}
+C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }
 C {symbols/cap_mim_2f0fF.sym} 50 -340 2 1 {name=C_CAS
@@ -129,10 +133,9 @@ model=cap_mim_2f0_m4m5_noshield
 spiceprefix=X
 m=4}
 C {lab_pin.sym} 50 -280 3 0 {name=p30 sig_type=std_logic lab=vss}
-C {code_shown.sym} -2000 -2000 0 0 {name=LVS_RESISTORS_CS only_toplevel=false
+C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
 format="tcleval( @value )"
 value="
-* LVS-only: coil flattened to its own metal-resistor stand-in directly in
-* this schematic (no subcircuit boundary), tied straight to the real nets.
-R1_LD2 output_match vdd rm4 W=7u L=1u
+* LVS-only inductor model selection, see lna_core_parts.sch for details.
+.lib $::env(PWD)/LD2_model.lib lvsrm
 "}
