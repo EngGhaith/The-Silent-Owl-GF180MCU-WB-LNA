@@ -1,0 +1,9 @@
+VDD power 5.0
+VSS power 0.0
+clock input min@0.0 max@5.0
+flash_clk input min@0.0 max@5.0
+flash_csb input min@0.0 max@5.0
+flash_io* input min@0.0 max@5.0
+gpio input min@0.0 max@5.0
+resetb input min@0.0 max@5.0
+mprj_io[*] input min@0.0 max@5.0
