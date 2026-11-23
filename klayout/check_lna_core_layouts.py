@@ -63,13 +63,33 @@ GUI: every LVS run also writes klayout/lvs/<cell>_lvs.gds (layout copy as checke
   region, creating a real cross-net short (observed: rf_in_pad, vdd and vss all merged into one net). This was
   caught before committing by checking Device.net_for_terminal after every single edit, never by DRC (DRC passed
   the shorted version clean) -- always re-check net_for_terminal per terminal after adding bridge geometry near
-  a resistor marker, do not rely on the overall mismatch count alone. The precise boundary between terminal A's
-  and terminal B's own contact region was not successfully determined this session (LayoutToNetlist.shapes_of_net
-  only works against a live, freshly-extracted L2N session -- it raises "circuit != 0" against a reloaded .lvsdb,
-  which is all check_lna_core_layouts.py normally produces). Next attempt should either extract fresh via a
-  from-scratch LayoutToNetlist in Python (bypassing the Ruby deck) to query shapes_of_net directly, or use
-  KLayout's GUI marker browser on klayout/lvs/lna_core_parts_lvs.gds + .spice to visually net-probe terminal A
-  vs B before placing any bridge geometry.
+  a resistor marker, do not rely on the overall mismatch count alone.
+  SECOND near-miss, same session: a short tap (500nm) placed right at the marker's west edge DID link correctly
+  to terminal A without touching B (net_for_terminal confirmed both terminals distinct) -- proving the technique
+  itself is sound close to the marker. But extending that SAME anchor into a long bridge (~12um) running west to
+  reach the real vss mesh picked up ANOTHER, unrelated short partway along the path: B ended up merged with
+  RF_IN_PAD+VDD+VSS all together, again DRC-clean. So "safe near the marker" does not imply "safe along the
+  whole path to the target" -- something along that specific corridor (y=543370-544370, x=58500-70700) belongs
+  to terminal B's own territory, not a neutral gap. Re-check net_for_terminal after EVERY incremental extension
+  of a bridge, not just once at the end, and prefer routing further from the marker's immediate surroundings
+  (e.g. a different y-row, or dropping to a lower metal sooner) over a long run squeezed into one narrow corridor.
+  Precisely locating each terminal's own contact region (to route around it with certainty, instead of probing
+  incrementally) needs shapes_of_net, and that does NOT work against a reloaded .lvsdb ("circuit != 0" error) --
+  it needs a live L2N session. A minimal from-scratch one DOES work for device extraction (confirmed working
+  recipe: `l2n = kdb.LayoutToNetlist(top.begin_shapes_rec(ly.layer(81,0)))`, then
+  `l2n.make_layer(ly.layer(<gds>,<dt>), '<name>')` -- NOT make_polygon_layer, which wants an already-internal
+  layer index, not one from the original layout -- returns a ready-to-use Region pulled from the original layout;
+  build metal5_con/top_metal_con/via4_n_cap from these via plain Region subtraction, l2n.connect() them,
+  l2n.extract_devices(kdb.DeviceExtractorResistor.new('tm11k', 0.04), {'R': metal5_res, 'C': top_metal_con}),
+  l2n.extract_netlist() -- all 4 coil devices extract correctly, confirmed by position). What did NOT work yet:
+  the resulting Device.net_for_terminal() returned None for all but one of the 8 terminals across the 4 devices,
+  and only one net in the whole circuit had a nonzero terminal_count -- device-to-net linking is not completing
+  correctly in this minimal setup (most likely missing some other required connect() or a different extraction
+  order/call not yet identified), so shapes_of_net was never actually reached. This is the one open thread worth
+  finishing before any further bridge attempts: get net_for_terminal returning real, populated nets in a fresh
+  L2N session first, then shapes_of_net on that net gives the exact contact polygon to route around safely.
+  Alternative, lower-effort path: KLayout's GUI marker browser on klayout/lvs/lna_core_parts_lvs.gds + .spice,
+  which doesn't need any of the above -- open it and visually net-probe terminal A vs B before routing.
 """
 import json
 import os
