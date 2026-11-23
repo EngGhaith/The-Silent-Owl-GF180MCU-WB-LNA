@@ -64,32 +64,57 @@ GUI: every LVS run also writes klayout/lvs/<cell>_lvs.gds (layout copy as checke
   caught before committing by checking Device.net_for_terminal after every single edit, never by DRC (DRC passed
   the shorted version clean) -- always re-check net_for_terminal per terminal after adding bridge geometry near
   a resistor marker, do not rely on the overall mismatch count alone.
-  SECOND near-miss, same session: a short tap (500nm) placed right at the marker's west edge DID link correctly
-  to terminal A without touching B (net_for_terminal confirmed both terminals distinct) -- proving the technique
-  itself is sound close to the marker. But extending that SAME anchor into a long bridge (~12um) running west to
-  reach the real vss mesh picked up ANOTHER, unrelated short partway along the path: B ended up merged with
-  RF_IN_PAD+VDD+VSS all together, again DRC-clean. So "safe near the marker" does not imply "safe along the
-  whole path to the target" -- something along that specific corridor (y=543370-544370, x=58500-70700) belongs
-  to terminal B's own territory, not a neutral gap. Re-check net_for_terminal after EVERY incremental extension
-  of a bridge, not just once at the end, and prefer routing further from the marker's immediate surroundings
-  (e.g. a different y-row, or dropping to a lower metal sooner) over a long run squeezed into one narrow corridor.
-  Precisely locating each terminal's own contact region (to route around it with certainty, instead of probing
-  incrementally) needs shapes_of_net, and that does NOT work against a reloaded .lvsdb ("circuit != 0" error) --
-  it needs a live L2N session. A minimal from-scratch one DOES work for device extraction (confirmed working
-  recipe: `l2n = kdb.LayoutToNetlist(top.begin_shapes_rec(ly.layer(81,0)))`, then
-  `l2n.make_layer(ly.layer(<gds>,<dt>), '<name>')` -- NOT make_polygon_layer, which wants an already-internal
-  layer index, not one from the original layout -- returns a ready-to-use Region pulled from the original layout;
-  build metal5_con/top_metal_con/via4_n_cap from these via plain Region subtraction, l2n.connect() them,
-  l2n.extract_devices(kdb.DeviceExtractorResistor.new('tm11k', 0.04), {'R': metal5_res, 'C': top_metal_con}),
-  l2n.extract_netlist() -- all 4 coil devices extract correctly, confirmed by position). What did NOT work yet:
-  the resulting Device.net_for_terminal() returned None for all but one of the 8 terminals across the 4 devices,
-  and only one net in the whole circuit had a nonzero terminal_count -- device-to-net linking is not completing
-  correctly in this minimal setup (most likely missing some other required connect() or a different extraction
-  order/call not yet identified), so shapes_of_net was never actually reached. This is the one open thread worth
-  finishing before any further bridge attempts: get net_for_terminal returning real, populated nets in a fresh
-  L2N session first, then shapes_of_net on that net gives the exact contact polygon to route around safely.
-  Alternative, lower-effort path: KLayout's GUI marker browser on klayout/lvs/lna_core_parts_lvs.gds + .spice,
-  which doesn't need any of the above -- open it and visually net-probe terminal A vs B before routing.
+  SECOND and THIRD near-misses, same session, both DRC-clean: a 500nm tap at the marker's west edge linked
+  correctly to A alone; extending that same anchor ~12um further west to reach a labelled vss region merged B
+  into RF_IN_PAD+VDD+VSS instead. A later, geometrically-precise attempt (see below) also ended up on a net
+  reported as "VDD,VSS" by the real gf180mcu.lvs run. In BOTH cases the short was caught by re-checking
+  Device.net_for_terminal after the edit, never by DRC -- always re-check net_for_terminal per terminal after
+  any bridge edit near a resistor marker, do not trust the overall mismatch count or DRC cleanliness alone.
+
+  RESOLVED this session: how to get an exact terminal contact shape instead of probing blind. Needs a live L2N
+  session (shapes_of_net raises "circuit != 0" against any reloaded .lvsdb, which is all this script normally
+  produces). Working recipe:
+    l2n = kdb.LayoutToNetlist(top.begin_shapes_rec(ly.layer(81,0)))
+    metal5 = l2n.make_layer(ly.layer(81,0), 'metal5')   # make_layer, NOT make_polygon_layer -- takes the
+    metal5_res = l2n.make_layer(ly.layer(110,15), 'metal5_res')   # ORIGINAL layout's layer index directly
+    fusetop = l2n.make_layer(ly.layer(75,0), 'fusetop')
+    via4 = l2n.make_layer(ly.layer(41,0), 'via4')
+    metal5_con = metal5 - metal5_res; top_metal_con = metal5_con - fusetop; via4_n_cap = via4 - fusetop
+    l2n.extract_devices(kdb.DeviceExtractorResistor.new('tm11k', 0.04), {'R': metal5_res, 'C': top_metal_con})
+    l2n.connect(via4_n_cap, metal5_con); l2n.connect(via4_n_cap, top_metal_con)
+    l2n.connect(top_metal_con)   # <- the missing piece: a layer needs to be connected to ITSELF too, or
+                                  #    Device.net_for_terminal() silently returns None for almost every
+                                  #    terminal even though extract_devices finds the devices fine (confirmed:
+                                  #    without this, only 1 of 8 terminals across 4 devices linked to a net)
+    l2n.extract_netlist()
+  After this, dev.net_for_terminal('A') / 'B' and l2n.shapes_of_net(net, top_metal_con, True) both work.
+  For LEQ specifically this revealed the terminal split is NOT the simple east/west guess used earlier -- it is
+  NORTH/SOUTH of the marker: terminal A's entire contact region has bbox (70000,459500;93000,542370) (strictly
+  below the marker's south edge, y<=542370), terminal B's is (1000,543370;255400,742870) (strictly above the
+  north edge, y>=543370). A tap placed north of the marker (as both near-misses above were) is in B's territory
+  regardless of how far east or west it sits -- that is WHY they kept merging into B's own net (RF_IN_PAD etc),
+  not because of anything specific to the x position tried. Do this shapes_of_net check for the actual coil
+  before placing any bridge; do not assume the split is east/west again.
+  CAUTION, also discovered this session: a bridge routed precisely inside terminal A's own confirmed shapes_of_net
+  region (y=500000-501000, well inside the A bbox above, reaching toward a labelled vss area at x=20000-60000)
+  STILL came back from the real gf180mcu.lvs run with A on a net named "VDD,VSS" -- so matching the resistor's
+  own terminal geometry correctly is necessary but not sufficient; the real deck's full device-aware extraction
+  can still find a path from a given point to both supplies that a metal-only analysis won't show. A pure
+  interconnect-only re-check (connect() across m1-m5 and their vias, no devices at all) also reported combined
+  "VDD,VSS" and "DEEMB_S,VBIAS_CAS,VSS" nets spanning the entire 1.11mm x 1.11mm die with thousands of shapes
+  each -- that is NOT evidence of a real short, it is the expected result of connectivity analysis with no
+  device boundaries at all (metal1-5 are shared by every net in the design; without transistors/resistors to
+  break continuity, a same-layer-plus-via walk will eventually touch everything). This is the same trap the
+  very first flood-fill attempt in this session fell into (vss and vdd network areas came out byte-identical
+  then, for the same reason) -- do not use a device-less interconnect walk to judge whether two labelled nets
+  are really merged; only the full official check_lna_core_layouts.py / gf180mcu.lvs result (or a from-scratch
+  L2N session with the actual device extractors for the surrounding transistors too, not attempted this
+  session) can be trusted for that question. Net effect: finding a target point that is simultaneously (a)
+  inside the resistor terminal's own confirmed contact region and (b) does not land on a path the real deck
+  considers vdd+vss-connected has not been achieved yet for any of the 4 coils.
+  Lower-effort alternative still untried: KLayout's GUI marker browser on klayout/lvs/lna_core_parts_lvs.gds
+  + .spice -- visually net-probing candidate target points before routing would catch issue (b) above directly,
+  without needing to reason about device-level paths in the abstract.
 """
 import json
 import os
