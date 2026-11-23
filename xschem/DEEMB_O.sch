@@ -14,9 +14,9 @@ C {iopin.sym} 120 -1120 0 1 {name=p1 lab=G}
 C {iopin.sym} 120 -570 0 1 {name=p2 lab=deemb_o}
 C {iopin.sym} 120 -20 0 1 {name=p3 lab=G}
 C {iopin.sym} 300 -510 0 1 {name=p5 lab=open_dummy_lvs}
-C {symbols/rm1.sym} 300 -540 0 0 {name=R1
+C {symbols/rm3.sym} 300 -540 0 0 {name=R1
 W=1.62e-6
 L=1e-6
-model=rm1
+model=rm3
 spiceprefix=X
 m=1}

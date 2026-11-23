@@ -133,7 +133,7 @@ value="
 * LVS-only inductor model selection, see lna_core_parts.sch for details.
 .lib $::env(PWD)/LD2_model.lib lvsrm
 "}
-C {symbols/cap_mim_2f0fF.sym} 50 -340 0 0 {name=C_CAS
+C {symbols/cap_mim_2f0fF.sym} 50 -340 2 1 {name=C_CAS
 W=49.8865e-6
 L=49.8865e-6
 model=cap_mim_2f0fF
