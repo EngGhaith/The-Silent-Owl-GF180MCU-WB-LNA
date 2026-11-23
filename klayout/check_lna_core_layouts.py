@@ -31,6 +31,45 @@ lna_core_parts: reference = lna_core_parts.sch with the four blocks mapped as ab
   flattened and implicit_connect is off, so every net (incl. vss / vdd between the blocks) must be joined by metal
 GUI: every LVS run also writes klayout/lvs/<cell>_lvs.gds (layout copy as checked) + <cell>_lvs.spice (reference);
   open the .gds in KLayout and use "gf180mcu PDK > Run Klayout LVS" (it picks up the .spice of the same name)
+
+"parts" LVS mismatch root cause (confirmed via the real cross-reference, NetlistCrossReference.each_net_pair /
+  each_device_pair / Device.net_for_terminal on a fresh run's .lvsdb -- see /tmp session notes, 2026-11-23):
+  device mismatches are NOT a wrong-PCell problem -- every mismatched device pair has an identical class name on
+  both sides (nfet_03v3==NFET_03V3, cap_mim_2f0fF==CAP_MIM_2F0FF, etc); it is purely a net-connectivity cascade.
+  Four coils each have one terminal that is a genuine physical dead end in the current layout (confirmed via a
+  properly-converged, same-layer-then-via multi-hop flood fill through m1..m5 -- NOT a quick bbox/label-distance
+  proxy, which gives false negatives/positives here):
+    - LEQ's vss-side terminal (schematic pin "B"): isolated, nearest real vss-connected m1/m2/m4 metal is ~10um
+      west of its marker (70000-80000,542370-543370), same Y range.
+    - LSHUNT_OUT's and L1's vss-side terminals: also isolated, real distance not yet pinned down as precisely.
+    - LD4's 4 parallel legs (rm2/rm3/rm4/tm11k) already correctly converge on ONE local vdd-side island (confirmed
+      via the net's own terminal list) -- that island itself doesn't reach the real labelled VDD net.
+    - LD2's rm4 OUTPUT_CS-side terminal (NOT its vdd side, which is already fine) is isolated.
+  PR#38/#39's rule-deck patch (connect(top_metal_con, metal5_con) in a vendored gf180mcu.lvs copy) is NOT needed
+  here: this layout has zero MIM-cap FuseTop overlap near any of these markers, so top_metal_con and metal5_con
+  are already geometrically identical in this area (confirmed empirically: applying the same one-line patch to a
+  scratch copy of the OFFICIAL deck against this unmodified layout changes nothing).
+  IMPORTANT, hard-won finding on how to actually bridge one of these dead ends: resistor devices here are
+  extracted by klayout's generic two-terminal DeviceExtractorResistor (kdb.DeviceExtractorResistor.__doc__ has
+  the full spec) -- the metal*_res marker is the wire, and it needs a contact region "attached to the ends of
+  the wire" on each side, with L/W computed from a simple-rectangle assumption. Extending the metal5 (or metal4)
+  polygon so it touches the marker along its LENGTH axis (i.e. growing the resistor's own end, directly beyond
+  x=<marker's own east/west edge> for a horizontal marker) reliably makes the device DISAPPEAR FROM EXTRACTION
+  ENTIRELY, at ANY size tried (500nm to 4000nm), on EITHER end, with or without vias, with or without explicit
+  region merging before writing -- confirmed via repeated isolated tests, not a one-off. A perpendicular side tap
+  (a stub growing from the marker's TOP or BOTTOM edge, i.e. along its WIDTH axis, not touching either end) does
+  NOT break extraction -- but the exact X position of that tap is NOT a safe "anywhere along the top edge" choice:
+  one test placed a tap only 2um in from one end and it silently merged into the WRONG terminal's own contact
+  region, creating a real cross-net short (observed: rf_in_pad, vdd and vss all merged into one net). This was
+  caught before committing by checking Device.net_for_terminal after every single edit, never by DRC (DRC passed
+  the shorted version clean) -- always re-check net_for_terminal per terminal after adding bridge geometry near
+  a resistor marker, do not rely on the overall mismatch count alone. The precise boundary between terminal A's
+  and terminal B's own contact region was not successfully determined this session (LayoutToNetlist.shapes_of_net
+  only works against a live, freshly-extracted L2N session -- it raises "circuit != 0" against a reloaded .lvsdb,
+  which is all check_lna_core_layouts.py normally produces). Next attempt should either extract fresh via a
+  from-scratch LayoutToNetlist in Python (bypassing the Ruby deck) to query shapes_of_net directly, or use
+  KLayout's GUI marker browser on klayout/lvs/lna_core_parts_lvs.gds + .spice to visually net-probe terminal A
+  vs B before placing any bridge geometry.
 """
 import json
 import os
