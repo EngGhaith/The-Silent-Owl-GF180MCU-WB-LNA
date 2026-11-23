@@ -55,7 +55,7 @@ All of these are applied by `lvs/apply_lvs_layout_fixes.py` (re-runnable on a fr
 4. **DRC MT.2b** (space to wide metaltop, 0.6 µm) at (734, 16) and (846, 16). These were already in the original layout. Two PG tiles merge there with the wide M5 of the L1 / LSHUNT_OUT coils, and each tile has a 2 × 2 µm M5 hole. Both holes are empty on M3–M5 and on all via layers, so filling them with M5 leaves the net unchanged.
 5. **Two `vss` labels on unconnected metal** were removed (text only): the M4 label at (578.107, 1096.027) and the M1 label at (55, 535). Magic reported them as disconnected nodes `vss_uq19` / `vss_uq31`, and Netgen showed them as extra pins ("port errors").
 
-## DRC
+## DRC (results: `lvs/check_results.txt`)
 
 ```bash
 python3 $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc/run_drc.py --path=klayout/lna_top2.gds --variant=D \

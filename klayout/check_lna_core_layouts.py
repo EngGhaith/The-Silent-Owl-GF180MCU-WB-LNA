@@ -4,8 +4,7 @@ DRC + LVS of the lna_core sub-cell layouts (klayout/lna_core_*.gds) with the gf1
 
 Usage:  python3 check_lna_core_layouts.py [cg cs input_match output_match parts] [--no-drc] [--no-lvs] [--run_dir DIR]
 
-DRC: gf180mcu.drc (invoked directly via klayout -b -r, same as gf180mcu.lvs below -- gf180mcuD, unlike the ihp
-  PDKs, has no run_drc.py wrapper script) --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density
+DRC: PDK run_drc.py (FEOL + BEOL + antenna; see run_drc()) --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density
   and dummy-fill decks excluded (block level: a density/dummy-fill check needs full-chip context to mean
   anything -- a sub-block cut out of it will almost always "fail" a global-density-style rule in isolation).
   KNOWN, EXPECTED "parts" result: 6 ANT.16_ii_ANT.{3,4,5,10,11,12} violations (one per metal level's antenna
@@ -117,7 +116,7 @@ GUI: every LVS run also writes klayout/lvs/<cell>_lvs.gds (layout copy as checke
   without needing to reason about device-level paths in the abstract.
 """
 import json
-import os
+import glob, os
 import re
 import shutil
 import subprocess
@@ -301,28 +300,29 @@ def lvs_layout(cell, out_dir):
 
 
 def run_drc(cell, run_dir):
-    """gf180mcuD has no run_drc.py wrapper (unlike the ihp PDKs) -- invoke gf180mcu.drc directly via klayout -b -r,
-    same pattern as run_lvs()'s gf180mcu.lvs below. density / dummy_comp decks excluded: both are global-fill-
-    density style checks that need full-chip context, not meaningful for (and will near-always "fail" on) an
-    isolated sub-block -- see module docstring. A prior version of this function assumed a run_drc.py wrapper
-    that silently never existed for gf180mcuD: subprocess.run doesn't raise on a missing executable file found
-    via a literal path argument to python3, so every DRC check up to this fix was a silent no-op that always
-    reported "clean" (empty violation dict, no .lyrdb ever produced) -- confirmed by directly invoking gf180mcu.drc
-    and finding real content (including correctly-excludable density violations, and genuine 0-violation results
-    once properly configured) that the old code never actually checked."""
+    """Real PDK DRC: run_drc.py from $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc (variant D = 5LM, 11 kA top
+    metal, MIM option B), deep mode, FEOL + BEOL + antenna. A previous version called gf180mcu.drc directly without
+    -rd feol=true / -rd beol=true; the deck then runs no FEOL/BEOL rule at all and always reports "clean".
+    Density is not part of this check (needs full-chip context); run run_drc.py --density_only separately.
+    lna_core_parts is checked on klayout/lna_top2.gds (the current layout)."""
     d = os.path.join(run_dir, "drc_" + cell)
-    os.makedirs(d, exist_ok=True)
-    report = os.path.join(d, cell + ".lyrdb")
-    if os.path.exists(report):
-        os.remove(report)
-    r = subprocess.run(["klayout", "-b", "-r", os.path.join(PDK_KL, "drc", "gf180mcu.drc"),
-                        "-rd", f"input={os.path.join(HERE, cell + '.gds')}", "-rd", f"report={report}",
-                        "-rd", "variant=D", "-rd", "run_mode=deep", "-rd", "workers=8",
-                        "-rd", "decks=all,-density,-dummy_comp"], capture_output=True, text=True)
+    if os.path.isdir(d):
+        shutil.rmtree(d)
+    os.makedirs(d)
+    gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
+    r = subprocess.run(["python3", os.path.join(PDK_KL, "drc", "run_drc.py"), f"--path={gds}", "--variant=D",
+                        f"--topcell={cell}", f"--run_dir={d}", "--mp=4", "--run_mode=deep", "--antenna"],
+                       capture_output=True, text=True, cwd=d)
     log = r.stdout + r.stderr
-    viol = dict((n, int(c)) for n, c in re.findall(r"'([\w.]+)'\s*:\s*(\d+) violation", log))
-    if r.returncode != 0 and not viol and "DRC RESULT: SUCCESS" not in log:
-        viol["drc deck crashed (see log)"] = 1
+    open(os.path.join(d, "run_drc.log"), "w").write(log)
+    viol = {}
+    import xml.etree.ElementTree as ET
+    for f in glob.glob(os.path.join(d, "*.lyrdb")):
+        for it in ET.parse(f).getroot().iter("item"):
+            cat = it.findtext("category", "").strip("'")
+            viol[cat] = viol.get(cat, 0) + 1
+    if "Klayout DRC run is clean" not in log and not viol:
+        viol["drc run failed (see run_drc.log)"] = 1
     return viol, d
 
 
