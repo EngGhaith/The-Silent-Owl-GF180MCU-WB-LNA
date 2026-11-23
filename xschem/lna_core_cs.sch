@@ -126,12 +126,6 @@ C {LD2_model.sym} 370 -690 0 1 {name=XXLD2}
 C {lab_pin.sym} 520 -690 0 1 {name=pRLD2_T1 sig_type=std_logic lab=vdd}
 C {lab_pin.sym} 100 -530 2 0 {name=p4 sig_type=std_logic lab=vdd
 }
-C {symbols/cap_mim_2f0fF.sym} 50 -340 2 1 {name=C_CAS
-W=49.8865u
-L=49.8865u
-model=cap_mim_2f0_m4m5_noshield
-spiceprefix=X
-m=4}
 C {lab_pin.sym} 50 -280 3 0 {name=p30 sig_type=std_logic lab=vss}
 C {code_shown.sym} -2000 -2000 0 0 {name=LVS_MODELS only_toplevel=true
 format="tcleval( @value )"
@@ -139,3 +133,9 @@ value="
 * LVS-only inductor model selection, see lna_core_parts.sch for details.
 .lib $::env(PWD)/LD2_model.lib lvsrm
 "}
+C {symbols/cap_mim_2f0fF.sym} 50 -340 0 0 {name=C_CAS
+W=49.8865e-6
+L=49.8865e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=4}

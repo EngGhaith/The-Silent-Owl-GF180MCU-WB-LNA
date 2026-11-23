@@ -12,7 +12,7 @@ lab=vss}
 N 760 -760 800 -760 {
 lab=vm2}
 N 700 -590 720 -590 {
-lab=g_cg}
+lab=#net1}
 N 550 -730 550 -710 {
 lab=vbias_cg}
 N 550 -490 550 -450 {
@@ -22,9 +22,9 @@ lab=vm2}
 N 760 -650 760 -620 {lab=vm2}
 N 760 -720 760 -660 {lab=vm2}
 N 500 -680 530 -680 {lab=vss}
-N 550 -590 550 -550 {lab=g_cg}
-N 550 -590 700 -590 {lab=g_cg}
-N 550 -650 550 -590 {lab=g_cg}
+N 550 -590 550 -550 {lab=#net1}
+N 550 -590 700 -590 {lab=#net1}
+N 550 -650 550 -590 {lab=#net1}
 N 760 -760 760 -720 {lab=vm2}
 N 760 -380 760 -370 {
 lab=input_match}
@@ -83,18 +83,6 @@ L=48.35u
 model=ppolyf_u_1k
 spiceprefix=X
 m=1}
-C {symbols/cap_mim_2f0fF.sym} 830 -760 1 0 {name=C2
-W=58.2168u
-L=58.2168u
-model=cap_mim_2f0_m4m5_noshield
-spiceprefix=X
-m=1}
-C {symbols/cap_mim_2f0fF.sym} 550 -520 2 1 {name=C3
-W=49.8865u
-L=49.8865u
-model=cap_mim_2f0_m4m5_noshield
-spiceprefix=X
-m=4}
 C {iopin.sym} 550 -730 3 0 {name=p16 lab=vbias_cg}
 C {lab_pin.sym} 550 -450 3 0 {name=p17 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 780 -590 2 0 {name=p18 sig_type=std_logic lab=vss}
@@ -137,3 +125,15 @@ value="
 .lib $::env(PWD)/L1_model.lib lvsrm
 .lib $::env(PWD)/LD4_model.lib lvsrm
 "}
+C {symbols/cap_mim_2f0fF.sym} 550 -520 0 0 {name=C3
+W=49.8865e-6
+L=49.8865e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=4}
+C {symbols/cap_mim_2f0fF.sym} 830 -760 3 0 {name=C2
+W=58.2168e-6
+L=58.2168e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}

@@ -14,12 +14,6 @@ N 440 -220 440 -120 {lab=rf_out_pad}
 N 440 -300 440 -220 {lab=rf_out_pad}
 N 680 -120 730 -120 {lab=vss}
 C {ipin.sym} 230 -300 0 0 {name=p3 lab=output_cs}
-C {symbols/cap_mim_2f0fF.sym} 350 -300 3 0 {name=C1
-W=64.61u
-L=54.0u
-model=cap_mim_2f0_m4m5_noshield
-spiceprefix=X
-m=1}
 C {iopin.sym} 170 -380 0 1 {name=p1 lab=vss}
 C {lab_pin.sym} 210 -380 2 0 {name=p4 sig_type=std_logic lab=vss
 }
@@ -32,3 +26,9 @@ value="
 * LVS-only inductor model selection, see lna_core_parts.sch for details.
 .lib $::env(PWD)/LSHUNT_OUT_model.lib lvsrm
 "}
+C {symbols/cap_mim_2f0fF.sym} 350 -300 3 0 {name=C1
+W=64.61e-6
+L=54.0e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}
