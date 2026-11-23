@@ -1,7 +1,7 @@
 Check results for klayout/lna_top2.gds (top cell lna_core_parts), branch lvs-clean-official
 =========================================================================================
-Date: 2026-11-23
-Layout: commit a7a4d82 (output of lvs/apply_lvs_layout_fixes.py on top of 5838df5)
+Date: 2026-11-24
+Layout: output of lvs/apply_lvs_layout_fixes.py (steps 1-7) on top of 5838df5
 PDK: gf180mcuD (/foss/pdks), container IIC-OSIC-TOOLS 2026.04 (Chipathon), Magic 8.3.636, KLayout via PDK run_drc.py
 
 1) LVS -- Magic + Netgen, run_full_lvs (lvs/extra_be_checks @ 4957b99, Chipathon integration flow)
@@ -20,6 +20,18 @@ PDK: gf180mcuD (/foss/pdks), container IIC-OSIC-TOOLS 2026.04 (Chipathon), Magic
    result  : CLEAN -- "Klayout DRC run is clean. GDS has no DRC violations."
    (the original layout 5838df5 had 2 x MT.2b at (734,16) / (846,16); fixed, see lvs/README.md, layout change 4)
 
+2b) DRC -- Magic, PDK tech gf180mcuD.tech, style drc(full)  (cross-check, as used by the integrator)
+-----------------------------------------------------------------------------------------------------
+   command : magic -dnull -noconsole -rcfile $PDK_ROOT/gf180mcuD/libs.tech/magic/gf180mcuD.magicrc
+             gds read klayout/lna_top2.gds; load lna_core_parts; drc style drc(full); drc check; drc catchup;
+             drc listall why
+   result  : CLEAN -- 0 errors
+   (before the fixes 6 and 7 in lvs/README.md: 983 errors, in two rules only --
+     972 x PRES/LRES/HRES.7  poly contact of the high-Rs resistors 0.25 um from SAB, Magic wants exactly 0.22 um
+      11 x MIMTM.2           via4 on the MiM bottom plates only 0.2-0.3 um from the plate edge, min 0.4 um
+    the KLayout deck reports neither: it checks HRES.8 as a minimum only, and MIMTM.2 only for vias over
+    the capacitor itself)
+
 3) Density (run_drc.py --density_only) -- documented only, NOT fixed
 ---------------------------------------------------------------------
    layer      density    rule                                  status
@@ -33,7 +45,7 @@ PDK: gf180mcuD (/foss/pdks), container IIC-OSIC-TOOLS 2026.04 (Chipathon), Magic
    Note: block level only. The Chipathon integration adds fill at the chip top level; projects were asked
    not to add their own fill (integration issue #201, Sep 2026).
 
-4) Antenna (run_drc.py --antenna_only) -- documented only, NOT fixed
+4) Antenna (run_drc.py --antenna_only) -- documented only, NOT fixed (same result before/after fixes 6+7)
 --------------------------------------------------------------------
    16 gate polygons, flagged by these rules (same gates in every rule):
      thin gate oxide  (4 gates) : ANT.16_i_ANT.2, ANT.16_i_ANT.5, ANT.16_i_ANT.9, ANT.16_i_ANT.10,

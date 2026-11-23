@@ -54,8 +54,10 @@ All of these are applied by `lvs/apply_lvs_layout_fixes.py` (re-runnable on a fr
 
 4. **DRC MT.2b** (space to wide metaltop, 0.6 µm) at (734, 16) and (846, 16). These were already in the original layout. Two PG tiles merge there with the wide M5 of the L1 / LSHUNT_OUT coils, and each tile has a 2 × 2 µm M5 hole. Both holes are empty on M3–M5 and on all via layers, so filling them with M5 leaves the net unchanged.
 5. **Two `vss` labels on unconnected metal** were removed (text only): the M4 label at (578.107, 1096.027) and the M1 label at (55, 535). Magic reported them as disconnected nodes `vss_uq19` / `vss_uq31`, and Netgen showed them as extra pins ("port errors").
+6. **Magic DRC MIMTM.2** (11 areas): some via4 of the M4-bottom-plate → M5 connections of the MIM caps sat only 0.2–0.3 µm from the bottom plate edge (minimum 0.4 µm). The via4 closer than 0.42 µm to the edge were removed: 208 shapes in 4 via-array cells, 400 vias over all instances. At least 4, and usually several hundred, vias remain per connection.
+7. **Magic DRC PRES/LRES/HRES.7** (972 places): Magic wants the poly contact of an unsalicided resistor exactly 0.22 µm from the SAB edge, while the PDK high-Rs pcell has 0.25 µm. The inner poly contacts were moved 0.03 µm towards the SAB edge (14 contacts in 3 resistor cells). This also meets the DRM minimum (HRES.8 ≥ 0.22 µm).
 
-## DRC (results: `lvs/check_results.txt`)
+## DRC (results: `lvs/check_results.txt`; KLayout and Magic DRC are both clean)
 
 ```bash
 python3 $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc/run_drc.py --path=klayout/lna_top2.gds --variant=D \

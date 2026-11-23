@@ -133,6 +133,64 @@ for layer, x, y in ((46, 578.107, 1096.027), (34, 55.0, 535.0)):
             m += 1
 assert m == 2, f"expected 2 dangling vss labels, found {m}"
 
+# ---- 6. Magic DRC MIMTM.2 (MiM bottom plate surrounds via4 by >= 0.4 um): the via4 of the M4-bottom-plate -> M5
+#         connections that are closer than 0.42 um to the bottom plate edge are removed (the remaining vias keep
+#         the connection; the via arrays are only used on these plates and fail identically in every instance)
+dbu_i = lambda v: int(round(v / dbu))
+M4 = db.Region(top.begin_shapes_rec(L(46))).merged()
+bot = M4.interacting(db.Region(top.begin_shapes_rec(L(75))))       # M4 bottom plates (touching the MIM top plate)
+inner = bot.sized(-dbu_i(0.42))
+bad = {}                                                            # cell index -> set of local via boxes
+seen_ok = {}
+it = top.begin_shapes_rec(L(41))
+while not it.at_end():
+    b = it.shape().bbox()
+    rb = db.Region(b.transformed(it.trans()))
+    is_bad = not (rb & bot).is_empty() and not (rb - inner).is_empty()
+    (bad if is_bad else seen_ok).setdefault(it.cell_index(), set()).add((b.left, b.bottom, b.right, b.top))
+    it.next()
+nvia = 0
+for ci, boxes in bad.items():
+    assert not (boxes & seen_ok.get(ci, set())), f"{ly.cell(ci).name}: via4 bad in one instance but ok in another"
+    assert len(seen_ok.get(ci, set())) >= 4, f"{ly.cell(ci).name}: too few via4 would remain"
+    shapes = ly.cell(ci).shapes(L(41))
+    for s in list(shapes.each()):
+        bb = s.bbox()
+        if (bb.left, bb.bottom, bb.right, bb.top) in boxes:
+            s.delete()
+            nvia += 1
+
+# ---- 7. Magic DRC PRES/LRES/HRES.7: the poly contact of an unsalicided (high-Rs) resistor must sit exactly 0.22 um
+#         from the salicide block (Magic window 0.22 .. 0.44 um; the PDK pcell has 0.25 um). The inner contacts are
+#         moved 0.03 um towards the SAB edge -> 0.22 um, which also meets the DRM minimum (HRES.8 / LRES.7 >= 0.22)
+ncont = 0
+for c in ly.each_cell():
+    sab = [s.bbox() for s in c.shapes(L(49)).each()]
+    if not sab or c.shapes(L(33)).is_empty():
+        continue
+    poly = db.Region(c.shapes(L(30)))
+    m1 = db.Region(c.shapes(L(34)))
+    for s in list(c.shapes(L(33)).each()):
+        b = s.bbox()
+        if not (db.Region(b) - poly).is_empty():
+            continue                                                 # not a poly contact
+        for sb in sab:
+            if b.top <= sb.bottom or b.bottom >= sb.top:
+                continue
+            if b.right <= sb.left:
+                gap = sb.left - b.right; sign = 1
+            elif b.left >= sb.right:
+                gap = b.left - sb.right; sign = -1
+            else:
+                continue
+            if dbu_i(0.22) < gap <= dbu_i(0.44):
+                nb = b.moved(sign * (gap - dbu_i(0.22)), 0)
+                assert (db.Region(nb) - poly).is_empty() and (db.Region(nb) - m1).is_empty(), \
+                    f"{c.name}: moved contact not enclosed by poly/M1"
+                s.box = nb
+                ncont += 1
+                break
+
 ly.write(dst)
 print(f"vss labels removed: 2 + {m} dangling, DEEMB feeds: {done}, rm1 markers removed: {n}, RES_MK added: {k}, "
-      f"M5 holes filled: 2 -> {dst}")
+      f"M5 holes filled: 2, MIM via4 removed: {nvia}, resistor contacts moved: {ncont} -> {dst}")
