@@ -89,9 +89,11 @@ Vp2gnd p2 0 0  ; port 2 shorted to the guard ring (ground) -- single-ended EM si
 
 .lib lvsrm
 .SUBCKT LD2_MODEL p1 p2
-* LVS-only: PDK metal4 resistor standing in for the coil -- not an
-* electrical fit, purely a structural device for LVS (see user's spec).
-R1 p1 p2 rm4 W=7u L=1u
+* LVS-only: PDK top-metal (M5) resistor standing in for the coil -- not an
+* electrical fit, purely a structural device for LVS. Marker (110/15) sits on
+* LD2's 7 um M5 feed line (the coil itself is on M4, but the gf180mcuD 5LM
+* LVS deck has no rm4 device, see klayout/lvs_deck_gf180mcuD/README_PATCH.md).
+R1 p1 p2 tm11k W=7u L=1u
 .ENDS LD2_MODEL
 .endl lvsrm
 

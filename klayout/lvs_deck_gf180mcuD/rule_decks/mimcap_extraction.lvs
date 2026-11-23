@@ -1,0 +1,35 @@
+################################################################################################
+# Copyright 2023 GlobalFoundries PDK Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+################################################################################################
+
+#==================================
+# ------- MIMCAP EXTRACTION -------
+#==================================
+
+logger.info('Starting MIMCAP EXTRACTION')
+
+case MIM_CAP
+when '1'
+  logger.info('Extracting cap_mim_1f0fF device')
+  extract_devices(capacitor('cap_mim_1f0fF', 1.0e-15, MIMCap), { 'P1' => mim_virtual, 'P2' => fuse_cap })
+
+when '1.5'
+  logger.info('Extracting cap_mim_1f5fF device')
+  extract_devices(capacitor('cap_mim_1f5fF', 1.5e-15, MIMCap), { 'P1' => mim_virtual, 'P2' => fuse_cap })
+
+when '2'
+  logger.info('Extracting cap_mim_2f0fF device')
+  extract_devices(capacitor('cap_mim_2f0fF', 2.0e-15, MIMCap), { 'P1' => mim_virtual, 'P2' => fuse_cap })
+end
