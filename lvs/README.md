@@ -59,12 +59,30 @@ All of these are applied by `lvs/apply_lvs_layout_fixes.py` (re-runnable on a fr
 
 ## DRC (results: `lvs/check_results.txt`; KLayout and Magic DRC are both clean)
 
+Both decks run from `klayout/check_lna_core_layouts.py`, selected with `--drc` (default `both`):
+
 ```bash
-python3 $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc/run_drc.py --path=klayout/lna_top2.gds --variant=D \
-    --topcell=lna_core_parts --run_dir=<dir> --mp=4 --run_mode=deep
+python3 klayout/check_lna_core_layouts.py parts --drc=both --no-lvs
 ```
-Result: "Klayout DRC run is clean". This runs the main table, all FEOL and BEOL rules; antenna and density are not included.
-**Note:** `klayout/check_lna_core_layouts.py` calls `gf180mcu.drc` directly without `-rd feol=true -rd beol=true`. In that case the deck runs **no** FEOL/BEOL rules. Every "DRC clean" from that script so far therefore did not actually check anything. Use `run_drc.py` as above.
+
+| `--drc=` | deck | covers | result on this layout |
+|---|---|---|---|
+| `klayout` | PDK KLayout deck | FEOL + BEOL + antenna | clean except the 11 documented `ANT.16_i/ii_*` items (vss-tied dummy gates, see section 4 of `check_results.txt`) |
+| `magic` | Magic, PDK `gf180mcuD` tech, `drc style drc(full)` | catches e.g. `PRES/LRES/HRES.7`, `MIMTM.2`; **no** antenna rules | clean (0 errors) |
+| `both` | both of the above | — | use this for signoff |
+
+They are not redundant: the two decks do not code the same rules, which is why `MIMTM.2` and `HRES.7` were only
+found by Magic (layout changes 6 and 7 above).
+
+The KLayout side uses the PDK's `run_drc.py` when the PDK ships one, and otherwise drives `gf180mcu.drc`
+directly. Note that there is no `-rd feol` / `-rd beol` switch in the deck shipped with the gf180mcuD in
+IIC-OSIC-TOOLS: there, `feol` and `beol` are *tags* on the rules (see `drc/options.rb` and the `tags: %w[...]`
+lines in `drc/rule_decks/*`), so `-rd decks=all,-density,-dummy_comp` runs every FEOL, BEOL and antenna rule.
+Which form is needed depends on the PDK build; the script picks automatically.
+
+Magic reads the coil cells with a few "Unknown layer/datatype" warnings for `151/5` (inductor marker) and
+`201/0` + `202/0` (openEMS simulation ports). These are marker layers with no manufacturable geometry, so
+nothing that DRC would check is skipped.
 
 ## 4. Schematic changes (`xschem/`)
 
