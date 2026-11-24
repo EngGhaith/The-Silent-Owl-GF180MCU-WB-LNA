@@ -300,19 +300,33 @@ def lvs_layout(cell, out_dir):
 
 
 def run_drc(cell, run_dir):
-    """Real PDK DRC: run_drc.py from $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc (variant D = 5LM, 11 kA top
-    metal, MIM option B), deep mode, FEOL + BEOL + antenna. A previous version called gf180mcu.drc directly without
-    -rd feol=true / -rd beol=true; the deck then runs no FEOL/BEOL rule at all and always reports "clean".
-    Density is not part of this check (needs full-chip context); run run_drc.py --density_only separately.
-    lna_core_parts is checked on klayout/lna_top2.gds (the current layout)."""
+    """Real PDK DRC, variant D (5LM, 11 kA top metal, MIM option B), deep mode, FEOL + BEOL + antenna.
+    Density is excluded (needs full-chip context); run it separately.
+    lna_core_parts is checked on klayout/lna_top2.gds (the current layout).
+
+    Two PDK layouts are supported, because they drive the deck differently:
+      - builds that ship drc/run_drc.py (the wrapper this check was written against) -- used when present;
+      - builds that ship only drc/gf180mcu.drc (e.g. the gf180mcuD in IIC-OSIC-TOOLS here), where the deck is
+        driven by rule *tags* via -rd decks=... There is no -rd feol / -rd beol switch in that deck: "feol" and
+        "beol" are tags on the rules themselves (see drc/options.rb and the tags: %w[...] lines in
+        drc/rule_decks/*), so decks=all,-density,-dummy_comp runs every FEOL, BEOL and antenna rule."""
     d = os.path.join(run_dir, "drc_" + cell)
     if os.path.isdir(d):
         shutil.rmtree(d)
     os.makedirs(d)
     gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
-    r = subprocess.run(["python3", os.path.join(PDK_KL, "drc", "run_drc.py"), f"--path={gds}", "--variant=D",
-                        f"--topcell={cell}", f"--run_dir={d}", "--mp=4", "--run_mode=deep", "--antenna"],
-                       capture_output=True, text=True, cwd=d)
+    runner = os.path.join(PDK_KL, "drc", "run_drc.py")
+    if os.path.exists(runner):
+        clean_marker = "Klayout DRC run is clean"
+        cmd = ["python3", runner, f"--path={gds}", "--variant=D", f"--topcell={cell}", f"--run_dir={d}",
+               "--mp=4", "--run_mode=deep", "--antenna"]
+    else:
+        clean_marker = "DRC RESULT: SUCCESS"
+        cmd = ["klayout", "-b", "-r", os.path.join(PDK_KL, "drc", "gf180mcu.drc"),
+               "-rd", f"input={gds}", "-rd", f"report={os.path.join(d, cell + '.lyrdb')}",
+               "-rd", f"topcell={cell}", "-rd", "variant=D", "-rd", "run_mode=deep", "-rd", "workers=4",
+               "-rd", "decks=all,-density,-dummy_comp"]
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=d)
     log = r.stdout + r.stderr
     open(os.path.join(d, "run_drc.log"), "w").write(log)
     viol = {}
@@ -321,7 +335,7 @@ def run_drc(cell, run_dir):
         for it in ET.parse(f).getroot().iter("item"):
             cat = it.findtext("category", "").strip("'")
             viol[cat] = viol.get(cat, 0) + 1
-    if "Klayout DRC run is clean" not in log and not viol:
+    if clean_marker not in log and not viol:
         viol["drc run failed (see run_drc.log)"] = 1
     return viol, d
 
