@@ -16,14 +16,13 @@ DRC runs with two independent decks, selected by --drc (default: both). They are
 DRC (KLayout): --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density
   and dummy-fill decks excluded (block level: a density/dummy-fill check needs full-chip context to mean
   anything -- a sub-block cut out of it will almost always "fail" a global-density-style rule in isolation).
-  KNOWN, EXPECTED "parts" result: 6 ANT.16_ii_ANT.{3,4,5,10,11,12} violations (one per metal level's antenna
-  check), each on a polygon spanning essentially the whole macro -- the shared vdd/vss plane/ring, with zero
-  associated protection-diode area because this standalone cut-out has no real pads yet. Confirmed via
-  klayout/lna_top.gds (the actual padframe + core assembly, with real I/O cells and their ESD diodes): zero
-  antenna violations there. Also confirmed present identically on an unrelated branch's parts.gds, i.e.
-  pre-existing and not introduced by whatever layout work you're currently checking -- not a real issue, just
-  an artifact of checking "lna_core_parts" in isolation from the padframe. Do not chase this one; if the exact
-  rule names or count ever change, that is worth a fresh look, but this specific set is a known baseline.
+  HISTORICAL NOTE (no longer applies): "parts" used to report a standing set of ANT.16_i/ii antenna
+  violations on the vdd/vss plane, treated as an artifact of checking the macro without its padframe.
+  Those are GONE: removing four metal1 rectangles in lna_core_parts (the redundant second path from the
+  dummy-transistor guard rings to the vss grid) cleared all of them. Antenna rules are evaluated per metal
+  level on the conductor attached to the gate at that step, so metal that is redundant for DC still counts
+  its full area. Both lna_core_parts.gds and lna_core_parts_filled.gds now report ZERO antenna violations;
+  any that reappear are new and worth chasing.
 LVS: reference = xschem netlist of xschem/<cell>.sch (netlisted here, then PDK spice converter) with
   - inductors and their ideal loss resistors removed (no inductor device in the PDK LVS deck); the spiral / coil
     cells (<cell>__L*, coils with their sub cells) are removed from the layout copy as well, so both inductor
@@ -137,6 +136,10 @@ XSCHEM = os.path.join(HERE, "..", "xschem")
 PDK_KL = "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
 PDK_MAGICRC = "/foss/pdks/gf180mcuD/libs.tech/magic/gf180mcuD.magicrc"
 CELLS = ["input_match", "cg", "cs", "output_match", "parts"]
+# The "parts" cell lives in its own GDS. lna_top2.gds was renamed to lna_core_parts.gds (unfilled,
+# DRC clean except density + LVS clean) and lna_core_parts_filled.gds (COMP/poly2 dummy fill, clean
+# on both DRC decks incl. density + LVS clean). The filled one is what lvs_config.json points at.
+PARTS_GDS = "lna_core_parts_filled.gds"
 DRC_ENGINES = ("klayout", "magic", "both")
 SHORTS = {"lna_core_cs": {"net1": "vss"}}  # RS_EQ1
 
@@ -313,7 +316,7 @@ def lvs_layout(cell, out_dir):
 def run_drc_klayout(cell, run_dir):
     """KLayout DRC with the PDK deck, variant D (5LM, 11 kA top metal, MIM option B), deep mode, FEOL + BEOL + antenna.
     Density is excluded (needs full-chip context); run it separately.
-    lna_core_parts is checked on klayout/lna_top2.gds (the current layout).
+    lna_core_parts is checked on klayout/<PARTS_GDS> (see the constant near the top).
 
     Two PDK layouts are supported, because they drive the deck differently:
       - builds that ship drc/run_drc.py (the wrapper this check was written against) -- used when present;
@@ -325,7 +328,7 @@ def run_drc_klayout(cell, run_dir):
     if os.path.isdir(d):
         shutil.rmtree(d)
     os.makedirs(d)
-    gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
+    gds = os.path.join(HERE, PARTS_GDS if cell == "lna_core_parts" else cell + ".gds")
     runner = os.path.join(PDK_KL, "drc", "run_drc.py")
     if os.path.exists(runner):
         clean_marker = "Klayout DRC run is clean"
@@ -361,7 +364,7 @@ def run_drc_magic(cell, run_dir):
     if os.path.isdir(d):
         shutil.rmtree(d)
     os.makedirs(d)
-    gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
+    gds = os.path.join(HERE, PARTS_GDS if cell == "lna_core_parts" else cell + ".gds")
     script = "\n".join([
         "crashbackups stop",
         "drc off",                      # no incremental checking while the GDS is being read

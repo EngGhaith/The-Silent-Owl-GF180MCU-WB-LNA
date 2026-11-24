@@ -4,3 +4,4 @@ techsweep/simulations/*.mat
 techsweep/simulation
 klayout/lvs/
 lvs/work/
+klayout/backups/
