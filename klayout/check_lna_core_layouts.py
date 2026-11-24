@@ -2,10 +2,18 @@
 """
 DRC + LVS of the lna_core sub-cell layouts (klayout/lna_core_*.gds) with the gf180mcuD KLayout decks.
 
-Usage:  python3 check_lna_core_layouts.py [cg cs input_match output_match parts] [--no-drc] [--no-lvs] [--run_dir DIR]
+Usage:  python3 check_lna_core_layouts.py [cg cs input_match output_match parts]
+                [--drc=klayout|magic|both] [--no-drc] [--no-lvs] [--run_dir DIR]
 
-DRC: gf180mcu.drc (invoked directly via klayout -b -r, same as gf180mcu.lvs below -- gf180mcuD, unlike the ihp
-  PDKs, has no run_drc.py wrapper script) --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density
+DRC runs with two independent decks, selected by --drc (default: both). They are NOT redundant -- the decks do
+  not code the same rules, so each catches things the other misses:
+    --drc=klayout  PDK KLayout deck (run_drc_klayout): FEOL + BEOL + antenna.
+    --drc=magic    Magic, PDK gf180mcuD tech, style drc(full) (run_drc_magic): catches e.g. PRES/LRES/HRES.7
+                   (poly contact to SAB) and MIMTM.2 (via4 enclosure on the MIM bottom plate), which the
+                   KLayout deck checks differently or not at all. No antenna rules in this style.
+    --drc=both     both of the above (use this for signoff).
+
+DRC (KLayout): --variant=D (5LM, 11 kA top metal, MIM option B), deep mode, density
   and dummy-fill decks excluded (block level: a density/dummy-fill check needs full-chip context to mean
   anything -- a sub-block cut out of it will almost always "fail" a global-density-style rule in isolation).
   KNOWN, EXPECTED "parts" result: 6 ANT.16_ii_ANT.{3,4,5,10,11,12} violations (one per metal level's antenna
@@ -117,7 +125,7 @@ GUI: every LVS run also writes klayout/lvs/<cell>_lvs.gds (layout copy as checke
   without needing to reason about device-level paths in the abstract.
 """
 import json
-import os
+import glob, os
 import re
 import shutil
 import subprocess
@@ -127,7 +135,9 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 XSCHEM = os.path.join(HERE, "..", "xschem")
 PDK_KL = "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
+PDK_MAGICRC = "/foss/pdks/gf180mcuD/libs.tech/magic/gf180mcuD.magicrc"
 CELLS = ["input_match", "cg", "cs", "output_match", "parts"]
+DRC_ENGINES = ("klayout", "magic", "both")
 SHORTS = {"lna_core_cs": {"net1": "vss"}}  # RS_EQ1
 
 # gf180mcu.lvs's own spice reader can't handle a hyphenated, unquoted .lib path ("Expected a word or quoted
@@ -300,30 +310,99 @@ def lvs_layout(cell, out_dir):
     return dst
 
 
-def run_drc(cell, run_dir):
-    """gf180mcuD has no run_drc.py wrapper (unlike the ihp PDKs) -- invoke gf180mcu.drc directly via klayout -b -r,
-    same pattern as run_lvs()'s gf180mcu.lvs below. density / dummy_comp decks excluded: both are global-fill-
-    density style checks that need full-chip context, not meaningful for (and will near-always "fail" on) an
-    isolated sub-block -- see module docstring. A prior version of this function assumed a run_drc.py wrapper
-    that silently never existed for gf180mcuD: subprocess.run doesn't raise on a missing executable file found
-    via a literal path argument to python3, so every DRC check up to this fix was a silent no-op that always
-    reported "clean" (empty violation dict, no .lyrdb ever produced) -- confirmed by directly invoking gf180mcu.drc
-    and finding real content (including correctly-excludable density violations, and genuine 0-violation results
-    once properly configured) that the old code never actually checked."""
+def run_drc_klayout(cell, run_dir):
+    """KLayout DRC with the PDK deck, variant D (5LM, 11 kA top metal, MIM option B), deep mode, FEOL + BEOL + antenna.
+    Density is excluded (needs full-chip context); run it separately.
+    lna_core_parts is checked on klayout/lna_top2.gds (the current layout).
+
+    Two PDK layouts are supported, because they drive the deck differently:
+      - builds that ship drc/run_drc.py (the wrapper this check was written against) -- used when present;
+      - builds that ship only drc/gf180mcu.drc (e.g. the gf180mcuD in IIC-OSIC-TOOLS here), where the deck is
+        driven by rule *tags* via -rd decks=... There is no -rd feol / -rd beol switch in that deck: "feol" and
+        "beol" are tags on the rules themselves (see drc/options.rb and the tags: %w[...] lines in
+        drc/rule_decks/*), so decks=all,-density,-dummy_comp runs every FEOL, BEOL and antenna rule."""
     d = os.path.join(run_dir, "drc_" + cell)
-    os.makedirs(d, exist_ok=True)
-    report = os.path.join(d, cell + ".lyrdb")
-    if os.path.exists(report):
-        os.remove(report)
-    r = subprocess.run(["klayout", "-b", "-r", os.path.join(PDK_KL, "drc", "gf180mcu.drc"),
-                        "-rd", f"input={os.path.join(HERE, cell + '.gds')}", "-rd", f"report={report}",
-                        "-rd", "variant=D", "-rd", "run_mode=deep", "-rd", "workers=8",
-                        "-rd", "decks=all,-density,-dummy_comp"], capture_output=True, text=True)
+    if os.path.isdir(d):
+        shutil.rmtree(d)
+    os.makedirs(d)
+    gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
+    runner = os.path.join(PDK_KL, "drc", "run_drc.py")
+    if os.path.exists(runner):
+        clean_marker = "Klayout DRC run is clean"
+        cmd = ["python3", runner, f"--path={gds}", "--variant=D", f"--topcell={cell}", f"--run_dir={d}",
+               "--mp=4", "--run_mode=deep", "--antenna"]
+    else:
+        clean_marker = "DRC RESULT: SUCCESS"
+        cmd = ["klayout", "-b", "-r", os.path.join(PDK_KL, "drc", "gf180mcu.drc"),
+               "-rd", f"input={gds}", "-rd", f"report={os.path.join(d, cell + '.lyrdb')}",
+               "-rd", f"topcell={cell}", "-rd", "variant=D", "-rd", "run_mode=deep", "-rd", "workers=4",
+               "-rd", "decks=all,-density,-dummy_comp"]
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=d)
     log = r.stdout + r.stderr
-    viol = dict((n, int(c)) for n, c in re.findall(r"'([\w.]+)'\s*:\s*(\d+) violation", log))
-    if r.returncode != 0 and not viol and "DRC RESULT: SUCCESS" not in log:
-        viol["drc deck crashed (see log)"] = 1
+    open(os.path.join(d, "run_drc.log"), "w").write(log)
+    viol = {}
+    import xml.etree.ElementTree as ET
+    for f in glob.glob(os.path.join(d, "*.lyrdb")):
+        for it in ET.parse(f).getroot().iter("item"):
+            cat = it.findtext("category", "").strip("'")
+            viol[cat] = viol.get(cat, 0) + 1
+    if clean_marker not in log and not viol:
+        viol["drc run failed (see run_drc.log)"] = 1
     return viol, d
+
+
+def run_drc_magic(cell, run_dir):
+    """Magic DRC with the PDK's own gf180mcuD tech, style drc(full) -- the second opinion the Chipathon
+    integrator runs. It is not redundant with the KLayout deck: the two decks do not code the same rules.
+    Magic catches e.g. PRES/LRES/HRES.7 (poly contact distance to SAB) and MIMTM.2 (via4 enclosure on the MIM
+    bottom plate), which the KLayout deck checks differently or not at all; the KLayout deck in turn runs the
+    antenna rules, which this style does not. Run both for signoff (--drc=both)."""
+    d = os.path.join(run_dir, "drc_magic_" + cell)
+    if os.path.isdir(d):
+        shutil.rmtree(d)
+    os.makedirs(d)
+    gds = os.path.join(HERE, "lna_top2.gds" if cell == "lna_core_parts" else cell + ".gds")
+    script = "\n".join([
+        "crashbackups stop",
+        "drc off",                      # no incremental checking while the GDS is being read
+        f"gds read {gds}",
+        f"load {cell}",
+        "select top cell",
+        "drc style drc(full)",
+        "drc euclidean on",
+        "drc check",
+        "drc catchup",                  # block until the checker has drained its queue
+        'puts "MAGIC_DRC_COUNT: [drc list count total]"',
+        "drc listall why",
+        "quit -noprompt",
+    ])
+    try:
+        r = subprocess.run(["magic", "-dnull", "-noconsole", "-rcfile", PDK_MAGICRC],
+                           input=script, capture_output=True, text=True, cwd=d)
+    except FileNotFoundError:
+        return {"magic not installed": 1}, d
+    log = r.stdout + r.stderr
+    open(os.path.join(d, "magic_drc.log"), "w").write(log)
+
+    m = re.search(r"MAGIC_DRC_COUNT:\s*(\d+)", log)
+    if m is None:
+        return {"magic drc run failed (see magic_drc.log)": 1}, d
+    total = int(m.group(1))
+    if total == 0:
+        return {}, d
+    # "drc listall why" prints each rule's own text, then its violating boxes; count the boxes per rule so the
+    # summary matches the KLayout side's {rule: count} shape instead of a single opaque number.
+    viol, rule = {}, None
+    for line in log.splitlines()[log.splitlines().index(m.group(0)) if m.group(0) in log.splitlines() else 0:]:
+        s = line.strip()
+        if not s or s.startswith("MAGIC_DRC_COUNT"):
+            continue
+        if re.match(r"^-?\d+\s+-?\d+\s+-?\d+\s+-?\d+$", s):   # a violation box
+            if rule:
+                viol[rule] = viol.get(rule, 0) + 1
+        elif not s.startswith("["):
+            rule = s[:90]
+    return viol or {f"magic drc: {total} violations (see magic_drc.log)": total}, d
 
 
 def run_lvs(cell, run_dir):
@@ -357,12 +436,24 @@ def main():
         i = args.index("--run_dir")
         run_dir = args[i + 1]
         del args[i:i + 2]
+    drc_engine = "both"
+    for a in list(args):
+        if a.startswith("--drc="):
+            drc_engine = a.split("=", 1)[1].strip().lower()
+            args.remove(a)
+    if drc_engine not in DRC_ENGINES:
+        sys.exit(f"--drc must be one of {'/'.join(DRC_ENGINES)} (got {drc_engine!r})")
+
     cells = [a for a in args if not a.startswith("--")] or CELLS
     for c in cells:
         cell = "lna_core_" + c
         if "--no-drc" not in args:
-            viol, d = run_drc(cell, run_dir)
-            print(f"{cell:24s} DRC {'clean' if not viol else 'VIOLATIONS ' + str(viol)}   ({d})", flush=True)
+            for eng, fn in (("klayout", run_drc_klayout), ("magic", run_drc_magic)):
+                if drc_engine in (eng, "both"):
+                    viol, d = fn(cell, run_dir)
+                    tag = f"DRC[{eng}]"
+                    print(f"{cell:24s} {tag:13s} {'clean' if not viol else 'VIOLATIONS ' + str(viol)}   ({d})",
+                          flush=True)
         if "--no-lvs" not in args:
             ok, d, log = run_lvs(cell, run_dir)
             print(f"{cell:24s} LVS {'match' if ok else 'MISMATCH'}   ({d})", flush=True)

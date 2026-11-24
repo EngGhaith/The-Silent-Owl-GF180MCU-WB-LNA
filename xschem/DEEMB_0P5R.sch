@@ -315,5 +315,13 @@ model=ppolyf_u_1k_6p0
 spiceprefix=X
 m=5}
 C {iopin.sym} 120 -1120 0 1 {name=p1 lab=G}
-C {iopin.sym} 120 -570 0 1 {name=p2 lab=deemb_0p5r}
+C {iopin.sym} 0 -570 0 1 {name=p2 lab=deemb_0p5r}
 C {iopin.sym} 120 -20 0 1 {name=p3 lab=G}
+N 0 -570 30 -570 {lab=deemb_0p5r}
+N 90 -570 120 -570 {lab=deemb_0p5r_m1}
+C {symbols/rm3.sym} 60 -570 1 0 {name=RM3
+W=1.62e-6
+L=1e-6
+model=rm3
+spiceprefix=X
+m=1}

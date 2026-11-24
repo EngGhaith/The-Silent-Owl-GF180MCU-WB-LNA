@@ -1,0 +1,27 @@
+
+D np_6p0
+D pn_6p0 
+D diode_nd2ps_06v0
+D diode_pd2nw_06v0
+
+D condiode
+
+R ppolyf_u_1k_6p0 R=r_length/r_width*50
+R ppolyf_u R=r_length/r_width*50
+
+MN nfet_06v0 Vth=0.4
+MN nfet_06v0_dss Vth=0.4
+MP pfet_06v0 Vth=-0.4
+MP pfet_06v0_dss Vth=-0.4
+MN nmos_6p0 Vth=0.4
+MP pmos_6p0 Vth=-0.4
+MN nmos_3p3 Vth=0.3
+MP pmos_3p3 Vth=-0.3
+
+C mim_2p0fF
+
+C cap_mim_2f0_m4m5_noshield
+C cap_nmos_06v0
+
+
+ 

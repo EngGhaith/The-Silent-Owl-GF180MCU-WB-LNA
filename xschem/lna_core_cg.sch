@@ -125,7 +125,7 @@ value="
 .lib $::env(PWD)/L1_model.lib lvsrm
 .lib $::env(PWD)/LD4_model.lib lvsrm
 "}
-C {symbols/cap_mim_2f0fF.sym} 550 -520 0 0 {name=C3
+C {symbols/cap_mim_2f0fF.sym} 550 -520 2 1 {name=C3
 W=49.8865e-6
 L=49.8865e-6
 model=cap_mim_2f0fF

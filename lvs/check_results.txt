@@ -1,0 +1,66 @@
+Check results for klayout/lna_top2.gds (top cell lna_core_parts), branch lvs-clean-official
+=========================================================================================
+Date: 2026-11-24
+Layout: output of lvs/apply_lvs_layout_fixes.py (steps 1-7) on top of 5838df5
+PDK: gf180mcuD (/foss/pdks), container IIC-OSIC-TOOLS 2026.04 (Chipathon), Magic 8.3.636, KLayout via PDK run_drc.py
+
+1) LVS -- Magic + Netgen, run_full_lvs (lvs/extra_be_checks @ 4957b99, Chipathon integration flow)
+-----------------------------------------------------------------------------------------------
+   command : lvs/run_lvs.sh
+   result  : PASS -- "Final result: Circuits match uniquely."
+             top level: "Netlists match uniquely." (no port errors)
+             28 devices / 22 nets / 13 pins on both sides
+             devices: nfet_06v0, nfet_03v3, cap_mim_2f0_m4m5_noshield, ppolyf_u_1k, ppolyf_u_1k_6p0,
+                      tm11k x2, rm4 x2, rm3 x6, rm2 x1 (after netgen's parallel/series merging)
+
+2) DRC -- main table, FEOL + BEOL (PDK run_drc.py)
+--------------------------------------------------
+   command : python3 $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/drc/run_drc.py --path=klayout/lna_top2.gds \
+                 --variant=D --topcell=lna_core_parts --run_dir=<dir> --mp=4 --run_mode=deep
+   result  : CLEAN -- "Klayout DRC run is clean. GDS has no DRC violations."
+   (the original layout 5838df5 had 2 x MT.2b at (734,16) / (846,16); fixed, see lvs/README.md, layout change 4)
+
+2b) DRC -- Magic, PDK tech gf180mcuD.tech, style drc(full)  (cross-check, as used by the integrator)
+-----------------------------------------------------------------------------------------------------
+   command : magic -dnull -noconsole -rcfile $PDK_ROOT/gf180mcuD/libs.tech/magic/gf180mcuD.magicrc
+             gds read klayout/lna_top2.gds; load lna_core_parts; drc style drc(full); drc check; drc catchup;
+             drc listall why
+   result  : CLEAN -- 0 errors
+   (before the fixes 6 and 7 in lvs/README.md: 983 errors, in two rules only --
+     972 x PRES/LRES/HRES.7  poly contact of the high-Rs resistors 0.25 um from SAB, Magic wants exactly 0.22 um
+      11 x MIMTM.2           via4 on the MiM bottom plates only 0.2-0.3 um from the plate edge, min 0.4 um
+    the KLayout deck reports neither: it checks HRES.8 as a minimum only, and MIMTM.2 only for vias over
+    the capacitor itself)
+
+3) Density (run_drc.py --density_only) -- documented only, NOT fixed
+---------------------------------------------------------------------
+   layer      density    rule                                  status
+   COMP        5.14 %    DCF.1b  global COMP density >= 25 %    VIOLATION
+   Poly2       0.26 %    PL.8    Poly2 coverage      >= 14 %    VIOLATION
+   Metal1     52.88 %                                           ok
+   Metal2     52.56 %                                           ok
+   Metal3     50.76 %                                           ok
+   Metal4     54.68 %                                           ok
+   Metal5     56.13 %                                           ok
+   Note: block level only. The Chipathon integration adds fill at the chip top level; projects were asked
+   not to add their own fill (integration issue #201, Sep 2026).
+
+4) Antenna (run_drc.py --antenna_only) -- documented only, NOT fixed (same result before/after fixes 6+7)
+--------------------------------------------------------------------
+   16 gate polygons, flagged by these rules (same gates in every rule):
+     thin gate oxide  (4 gates) : ANT.16_i_ANT.2, ANT.16_i_ANT.5, ANT.16_i_ANT.9, ANT.16_i_ANT.10,
+                                  ANT.16_i_ANT.11, ANT.16_i_ANT.12
+     thick gate oxide (12 gates): ANT.16_ii_ANT.2, ANT.16_ii_ANT.9, ANT.16_ii_ANT.10,
+                                  ANT.16_ii_ANT.11, ANT.16_ii_ANT.12
+   gate locations (layout cell, um):
+     lna_core_cs__M1  (nfet_03v3, thin)  : x 607.3 / 608.1 / 688.9 / 689.7, y 759.2
+     lna_core_cg__M2A (nfet_06v0, thick) : x 419.2 / 420.3 / 499.9 / 501.0, y 724.2
+     lna_core_cg__M2B (nfet_06v0, thick) : x 419.2 / 420.3 / 499.9 / 501.0, y 732.7
+     lna_core_cs__M4  (nfet_06v0, thick) : x 624.3 / 625.4 / 671.3 / 672.5, y 771.2
+   Interpretation: the finger counts match the devices whose gate is tied to vss in the schematic.
+   - MM5 in lna_core_cs (nfet_03v3, nf=2, m=2) gives the 4 thin-oxide gates.
+   - MM3 in lna_core_cg (nf=2, m=4) and MM4D in lna_core_cs (nf=2, m=2) give the 12 thick-oxide gates.
+   vss is the whole supply mesh (M1-M5), so the metal-to-gate ratio is very large at block level, and no pad
+   diode is present in this cut-out. At chip level vss connects to the pad ring and its ESD diodes
+   (lna_top.gds was antenna clean according to the note in klayout/check_lna_core_layouts.py).
+   Report: run_drc.py writes <run_dir>/lna_top2_antenna.lyrdb (open in KLayout: Tools > Marker Browser).
