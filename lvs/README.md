@@ -57,6 +57,15 @@ All of these are applied by `lvs/apply_lvs_layout_fixes.py` (re-runnable on a fr
 6. **Magic DRC MIMTM.2** (11 areas): some via4 of the M4-bottom-plate → M5 connections of the MIM caps sat only 0.2–0.3 µm from the bottom plate edge (minimum 0.4 µm). The via4 closer than 0.42 µm to the edge were removed: 208 shapes in 4 via-array cells, 400 vias over all instances. At least 4, and usually several hundred, vias remain per connection.
 7. **Magic DRC PRES/LRES/HRES.7** (972 places): Magic wants the poly contact of an unsalicided resistor exactly 0.22 µm from the SAB edge, while the PDK high-Rs pcell has 0.25 µm. The inner poly contacts were moved 0.03 µm towards the SAB edge (14 contacts in 3 resistor cells). This also meets the DRM minimum (HRES.8 ≥ 0.22 µm).
 
+8. **DRC ANT.16** (11 areas): four metal1 rectangles in `lna_core_parts` were removed — two straps
+   (3.840 x 35.320 um at 412.760/680.000 and 3.740 x 33.860 um at 601.260/786.140) and two small pieces
+   (at 60.000/824.905 and 552.510/812.500). They were a second path from the dummy-transistor guard rings
+   to the vss grid, which is tied to vss anyway, so the extracted netlist is unchanged (28 devices / 22 nets
+   before and after). Antenna rules are evaluated per metal level on the conductor attached to the gate at
+   that step, so this redundant-for-DC metal still counted its full area and broke `ANT.16_i/ii_ANT.2/5/9/10/11/12`.
+   Removing it clears all 11. Five unreferenced `PG_PLAIN_*` cells were deleted at the same time; they also
+   left the layout with a single top cell (it had four).
+
 ## DRC (results: `lvs/check_results.txt`; KLayout and Magic DRC are both clean)
 
 Both decks run from `klayout/check_lna_core_layouts.py`, selected with `--drc` (default `both`):
@@ -67,7 +76,7 @@ python3 klayout/check_lna_core_layouts.py parts --drc=both --no-lvs
 
 | `--drc=` | deck | covers | result on this layout |
 |---|---|---|---|
-| `klayout` | PDK KLayout deck | FEOL + BEOL + antenna | clean except the 11 documented `ANT.16_i/ii_*` items (vss-tied dummy gates, see section 4 of `check_results.txt`) |
+| `klayout` | PDK KLayout deck | FEOL + BEOL + antenna | clean (0 violations over 753 rule categories) |
 | `magic` | Magic, PDK `gf180mcuD` tech, `drc style drc(full)` | catches e.g. `PRES/LRES/HRES.7`, `MIMTM.2`; **no** antenna rules | clean (0 errors) |
 | `both` | both of the above | — | use this for signoff |
 
