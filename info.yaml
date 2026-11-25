@@ -16,16 +16,52 @@ project:
   lvs_ready: false              # Set true only when the final GDS and LVS inputs are ready
   export_control: "docs/Export_Control_GF_Rev8.2.pdf"   # Required export control document
 
-# Intended seven-pin interface for the current active schematic:
-# 2 RF ports + 3 external analog biases + power + ground.
+# Pin interface of top cell lna_core_parts (klayout/lna_core_parts_filled.gds).
+# vss_l_* / vss_t_* are the 9 ground pads of the net vss, vdd_t_* the 3 supply pads of the net vdd
+# (l = left/west edge, t = top/north edge, numbered bottom to top / left to right).
+# open_dummy_lvs is an LVS-only label on the open end of the open structure (no pad), so it is not listed.
 
 pins:
-  - name: vss
+  # ground pads of the GSG groups, west (left) edge, bottom to top
+  - name: vss_l_1
     io_type: ground
 
-  - name: rf_in_pad
-    io_type: analog
+  - name: vss_l_2
+    io_type: ground
 
+  - name: vss_l_3
+    io_type: ground
+
+  - name: vss_l_4
+    io_type: ground
+
+  - name: vss_l_5
+    io_type: ground
+
+  - name: vss_l_6
+    io_type: ground
+
+  # ground pads of the GSG groups, north (top) edge, left to right
+  - name: vss_t_1
+    io_type: ground
+
+  - name: vss_t_2
+    io_type: ground
+
+  - name: vss_t_3
+    io_type: ground
+
+  # supply pads, north (top) edge, left to right
+  - name: vdd_t_1
+    io_type: power
+
+  - name: vdd_t_2
+    io_type: power
+
+  - name: vdd_t_3
+    io_type: power
+
+  # external bias voltages
   - name: vbias_cg
     io_type: analog
 
@@ -35,10 +71,25 @@ pins:
   - name: vbias_cas
     io_type: analog
 
+  # RF ports
+  - name: rf_in_pad
+    io_type: analog
+
   - name: rf_out_pad
     io_type: analog
 
-  - name: vdd
-    io_type: power
+  # de-embedding structures (open/short/load R/2R/0.5R), each with its own pad in a GSG group
+  - name: deemb_o
+    io_type: analog
 
+  - name: deemb_s
+    io_type: analog
 
+  - name: deemb_r
+    io_type: analog
+
+  - name: deemb_2r
+    io_type: analog
+
+  - name: deemb_0p5r
+    io_type: analog
