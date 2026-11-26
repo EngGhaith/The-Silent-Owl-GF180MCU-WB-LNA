@@ -1,7 +1,7 @@
 # The-Silent-Owl-GF180MCU-WB-LNA
 The Silent Owl is an open-source LNA designed in GF180MCU for Chipathon 2026
 
-Branch: `main_pex_layout_refloor` — the Chipathon 2026 submission.
+Branch: `main` — the Chipathon 2026 submission.
 
 
 # Sign-off files
