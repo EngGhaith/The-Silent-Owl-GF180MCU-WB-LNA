@@ -15,7 +15,7 @@ the edges**. The arrangement is intentional:
   reorder them.
 - Please do not rename nets (for example `vss` to `VSS` or `gnd`). The net names in the layout
   (`vss`, `vdd`, ...) have to match the schematic netlist `xschem/lna_core_parts_lvs.spice`.
-- The pad names in `info.yaml` name the individual pads of these nets: `vss_l_1..6`, `vss_t_1..3`
+- The pad names in `info.yaml` name the individual pads of these nets: `vss_l_1..6`, `vss_t_7..9`
   are the 9 pads of net `vss`, `vdd_t_1..3` the 3 pads of net `vdd`. All other pads have the same
   name as their net (see the tables below).
 
@@ -46,11 +46,11 @@ North edge, left to right (y about 1095-1107):
 | 272 | vbias_cs | `vbias_cs` | bias |
 | 379 | vdd | `vdd_t_2` | supply |
 | 477 | vbias_cas | `vbias_cas` | bias |
-| 578 | vss | `vss_t_1` | G |
+| 578 | vss | `vss_t_7` | G |
 | 678 | **rf_out_pad** | `rf_out_pad` | S (RF output) |
-| 778 | vss | `vss_t_2` | G (shared by rf_out_pad and deemb_o) |
+| 778 | vss | `vss_t_8` | G (shared by rf_out_pad and deemb_o) |
 | 880 | deemb_o | `deemb_o` | S (de-embedding, open) |
-| 978 | vss | `vss_t_3` | G |
+| 978 | vss | `vss_t_9` | G |
 | 1079 | vdd | `vdd_t_3` | supply |
 
 South and east edges carry only `vdd` and `vss` supply connections (corners, x = 575, y = 535); they are
@@ -60,7 +60,7 @@ not pad positions and have no `info.yaml` entry.
 
 | pin | io_type |
 |---|---|
-| vss_l_1..6, vss_t_1..3 (net vss) | ground (DVSS) |
+| vss_l_1..6, vss_t_7..9 (net vss) | ground (DVSS) |
 | vdd_t_1..3 (net vdd) | power (DVDD) |
 | rf_in_pad, rf_out_pad | analog (ASIG5V) |
 | vbias_cg, vbias_cs, vbias_cas | analog |
@@ -73,7 +73,7 @@ not pad positions and have no `info.yaml` entry.
   longer open. That is why it is not in `info.yaml`.
 - `vss` is one net, but it has 9 ground pads (the G of each GSG group: 6 west, 3 north). `vdd` has
   3 pads on the north edge. In `info.yaml` they are listed as `vss_l_1..6` (west edge, bottom to
-  top), `vss_t_1..3` and `vdd_t_1..3` (north edge, left to right). In the layout and in the LVS
+  top), `vss_t_7..9` and `vdd_t_1..3` (north edge, left to right). In the layout and in the LVS
   netlist all of them are still labelled `vss` / `vdd`. Please tell us whether the pad names in
   `info.yaml` have to match the layout labels, or how multiple pads of one net should be declared.
 - Many DVSS cells sit between the ASIG5V pads. Please let us know if that is a problem for the
