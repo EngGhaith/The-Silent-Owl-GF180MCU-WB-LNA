@@ -26,5 +26,5 @@
 	"LVS_VERILOG_FILES": [
 		""
 	],
-	"LAYOUT_FILE": "$UPRJ_ROOT/klayout/$TOP_LAYOUT.gds"
+	"LAYOUT_FILE": "$UPRJ_ROOT/klayout/lna_core_parts_filled.gds"
 }

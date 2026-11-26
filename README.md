@@ -1,6 +1,32 @@
 # The-Silent-Owl-GF180MCU-WB-LNA
 The Silent Owl is an open-source LNA designed in GF180MCU for Chipathon 2026
 
+Branch: `main_pex_layout_refloor` — the Chipathon 2026 submission.
+
+
+# Sign-off files
+
+| | path | notes |
+|---|---|---|
+| **Sign-off GDS (filled)** | [`klayout/lna_core_parts_filled.gds`](klayout/lna_core_parts_filled.gds) | top cell `lna_core_parts`, 1110 × 1110 µm. COMP + poly2 dummy fill, **no metal fill**. This is the file to hand to integration. |
+| GDS (unfilled) | [`klayout/lna_core_parts.gds`](klayout/lna_core_parts.gds) | same layout without the dummy fill. Clean on every rule except the three density rules the fill exists to satisfy (`DCF.1a`, `DCF.1b`, `PL.8`) — per Chipathon issue #202 density fill may be left to chip-level integration, so both variants are kept. |
+| **Sign-off schematic (LVS top)** | [`xschem/lna_core_parts.sch`](xschem/lna_core_parts.sch) | top cell `lna_core_parts`; hierarchy: `lna_core_input_match`, `lna_core_cg`, `lna_core_cs`, `lna_core_output_match` |
+| LVS reference netlist | [`xschem/lna_core_parts_lvs.spice`](xschem/lna_core_parts_lvs.spice) | generated from the schematic above by `lvs/make_lvs_netlist.py` (called by `lvs/run_lvs.sh`); regenerate it after any schematic change |
+| LVS configuration | [`lvs_config.json`](lvs_config.json) | `TOP_SOURCE`/`TOP_LAYOUT` = `lna_core_parts`, `LAYOUT_FILE` = the filled GDS, `LVS_SPICE_FILES` = the netlist above |
+
+Verification status of both GDS variants (see [`lvs/README.md`](lvs/README.md) for how to reproduce):
+
+| | KLayout DRC | Magic DRC | LVS |
+|---|---|---|---|
+| `lna_core_parts_filled.gds` | 0 violations | 0 violations | match uniquely — 28 devices / 22 nets |
+| `lna_core_parts.gds` | 0 violations | 0 violations | match uniquely — 28 devices / 22 nets |
+
+Both GDS files are written **without KLayout PCell/library context information** (`Store PCell and library
+context information` off, i.e. `SaveLayoutOptions.write_context_info = False`). Every cell is a static cell,
+so reopening the file with the PDK libraries loaded can no longer regenerate the pcells and silently revert
+the hand-applied layout fixes listed in `lvs/README.md`. The consequence is that those cells have no pcell
+parameter dialog any more — edit a pre-freeze copy if a pcell parameter has to change.
+
 
 # Papers about LNA
 
