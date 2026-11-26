@@ -1,6 +1,42 @@
 # The-Silent-Owl-GF180MCU-WB-LNA
 The Silent Owl is an open-source LNA designed in GF180MCU for Chipathon 2026
 
+Branch: `main_Chipalooza` — the Chipalooza variant of the layout.
+
+
+# Sign-off files
+
+| | path | notes |
+|---|---|---|
+| **Sign-off GDS (filled)** | [`klayout/lna_core_parts_filled.gds`](klayout/lna_core_parts_filled.gds) | top cell `lna_core_parts`, 1109 × 1080 µm. COMP + poly2 dummy fill, **no metal fill**. This is the file to hand to integration. |
+| GDS (unfilled) | [`klayout/lna_core_parts.gds`](klayout/lna_core_parts.gds) | same layout without the dummy fill |
+| **Sign-off schematic (LVS top)** | [`xschem/lna_core_parts.sch`](xschem/lna_core_parts.sch) | top cell `lna_core_parts`; hierarchy: `lna_core_input_match`, `lna_core_cg`, `lna_core_cs`, `lna_core_output_match` |
+| LVS reference netlist | [`xschem/lna_core_parts_lvs.spice`](xschem/lna_core_parts_lvs.spice) | generated from the schematic above by `lvs/make_lvs_netlist.py` (called by `lvs/run_lvs.sh`); regenerate it after any schematic change |
+| LVS configuration | [`lvs_config.json`](lvs_config.json) | `TOP_SOURCE`/`TOP_LAYOUT` = `lna_core_parts`, `LAYOUT_FILE` = the filled GDS, `LVS_SPICE_FILES` = the netlist above — same convention as the Chipathon branch |
+
+What the layout carries, beyond the Chipathon branch:
+
+* bias resistors R1/R2 are `ppolyf_u_1k_6p0` (6 V), marked with DUALGATE inside `lna_core_cg__R3`/`R4`
+* the substrate tie is **Fix A**: one existing p-tap (COMP + pplus + 64 contacts + M1) duplicated into the
+  `lna_core_parts` cell itself at the same coordinates, so Magic exports the substrate node as `vss`
+  instead of an unnamed `VSUBS`. It is pure geometry duplication — no device, and the schematic needs no
+  counterpart. Rendered by `lvs/render_fix.py A`.
+* coils enter LVS as PDK metal resistors through the `lvsrm` sections of `xschem/*_model.lib`
+
+Verification status of both GDS variants:
+
+| | KLayout DRC | Magic DRC | LVS |
+|---|---|---|---|
+| `klayout/lna_core_parts_filled.gds` | 0 violations | 0 violations | match uniquely — 21 devices / 13 nets |
+| `klayout/lna_core_parts.gds` | 0 violations | 0 violations | match uniquely — 21 devices / 13 nets |
+
+Both GDS files are written **without KLayout PCell/library context information** (`Store PCell and library
+context information` off, i.e. `SaveLayoutOptions.write_context_info = False`). Every cell is a static cell,
+so reopening the file with the PDK libraries loaded can no longer regenerate the pcells and silently revert
+the layout fixes that `lvs/repair_pcell_regression.py` exists to restore (RES_MK on the coil markers, the
+stray rm1 marker, the MIMTM.2 via4 trim). The consequence is that those cells have no pcell parameter
+dialog any more — edit a pre-freeze copy if a pcell parameter has to change.
+
 
 # Papers about LNA
 

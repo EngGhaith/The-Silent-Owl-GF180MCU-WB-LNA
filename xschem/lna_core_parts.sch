@@ -64,3 +64,15 @@ C {lab_pin.sym} 790 -460 1 0 {name=p15 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 1220 -460 1 0 {name=p16 sig_type=std_logic lab=vdd
 }
+C {code_shown.sym} 500 -770 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection -- every coil in this hierarchy becomes a
+* PDK metal resistor device instead of an inductor, so the Magic/Netgen flow has
+* something comparable to match against the layout's resistor-marker geometry.
+* The ideal / rl / snp2le simulation variants in the same .lib files are untouched.
+.lib $::env(PWD)/LEQ_MAIN_model.lib lvsrm
+.lib $::env(PWD)/L1_model.lib lvsrm
+.lib $::env(PWD)/LD2_model.lib lvsrm
+.lib $::env(PWD)/LD4_model.lib lvsrm
+"}

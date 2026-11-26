@@ -6,15 +6,15 @@ S {}
 F {}
 E {}
 N 610 -630 630 -630 {
-lab=g_cg}
+lab=#net1}
 N 460 -770 460 -750 {
 lab=vbias_cg}
 N 460 -530 460 -490 {
 lab=vss}
 N 410 -720 440 -720 {lab=vss}
-N 460 -630 460 -590 {lab=g_cg}
-N 460 -690 460 -630 {lab=g_cg}
-N 460 -630 610 -630 {lab=g_cg}
+N 460 -630 460 -590 {lab=#net1}
+N 460 -690 460 -630 {lab=#net1}
+N 460 -630 610 -630 {lab=#net1}
 N 670 -630 690 -630 {
 lab=vss}
 N 670 -420 670 -410 {
@@ -24,7 +24,7 @@ lab=input_match}
 N 670 -600 670 -420 {lab=input_match}
 N 670 -210 670 -170 {lab=vss}
 N 670 -380 670 -360 {lab=input_match}
-N 670 -300 670 -270 {lab=#net1}
+N 670 -300 670 -270 {lab=input_match}
 N 560 -380 670 -380 {lab=input_match}
 N 670 -410 790 -410 {lab=input_match}
 N 790 -470 810 -470 {lab=input_match}
@@ -38,7 +38,7 @@ N 670 -760 670 -700 {lab=vm2}
 N 670 -965 670 -895 {lab=vdd}
 N 570 -895 670 -895 {lab=vdd}
 N 670 -825 770 -825 {lab=vm2}
-N 770 -825 770 -895 {lab=vm2}
+N 770 -895 770 -825 {lab=vm2}
 N 670 -825 670 -815 {lab=vm2}
 N 670 -1015 670 -965 {lab=vdd}
 N 670 -800 670 -760 {lab=vm2}
@@ -47,18 +47,19 @@ N 670 -815 670 -810 {lab=vm2}
 N 750 -740 790 -740 {
 lab=vm2}
 N 850 -740 890 -740 {
-lab=g_cs}
+lab=output_cs}
 N 940 -940 940 -920 {
 lab=vbias_cs}
 N 940 -860 940 -830 {
-lab=g_cs}
+lab=output_cs}
 N 890 -890 920 -890 {lab=vss}
-N 890 -740 940 -740 {lab=g_cs}
-N 940 -830 940 -740 {lab=g_cs}
-N 940 -740 1000 -740 {lab=g_cs}
+N 890 -740 940 -740 {lab=output_cs}
+N 940 -830 940 -740 {lab=output_cs}
+N 940 -740 1000 -740 {lab=output_cs}
 N 670 -740 750 -740 {lab=vm2}
 N 190 -790 230 -790 {lab=vss}
 N 190 -820 230 -820 {lab=vdd}
+N 670 -370 670 -290 {lab=input_match}
 C {symbols/nfet_05v0.sym} 650 -630 0 0 {name=M2
 L=0.6u
 W=40u
@@ -73,10 +74,10 @@ sa=0 sb=0 sd=0
 model=nfet_05v0
 spiceprefix=X
 }
-C {symbols/ppolyf_u_1k.sym} 460 -720 2 1 {name=R1
+C {symbols/ppolyf_u_1k_6p0.sym} 460 -720 2 1 {name=R1
 W=1u
 L=48.35u
-model=ppolyf_u_1k
+model=ppolyf_u_1k_6p0
 spiceprefix=X
 m=1}
 C {symbols/cap_mim_2f0fF.sym} 460 -560 2 1 {name=C9
@@ -91,19 +92,8 @@ C {lab_pin.sym} 410 -720 2 1 {name=p3 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 690 -630 2 0 {name=p12 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 670 -400 2 0 {name=p1 sig_type=std_logic lab=s
 spice_ignore=true}
-C {ind.sym} 670 -240 0 0 {name=L1
-m=1
-value=2.5n
-footprint=1206
-device=inductor
-}
+C {L1_model.sym} 670 -240 0 0 {name=XXL1}
 C {lab_pin.sym} 670 -170 3 0 {name=p19 sig_type=std_logic lab=vss}
-C {res.sym} 670 -330 0 0 {name=Rs
-value=2.5
-footprint=1206
-device=resistor
-m=1
-}
 C {symbols/nfet_05v0.sym} 770 -440 0 0 {name=M2D
 L=0.6u
 W=8u
@@ -123,15 +113,15 @@ C {lab_pin.sym} 790 -440 2 0 {name=pM2D_b sig_type=std_logic lab=vss}
 C {lab_pin.sym} 670 -1015 1 0 {name=p11 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 670 -688.75 0 0 {name=p71 sig_type=std_logic lab=vm2}
-C {LD4_model.sym} 670 -895 0 0 {name=XLD4}
+C {LD4_model.sym} 670 -895 0 0 {name=XXLD4}
 C {lab_wire.sym} 890 -740 0 0 {name=p14 sig_type=std_logic lab=output_cs}
-C {symbols/ppolyf_u_1k.sym} 940 -890 2 1 {name=R2
+C {symbols/ppolyf_u_1k_6p0.sym} 940 -890 2 1 {name=R2
 W=1u
 L=48.35u
-model=ppolyf_u_1k
+model=ppolyf_u_1k_6p0
 spiceprefix=X
 m=1}
-C {symbols/cap_mim_2f0fF.sym} 820 -740 1 0 {name=C1
+C {symbols/cap_mim_2f0fF.sym} 820 -740 3 0 {name=C1
 W=58.2168u
 L=58.2168u
 model=cap_mim_2f0_m4m5_noshield
@@ -148,3 +138,10 @@ C {lab_pin.sym} 230 -820 2 0 {name=p8 sig_type=std_logic lab=vdd
 }
 C {lab_pin.sym} 230 -790 2 0 {name=p9 sig_type=std_logic lab=vss
 }
+C {code_shown.sym} 190 -1290 0 0 {name=LVS_MODELS only_toplevel=true
+format="tcleval( @value )"
+value="
+* LVS-only inductor model selection
+.lib $::env(PWD)/L1_model.lib lvsrm
+.lib $::env(PWD)/LD4_model.lib lvsrm
+"}

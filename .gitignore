@@ -3,3 +3,24 @@
 techsweep/simulations/*.mat
 techsweep/simulation
 klayout/lvs/
+
+# LVS / DRC run artefacts (regenerate with lvs/run_lvs.sh and the KLayout/Magic decks)
+lvs/work/
+lvs5/
+drc*/
+*.lyrdb
+
+# KLayout autosaves and xschem backups
+klayout/backups/
+xschem/*.bak
+
+# Intermediate layout builds kept only for debugging. The sign-off pair is
+# klayout/lna_core_parts.gds (unfilled) and klayout/lna_core_parts_filled.gds.
+klayout/lna_core_parts_6p0.gds
+klayout/lna_core_parts_fixed.gds
+klayout/lna_core_parts_rdum.gds
+klayout/lna_core_parts_viafix.gds
+klayout/lna_core_parts_viafix_filled.gds
+
+# Renders (regenerate with lvs/render_fix.py)
+renders/

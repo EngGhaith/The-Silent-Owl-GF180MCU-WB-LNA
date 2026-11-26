@@ -156,3 +156,21 @@ Gdcp_y2_2 p2 0 dcp_d2 0 -972.4335029579479
 .ENDS LD2_MODEL
 
 .endl snp2le
+
+.lib lvsrm
+.SUBCKT LD2_MODEL p1 p2
+* LVS-only: PDK metal4 resistor standing in for the coil -- not an
+* electrical fit, purely a structural device for LVS (see user's spec).
+* LD2's winding really is a single M4 layer (its guard ring is the M3 one).
+R1 p1 p2 rm4 W=7u L=1u
+.ENDS LD2_MODEL
+.endl lvsrm
+
+.lib lvssc
+.SUBCKT LD2_MODEL p1 p2
+* LVS-only diagnostic: p1/p2 deliberately shorted together, to test whether
+* this specific coil's two ports being tied together explains an otherwise
+* unexplained net merge elsewhere in LVS.
+R1 p1 p2 0
+.ENDS LD2_MODEL
+.endl lvssc
