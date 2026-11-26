@@ -5,3 +5,13 @@ techsweep/simulation
 klayout/lvs/
 lvs/work/
 klayout/backups/
+
+# git worktree of the main_Chipalooza branch -- a checkout of another branch living inside
+# this one. It must never be committed here: `git add -A` would otherwise pull a whole
+# second working copy into this branch.
+chipalooza_sim/
+
+# tool and editor artefacts
+.claude/
+__pycache__/
+*.lyrdb

@@ -77,12 +77,6 @@ model=nfet_05v0
 spiceprefix=X
 }
 C {lab_pin.sym} 760 -758.75 0 0 {name=p15 sig_type=std_logic lab=vm2}
-C {symbols/ppolyf_u_1k.sym} 550 -680 2 1 {name=R3
-W=1u
-L=48.35u
-model=ppolyf_u_1k
-spiceprefix=X
-m=1}
 C {iopin.sym} 550 -730 3 0 {name=p16 lab=vbias_cg}
 C {lab_pin.sym} 550 -450 3 0 {name=p17 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 780 -590 2 0 {name=p18 sig_type=std_logic lab=vss}
@@ -103,12 +97,6 @@ spiceprefix=X
 }
 C {lab_pin.sym} 820 -370 0 0 {name=pM1 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 880 -370 2 0 {name=pM2 sig_type=std_logic lab=vss}
-C {symbols/ppolyf_u_1k.sym} 950 -910 2 1 {name=R4
-W=1u
-L=48.35u
-model=ppolyf_u_1k
-spiceprefix=X
-m=1}
 C {iopin.sym} 950 -960 3 0 {name=p24 lab=vbias_cs
 }
 C {lab_pin.sym} 900 -910 2 1 {name=p25 sig_type=std_logic lab=vss}
@@ -135,5 +123,17 @@ C {symbols/cap_mim_2f0fF.sym} 830 -760 3 0 {name=C2
 W=58.2168e-6
 L=58.2168e-6
 model=cap_mim_2f0fF
+spiceprefix=X
+m=1}
+C {symbols/ppolyf_u_1k_6p0.sym} 550 -680 2 1 {name=R3
+W=1e-6
+L=48.35e-6
+model=ppolyf_u_1k_6p0
+spiceprefix=X
+m=1}
+C {symbols/ppolyf_u_1k_6p0.sym} 950 -910 2 1 {name=R4
+W=1e-6
+L=48.35e-6
+model=ppolyf_u_1k_6p0
 spiceprefix=X
 m=1}

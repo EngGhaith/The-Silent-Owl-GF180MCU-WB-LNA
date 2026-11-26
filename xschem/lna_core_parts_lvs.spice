@@ -38,13 +38,13 @@ XC15 input_cg rf_in_pad cap_mim_2f0_m4m5_noshield c_width=24.82u c_length=24.82u
 .ends
 .subckt lna_core_cg vbias_cs vdd vss vbias_cg output_cs input_match
 XM1 vm2 net1 input_match vss nfet_06v0 L=0.6u W=40u nf=10 m=14
-XR3 vbias_cg net1 vss ppolyf_u_1k r_width=1u r_length=48.35u
 XM3 input_match vss input_match vss nfet_06v0 L=0.6u W=8u nf=2 m=4
-XR4 vbias_cs output_cs vss ppolyf_u_1k r_width=1u r_length=48.35u
 XXLD4 vdd vm2 ld4_model
 XXL1 input_match vss l1_model
 XC3 vss net1 cap_mim_2f0_m4m5_noshield c_width=49.89u c_length=49.89u m=4
 XC2 vm2 output_cs cap_mim_2f0_m4m5_noshield c_width=58.22u c_length=58.22u
+XR3 vbias_cg net1 vss ppolyf_u_1k_6p0 r_width=1u r_length=48.35u
+XR4 vbias_cs output_cs vss ppolyf_u_1k_6p0 r_width=1u r_length=48.35u
 .ends
 .subckt lna_core_cs output_match vbias_cas input_cg vdd vss
 XM4D vm1 vss vm1 vss nfet_06v0 L=0.6u W=7u nf=2 m=2
