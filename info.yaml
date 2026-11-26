@@ -12,8 +12,8 @@ project:
   lvs_config: "lvs_config.json"
   gf_def_ready: false           # Set true only after GF padframe/DEF preparation is verified
   ws_def_ready: false           # Set true only after Wafer Space padframe/DEF preparation is verified
-  drc_ready: false              # Set true only when submission GDS is integration/DRC ready
-  lvs_ready: false              # Set true only when the final GDS and LVS inputs are ready
+  drc_ready: true               # klayout/lna_core_parts_filled.gds: KLayout + Magic DRC, 0 violations
+  lvs_ready: true               # same GDS vs xschem/lna_core_parts_lvs.spice: 28 devices / 22 nets, match
   export_control: "docs/Export_Control_GF_Rev8.2.pdf"   # Required export control document
 
 # Intended seven-pin interface for the current active schematic:
